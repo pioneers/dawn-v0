@@ -1,8 +1,7 @@
 div(ng-app='ng-app', ng-controller='WidgetCtrl')
+  div(ng-include="'/partials/sidebar.html'")
   div(id='widget-container', data-target="#canvas-context-menu", data-toggle="context")
     div.widget(draggable, resizable, widgetcontextcaller
       ng-repeat='widget in widgets', ng-include='widget.url')
-
   canvascontext#canvas-context-menu(ng-controller="CanvasContextCtrl")
-  widgetcontext#widget-context-menu
-
+  widgetcontext#widget-context-menu  
