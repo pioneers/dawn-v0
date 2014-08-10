@@ -14,6 +14,6 @@
 		li.sidebar-sub.clickable(ng-repeat='gPad in robot.gamePad', ng-click='gPad.showPeriphs = !gPad.showPeriphs') {{gPad.name}}
 			ul(ng-hide='gPad.showPeriphs')
 				li.sidebar-prop.clickable(ng-repeat='subPeriph in gPad.subPeripherals()[0]', ng-click='subPeriph.instantiate=!subPeriph.instantiate; $event.stopPropagation();') {{subPeriph.name}}
-					button.clickable(ng-hide='! (subPeriph.instantiate)', ng-click="sidebar(subPeriph)") Line Chart
+					button.clickable(ng-hide='! (subPeriph.instantiate)', ng-click="sidebar(subPeriph, subPeriph); $event.stopPropagation();") Line Chart
 				//- button.clickable(ng-hide='! (periph.subPeripherals().length && subPeriph.instantiate)', ng-click="sidebar(subPeriph)") Bar Chart
 					

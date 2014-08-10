@@ -14,10 +14,7 @@ angular.module('daemon.robot', ['daemon.radio', 'daemon.peripheral', 'daemon.gam
     _peripherals = []
     _peripherals.push(new Peripheral(-1, 'Mock Peripheral'))
     _gamepadIndexes = []
-    _gamePad = [{
-      name: 'noname'
-      subPeripherals: -> []
-    }]
+    _gamePad = []
 
     listen = ($scope) ->
       $scope.$watch((-> return gamepads.active()), 
@@ -29,9 +26,6 @@ angular.module('daemon.robot', ['daemon.radio', 'daemon.peripheral', 'daemon.gam
                 gpad = new Gamepad(g, g.id, 'Gamepad ' + g.index)
                 _gamePad.push(gpad)
                 gamepads.onUpdate(gpad.update)), true)
-
-    _gamePad.push(new Gamepad({index: 1}, 5, 'Gamepad' + 2))
-    console.log _gamePad[1].subPeripherals()
 
     updateLastContact = ->
       _lastContact = Date.now()
