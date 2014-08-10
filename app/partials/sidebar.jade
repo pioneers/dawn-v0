@@ -7,12 +7,11 @@
     li.sidebar-prop {{activeWidget.options.chart.type}}
     li.sidebar-sub Peripherals:
     li.sidebar-prop(ng-repeat = "periph in activeWidget.data") {{periph.key}}
-    li.sidebar-brand Peripherals
-    ul.sidebar-nav(ng-repeat='periph in robot.peripherals()')
-      li.sidebar-sub(ng-click='periph.instantiate=true') {{periph.name}}
-        button(ng-show='periph.subPeripherals().length && periph.instantiate', ng-click="addWidget(periph.id, 'lineChart') && periph.instatiate = false" ) Line Chart
-        button(ng-show='periph.subPeripherals().length && periph.instantiate', ng-click="addWidget(periph.id, 'barChart') && periph.instatiate = false") Bar Chart
-        li.sidebar-prop(ng-repeat='subPeriph in peripheral.subPeripherals()', ng-click='subPeriph.instantiate=true') {{subPeriph.name}}
-          button(ng-show='subPeriph.instantiate', ng-click="addWidget(subPeriph.id, 'lineChart') && subPeriph.instatiate = false") Line Chart
-          button(ng-show='subPeriph.instantiate', ng-click="addWidget(subPeriph.id, 'barChart') && subPeriph.instatiate = false") Bar Chart
+    li.sidebar-brand Peripherals on Chart
+    li.sidebar-sub.clickable(ng-repeat='periph in robot.peripherals()', ng-click='periph.instantiate=!periph.instantiate') {{periph.name}}
+      button.clickable(ng-hide='! periph.instantiate', ng-click="sidebar(periph)" ) Line Chart
+      button.clickable(ng-hide='! periph.instantiate', ng-click="sidebar(periph)") Bar Chart
+      li.sidebar-prop.clickable(ng-repeat='subPeriph in peripheral.subPeripherals()', ng-click='subPeriph.instantiate=true') {{subPeriph.name}}
+        button.clickable(ng-hide='! (periph.subPeripherals().length && subPeriph.instantiate)', ng-click="sidebar(subPeriph)") Line Chart
+        button.clickable(ng-hide='! (periph.subPeripherals().length && subPeriph.instantiate)', ng-click="sidebar(subPeriph)") Bar Chart
           

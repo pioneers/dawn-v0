@@ -12,6 +12,7 @@ angular.module('daemon.widget', ['daemon.context', 'daemon.robot', 'nvd3'])
 ($scope, Widget, robot) ->
   $scope.widgets = []
   $scope.activeWidget = {}
+  $scope.robot = robot
 
   $scope.setRecentWidget = (widget) ->
     $scope.activeWidget = widget
@@ -19,6 +20,11 @@ angular.module('daemon.widget', ['daemon.context', 'daemon.robot', 'nvd3'])
   $scope.addWidget = (properties = {id: -1}) ->
     $scope.widgets.push new Widget(robot.peripheral(properties), 'linechart')
     $scope.widgets[$scope.widgets.length-1].update()
+
+  $scope.sidebar = (peripheral) ->
+    $scope.addWidget({id: peripheral.id})
+    peripheral.instantiate = false
+    return
 
   $scope.removeWidget = (widget) ->
     id = widget.id
