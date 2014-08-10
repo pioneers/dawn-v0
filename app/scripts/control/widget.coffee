@@ -4,21 +4,21 @@
 
 angular.module('daemon.widget', ['daemon.context', 'daemon.robot', 'nvd3'])
 
-.controller('widgetCtrl', [
+.controller('WidgetCtrl', [
   '$scope'
-  '$interval'
-  'widgetFactory'
+  'Widget'
   'robot'
 
-($scope, $interval, widgetFactory, robot) ->
+($scope, Widget, robot) ->
   $scope.widgets = []
-  $scope.mostRecentWidget = {}
+  $scope.activeWidget = {}
 
   $scope.setRecentWidget = (widget) ->
-    $scope.mostRecentWidget = widget
+    $scope.activeWidget = widget
 
-  $scope.addWidget = (peripheralFilter = {id: -1}) ->
-    $scope.widgets.push new widgetFactory(robot.peripheral(peripheralFilter), 'linechart')
+  $scope.addWidget = (properties = {id: -1}) ->
+    $scope.widgets.push new Widget(robot.peripheral(properties), 'linechart')
+    $scope.widgets[$scope.widgets.length-1].update()
 
   $scope.removeWidget = (widget) ->
     id = widget.id
@@ -28,17 +28,10 @@ angular.module('daemon.widget', ['daemon.context', 'daemon.robot', 'nvd3'])
         return
 
   $scope.removeRecentWidget = ->
-    $scope.removeWidget($scope.mostRecentWidget)
+    $scope.removeWidget($scope.activeWidget)
 
   $scope.removeAllWidgets = ->
     $scope.widgets = []
-
-  # update widgets
-  $interval(
-    ->
-      widget.update() for widget in $scope.widgets when widget.render
-    , 300
-    )
 ])
 
 .directive('draggable',
@@ -53,12 +46,11 @@ angular.module('daemon.widget', ['daemon.context', 'daemon.robot', 'nvd3'])
     $(jQelm).draggable({
       containment: 'parent'
       start: (event, ui) ->
-        widget.render = false
         for series in widget.data
           series.values = series.values.slice()
       stop: (event, ui) ->
         widget.position = ui.position
-        widget.render = true
+        widget.update()
       })
 )
 
@@ -70,21 +62,20 @@ angular.module('daemon.widget', ['daemon.context', 'daemon.robot', 'nvd3'])
     jQelm = $(elm[0])
     $(jQelm).resizable({
       start: (event, ui) ->
-        widget.render = false
         for series in widget.data
           series.values = series.values.slice()
       stop: (event, ui) ->
-        widget.render = true
+        widget.update()
     })
 )
 
-.factory('widgetFactory',
+.factory('Widget',
 ->
   defaultURL = '/partials/type.html'
   # guid generator code
   guid = ->
     s4 = ->
-      return Math.floor((1 + Math.random() * 0x10000)).toString(16).substring(1)
+      return Math.floor(1 + Math.random() * 0x10000).toString(16).substring(1)
     return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
              s4() + '-' + s4() + s4() + s4()
 
@@ -101,7 +92,6 @@ angular.module('daemon.widget', ['daemon.context', 'daemon.robot', 'nvd3'])
       update: -> _.each(_data, (element, index, list) ->
         element.values =  element.peripheral.historyPairs())
       url: defaultURL.replace('type', String(type))
-      render: true
       position: null
       options: {
         chart: {
