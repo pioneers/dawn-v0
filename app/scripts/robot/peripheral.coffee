@@ -85,7 +85,11 @@ angular.module('daemon.peripheral', ['daemon.gamepad'])
       return {
         id: id
         name: name
+        actions: _actions
         update: -> update()
-        subPeripherals: -> subPeripherals()
+        subPeripherals: ->
+          console.log("actions are:" + _actions)
+          [action.periph for action in _actions]
+        showPeriphs: true
       }
   ])

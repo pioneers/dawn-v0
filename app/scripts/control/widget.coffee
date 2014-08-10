@@ -14,6 +14,9 @@ angular.module('daemon.widget', ['daemon.context', 'daemon.robot', 'nvd3'])
   $scope.activeWidget = {}
   $scope.robot = robot
 
+  $scope.listen = -> robot.listen($scope)
+  $scope.listen()
+
   $scope.setRecentWidget = (widget) ->
     $scope.activeWidget = widget
 
