@@ -1,0 +1,19 @@
+#sidebar-wrapper
+	ul.sidebar-nav
+		li.sidebar-brand Active Widget 
+		li.sidebar-sub ID: 
+		li.sidebar-prop {{activeWidget.id}}
+		li.sidebar-sub Type:
+		li.sidebar-prop {{activeWidget.options.chart.type}}
+		li.sidebar-sub Peripherals on Widget:
+		li.sidebar-prop(ng-repeat = "periph in activeWidget.data") {{periph.key}}
+		li.sidebar-brand Peripherals
+		li.sidebar-sub.clickable(ng-repeat='periph in robot.peripherals()', ng-click='periph.instantiate=!periph.instantiate') {{periph.name}}
+			button.clickable(ng-hide='! periph.instantiate', ng-click="sidebar(periph)" ) Line Chart
+			//- button.clickable(ng-hide='! periph.instantiate', ng-click="sidebar(periph)") Bar Chart
+		li.sidebar-sub.clickable(ng-repeat='gPad in robot.gamePad', ng-click='gPad.showPeriphs = !gPad.showPeriphs') {{gPad.name}}
+			ul(ng-hide='gPad.showPeriphs')
+				li.sidebar-prop.clickable(ng-repeat='subPeriph in gPad.subPeripherals()[0]', ng-click='subPeriph.instantiate=!subPeriph.instantiate; $event.stopPropagation();') {{subPeriph.name}}
+					button.clickable(ng-hide='! (subPeriph.instantiate)', ng-click="sidebar(subPeriph, subPeriph); $event.stopPropagation();") Line Chart
+				//- button.clickable(ng-hide='! (periph.subPeripherals().length && subPeriph.instantiate)', ng-click="sidebar(subPeriph)") Bar Chart
+					

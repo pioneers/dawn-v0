@@ -66,15 +66,17 @@ angular.module('daemon.peripheral', ['daemon.gamepad'])
       genID = (buttonIndex) ->
         (_gamepad.index * 8) + buttonIndex
 
-      for i in [0..8] by 1
+      for i in [0..16] by 1
         _actions.push({
           periph: new Peripheral(genID(i), buttonNames[i], memoryLength)
           index: i
           })
 
-      update = ->
+      updatePeriphs = (peripheral) ->
         for action in _actions
-          action.periph.update(action.periph.name, {time: Date.now(), value: _gamepad.buttons[action.index]})
+          if action.periph.name == peripheral.name
+            index = action.index
+          peripheral.update(peripheral.name, {time: Date.now(), value: _gamepad.buttons[index]})
 
       subPeripherals = ->
         subPeriphs = []
@@ -85,7 +87,12 @@ angular.module('daemon.peripheral', ['daemon.gamepad'])
       return {
         id: id
         name: name
-        update: -> update()
-        subPeripherals: -> subPeripherals()
+        actions: _actions
+        update: -> 
+          for action in _actions
+            updatePeriphs(action.periph)
+        subPeripherals: ->
+          [action.periph for action in _actions]
+        showPeriphs: true
       }
   ])
