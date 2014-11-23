@@ -20,19 +20,19 @@ angular.module('daemon.menubar', ['daemon.fieldcontrol', 'daemon.radio'])
 
     fieldControlMenu.append new gui.MenuItem
       label: 'Teleop'
-      click: -> radio.setTeleoperated()
+      click: -> fieldcontrol.states.setTeleoperated()
       key: '1'
       modifiers: if onMac then 'cmd-shift' else 'ctrl-shift'
 
     fieldControlMenu.append new gui.MenuItem
       label: 'Autonomous'
-      click: -> radio.setAutonomous()
+      click: -> fieldcontrol.states.setAutonomous()
       key: '2'
       modifiers: if onMac then 'cmd-shift' else 'ctrl-shift'
 
     fieldControlMenu.append new gui.MenuItem
       label: 'Emergency Stop'
-      click: -> radio.emergencyStop()
+      click: -> fieldcontrol.states.emergencyStop()
       key: 'e'
       modifiers: if onMac then 'cmd' else 'ctrl'
 
