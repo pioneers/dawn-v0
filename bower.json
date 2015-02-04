@@ -25,7 +25,8 @@
     "angular-nvd3": "~0.0.8",
     "jquery-ui": "~1.11.0",
     "bootstrap-contextmenu": "~0.2.0",
-    "eventEmitter": "~4.2.9"
+    "eventEmitter": "~4.2.9",
+    "javascript-state-machine": "~2.3.3"
   },
   "overrides": {
     "bootstrap-less": {

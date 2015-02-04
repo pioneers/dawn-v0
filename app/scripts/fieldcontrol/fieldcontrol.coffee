@@ -11,6 +11,41 @@ angular.module('daemon.fieldcontrol', ['daemon.radio'])
       auton: true
       enabled: true
 
+    fieldcontrol.states = StateMachine.create(
+      initial: "Autonomous"
+      events: [
+        {
+          name: "setAutonomous"
+          from: "*"
+          to: "Autonomous"
+        }
+        {
+          name: "setTeleoperated"
+          from: "*"
+          to: "Teleop"
+        }
+        {
+          name: "emergencyStop"
+          from: "*"
+          to: "Emergency Stop"
+        }
+
+      ],
+      callbacks: {
+        onsetAutonomous: (event, from, to) ->
+          radio.setAutonomous()
+          console.log("set auto")
+        onsetTeleoperated: (event,from,to) ->
+          radio.setTeleoperated()
+          console.log("set teleop")
+        onemergencyStop: (event,from,to) ->
+          radio.emergencyStop()
+          console.log("emergency stop")
+
+
+      }
+    )
+
     updateState = (msg) ->
       newState =
         auton: msg.auton
