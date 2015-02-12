@@ -1,6 +1,8 @@
 Daemon
 ======
 
+[![Join the chat at https://gitter.im/pioneers/daemon](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/pioneers/daemon?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Daemon is a cross-platform frontend for a robotics control system. It's also the future.
 
 ## Quickstart
