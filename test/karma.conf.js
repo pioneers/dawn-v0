@@ -6,6 +6,11 @@ module.exports = function(karma) {
     // base path, that will be used to resolve files and exclude
     basePath: '../',
 
+    // preprocessors
+    preprocessors: {
+      '**/*.coffee': ['coffee']
+    },
+
 
     // frameworks to use
     frameworks: ['jasmine'],
