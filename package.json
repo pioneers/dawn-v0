@@ -36,8 +36,10 @@
     "uglify-js-brunch": ">= 1.0 < 1.8"
   },
   "devDependencies": {
+    "jasmine-core": "^2.2.0",
     "karma": "~0.12.31",
     "karma-coffee-preprocessor": "~0.2.1",
+    "karma-jasmine": "^0.3.5",
     "karma-ng-scenario": "~0.1",
     "karma-nodewebkit-launcher": "~0.0.9"
   }
