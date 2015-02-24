@@ -6,3 +6,4 @@ before_install:
  - npm install
  - bower install
  - brunch b
+ - npm install -g nodewebkit
