@@ -29,13 +29,15 @@
     "jade-angularjs-brunch": "~0.0.5",
     "javascript-brunch": ">= 1.0 < 1.8",
     "js-yaml": "3.1.0",
-    "karma": "~0.9.4",
-    "karma-coffee-preprocessor": "~0.0.2",
-    "karma-ng-scenario": "~0.0.2",
-    "karma-nodewebkit-launcher": "0.0.8",
     "less-brunch": ">= 1.0 < 1.8",
     "nodewebkit": "^0.10.5",
     "stylus-brunch": ">= 1.0 < 1.8",
     "uglify-js-brunch": ">= 1.0 < 1.8"
+  },
+  "devDependencies": {
+    "karma": "~0.9.4",
+    "karma-coffee-preprocessor": "~0.0.2",
+    "karma-ng-scenario": "~0.0.2",
+    "karma-nodewebkit-launcher": "0.0.8"
   }
 }
