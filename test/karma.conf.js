@@ -82,8 +82,7 @@ module.exports = function(karma) {
     plugins: [
       'karma-jasmine',
       'karma-coffee-preprocessor',
-      'karma-nodewebkit-launcher',
-      'karma-phantomjs-launcher'
+      'karma-nodewebkit-launcher'
     ],
 
 
