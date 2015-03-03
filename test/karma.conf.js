@@ -73,6 +73,13 @@ module.exports = function(karma) {
     // - IE (only Windows)
     browsers: ['NodeWebkit'],
 
+    customLaunchers: {
+      'NodeWebkitTravis': {
+        base: 'NodeWebkit',
+        command: 'node_modules/nodewebkit/nodewebkit/node-webkit'
+      }
+    }
+
 
     // If browser does not capture in given timeout [ms], kill it
     captureTimeout: 60000,
