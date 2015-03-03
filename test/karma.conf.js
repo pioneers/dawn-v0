@@ -78,7 +78,7 @@ module.exports = function(karma) {
         base: 'NodeWebkit',
         command: 'node_modules/nodewebkit/nodewebkit/node-webkit'
       }
-    }
+    },
 
 
     // If browser does not capture in given timeout [ms], kill it
