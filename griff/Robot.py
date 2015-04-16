@@ -8,4 +8,4 @@ class Robot:
     @property
     def status(self):
         ''' let students access robot status data'''
-        return shared_data
+        return self.shared_data

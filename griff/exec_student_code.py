@@ -25,16 +25,17 @@ def run_student_code(shared_data):
 #                 print e
 
 def update_shared_data(shared_data):
-    time.sleep(1)
-    shared_data['test'] = time.time()
+    while True:
+        time.sleep(1)
+        shared_data['test'] = time.time()
 
 def get_status():
     ''' status getter method meant for Robot.py'''
     return shared_data
 
 shared_data = Manager().dict()
-code_subprocess = Process(target=run_student_code, args = (shared_data,))
 update_subprocess = Process(target=update_shared_data, args = (shared_data,))
+code_subprocess = Process(target=run_student_code, args = (shared_data,))
 print "About to start update update_subprocess"
 update_subprocess.start()
 print "Updating started. About to execute student code"
