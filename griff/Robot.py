@@ -1,12 +1,11 @@
 from multiprocessing import Process, Pipe, Manager
-import exec_student_code
 # from grizzly import *
 
 class Robot:
-    def __init__(self):
+    def __init__(self, shared_data):
         # do stuff
-    	nothing = True
+    	self.shared_data = shared_data
     @property
     def status(self):
         ''' let students access robot status data'''
-        return exec_student_code.get_status()
+        return shared_data

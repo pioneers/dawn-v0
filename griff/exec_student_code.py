@@ -1,12 +1,14 @@
 from multiprocessing import Process, Pipe, Manager
 import time, os
-import student_code
+from Robot import Robot
+from student_code import teleop
 # import ansible
 
-def run_student_code():
+def run_student_code(shared_data):
     ''' execute student code in student_code.py '''
     try:
-        student_code.teleop()
+        robot = Robot(shared_data)
+        teleop(robot)
     except Exception as e:
         print "Student code error: " + repr(e)
 
@@ -31,7 +33,7 @@ def get_status():
     return shared_data
 
 shared_data = Manager().dict()
-code_subprocess = Process(target=run_student_code, args = ())
+code_subprocess = Process(target=run_student_code, args = (shared_data,))
 update_subprocess = Process(target=update_shared_data, args = (shared_data,))
 print "About to start update update_subprocess"
 update_subprocess.start()
