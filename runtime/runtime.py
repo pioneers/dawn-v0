@@ -52,8 +52,11 @@ h.subToDevices([(device, 50) for (device, device_type) in connectedDevices])
 def init_battery():
     global battery_UID
     global battery_safe
+    print(connectedDevices)
     for UID, dev in connectedDevices: 
+	print UID, dev
         print(h.getDeviceName(int(dev)))
+	print
         if h.getDeviceName(int(dev)) == "BatteryBuzzer": 
             battery_UID = UID
     if not bool(battery_UID):
@@ -72,13 +75,13 @@ def init_battery():
 
 def get_all_data(connectedDevices):
     all_data = {}
-    for t in connectedDevices:
-        if t[0] == battery_UID:  #does not enumerate battery UID into sensor_data
+    for uid, device_type in connectedDevices:
+        if uid == battery_UID:  #does not enumerate battery UID into sensor_data
             continue
-        if t[1] == 9:             #just for color sensor, put all data into one list
-            all_data["5" + str(t[0])] = h.getData(t[0], "dataUpdate")
+        if device_type == 9:             #just for color sensor, put all data into one list
+            all_data["5" + str(uid)] = h.getData(uid, "dataUpdate")
         count = 1
-        tup_nest = h.getData(t[0], "dataUpdate")
+        tup_nest = h.getData(uid, "dataUpdate")
         if not tup_nest:
             continue
         values, timestamps = tup_nest
