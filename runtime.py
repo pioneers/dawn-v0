@@ -29,6 +29,8 @@ def get_all_data(connectedDevices):
     for t in connectedDevices:
         count = 1
         tup_nest = h.getData(t[0], "dataUpdate")
+        if len(tup_nest) == 0:
+            continue
         tup_vals = tup_nest[0]
         for i in tup_vals:
             all_data[str(count) + str(t[0])] = i
