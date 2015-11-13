@@ -165,7 +165,7 @@ def test_battery():
     try:
         test = h.getData(battery_UID,"dataUpdate")
         print(test)
-        (safe, connected, c0, c1, c2, c3, voltage), timestamp = test
+        (safe, connected, c0, c1, c2, voltage), timestamp = test
     except:
         raise
         safe = False
