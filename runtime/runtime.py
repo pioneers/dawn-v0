@@ -1,13 +1,17 @@
 import subprocess, signal, sys
-import ansible
+from ansible import Ansible
 import threading
 import time
-import grizzly
-from api import Robot
-from api import Gamepads
+
+from grizzly import *
+#from api import Robot
+#from api import Gamepads
 import hibike
 import deviceContext
 import time
+
+dawn_ansible = Ansible('dawn')
+runtime_ansible = Ansible('runtime')
 
 #Robot.init()
 
@@ -26,7 +30,6 @@ import time
 #peripheral_thread.start()
 
 running_code = False
-
 
 pobs = set() # set of all active processes
 pobslock = threading.Lock()  # Ensures that only one processs modifies pobs at a time
@@ -61,9 +64,9 @@ connectedDevices = h.getEnumeratedDevices()
 h.subToDevices(connectedDevices)
 
 while True:
-    command = ansible.recv()
+    command = dawn_ansible.recv()
     if command:
-        print("Message received from ansible!")
+        print("Message received from ansible! " + command['header']['msg_type'])
         msg_type, content = command['header']['msg_type'], command['content']
         if msg_type == 'execute':
 	        print("Ansible said to start the code")
@@ -72,38 +75,24 @@ while True:
                 with pobslock:
                     pobs.add(p)
                 #makes a deamon thread to supervise the process
-                t = threading.Thread(target=p_watch, args=(p))
-                t.daemon = True
-                t.start()
+                #t = threading.Thread(target=p_watch, args=(p,))
+                #t.daemon = True
+                #t.start()
                 running_code = True
         elif msg_type == 'stop':
 	        print("Ansible said to stop the code")
             if running_code:
                 with pobslock:
                     print("killed")
-                    for p in pobs: p.kill()
+                    for p in pobs:
+                        p.terminate() #ideal way to shut down
+                        #p.kill()
+                    pobs.clear()
+                    #for p in pobs: p.kill() #brut force stuck processes
                 #kill all motor values
-                Robot.set_motor('motor0', 0)
-                Robot.set_motor('motor1', 0)
+                for addr in Grizzly.get_all_ids():
+                    Grizzly(addr).set_target(0)
                 running_code = False
-	    runtime_ansible.sendMessage("sensor_value",connectedDevices)
-#        student_command = runtime_ansible.recv()
-#        if student_command:
-#            hibike_data = {}
-#            header = student_command['header']
-#            content = student_command['content']
-#            if header['msg_type'] == "get_sensor" and content:
-#                for name in content:
-#                        hibike_data{str(name)} = Robot.get_sensor(name)
-#                    except:
-##                    try:
-#                        print("sensor is not set")
-#            elif header['msg_type'] == 'set_motor' and content:
-##                runtime_ansible.send_message('sensor_data', hibike_data)
-#                for motor_name in content:
-#                    try:
-#                        Robot.set_motor(motor_name, content[motor_name])
-#                        print("motor is not set")
-#                    except:
-#                        #needs improvement
-#                runtime_ansible.send_message('set')
+        elif msg_type == 'gamepad':
+            runtime_ansible.send(command)
+        runtime_ansible.sendMessage("sensor_value",connectedDevices)
