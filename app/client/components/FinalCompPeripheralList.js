@@ -43,7 +43,7 @@ var FinalCompPeripheralList = React.createClass({
     else{
       return(
         <PeripheralList header='Connected Components'>
-          Not connected
+          There doesn't seem to be any sensors connected. 
         </PeripheralList>
       );
     };

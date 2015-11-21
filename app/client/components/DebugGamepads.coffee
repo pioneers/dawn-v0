@@ -27,7 +27,7 @@ module.exports = DebugGamepads = React.createClass
         <DebugGamepadItem key={index} index={index} gamepad={gamepad} />
     else # assume they haven't connected any
       <p>
-        There don't seem to be any gamepads connected.
+        There doesn't seem to be any gamepads connected.
         Connect a gamepad and press any button on it.
       </p>
   render: ->

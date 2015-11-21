@@ -35,7 +35,7 @@ var RemoteRobotStore = assign({}, EventEmitter.prototype, {
   }
 });
 
-RemoteRobotStore.temp2 = 'peripheral';
+var prevType = 'stop';
 
 /**
  * Remove the motor from the motors list. Helper for handleUpdateMotor.
@@ -78,6 +78,10 @@ function handleUpdateMotor(action) {
   RemoteRobotStore.emitChange();
 }
 
+function handleOff(){
+  if(prevType == 'stop'){
+    RemoteRobotStore.emitStop();
+}}
 /**
  * Handles receiving an UPDATE_PERIPHERAL action.
  */
@@ -98,7 +102,7 @@ function handleUpdateBattery(action){
 }
 
 /**
- * Hacking more.
+ * catalyst for handling off function
  */
 
 if (process.browser) {
@@ -112,18 +116,14 @@ if (process.browser) {
   }, 1000);
 }
 
-function handleOff(){
-  RemoteRobotStore.emitStop();
-}
+
+    
 
 RemoteRobotStore.dispatchToken = AppDispatcher.register((action) => {
-  RemoteRobotStore.temp1 = RemoteRobotStore.temp2;
-  RemoteRobotStore.temp2 = action.type;
-  if (RemoteRobotStore.temp1 == 'stop' && RemoteRobotStore.temp2 == 'stop'){
-    handleOff();
-    return;
-  };
   switch (action.type) {
+    case 'stop':
+      handleOff();
+      break;
     case ActionTypes.UPDATE_MOTOR:
       handleUpdateMotor(action);
       break;
@@ -137,6 +137,7 @@ RemoteRobotStore.dispatchToken = AppDispatcher.register((action) => {
       handleUpdateBattery(action);
       break;  
   }
+  prevType = action.type;
 });
 
 export default RemoteRobotStore;
