@@ -15,6 +15,9 @@ var robotStatus = false;
 var batteryLevel = 0;
 
 var RemoteRobotStore = assign({}, EventEmitter.prototype, {
+  emitStop() {
+    this.emit('stop');
+  },
   emitChange() {
     this.emit('change');
   },
@@ -31,6 +34,8 @@ var RemoteRobotStore = assign({}, EventEmitter.prototype, {
     return batteryLevel
   }
 });
+
+RemoteRobotStore.temp2 = 'peripheral';
 
 /**
  * Remove the motor from the motors list. Helper for handleUpdateMotor.
@@ -99,7 +104,7 @@ function handleUpdateBattery(action){
 if (process.browser) {
   setInterval(() => {
     AppDispatcher.dispatch({
-      type: 'peripherals',
+      type: 'stop',
       content: {
         testPeripheralHack: 5
       }
@@ -107,7 +112,17 @@ if (process.browser) {
   }, 1000);
 }
 
+function handleOff(){
+  RemoteRobotStore.emitStop();
+}
+
 RemoteRobotStore.dispatchToken = AppDispatcher.register((action) => {
+  RemoteRobotStore.temp1 = RemoteRobotStore.temp2;
+  RemoteRobotStore.temp2 = action.type;
+  if (RemoteRobotStore.temp1 == 'stop' && RemoteRobotStore.temp2 == 'stop'){
+    handleOff();
+    return;
+  };
   switch (action.type) {
     case ActionTypes.UPDATE_MOTOR:
       handleUpdateMotor(action);
