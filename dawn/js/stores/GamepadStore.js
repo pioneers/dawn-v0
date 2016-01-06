@@ -16,6 +16,8 @@ var GamepadStore = assign({}, EventEmitter.prototype, {
 });
 
 var handleGamepadUpdates = function(action) {
+  console.log('Received gamepads in store:');
+  console.log(gamepads);
   gamepads = action.gamepads;
   GamepadStore.emitChange();
 };
