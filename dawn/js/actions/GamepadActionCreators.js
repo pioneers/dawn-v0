@@ -8,12 +8,11 @@ var _timestamps = [0, 0, 0, 0];
 var _needToUpdate = function(newGamepads) {
   _.forEach(newGamepads, function(gamepad, index) {
     if(!_.isUndefined(gamepad) && (gamepad.timestamp > _timestamps[index])) {
-      console.log('Returning true!');
       _timestamps[index] = gamepad.timestamp;
       return true;
     }
-    return false;
   });
+  return false;
 };
 
 var _formatGamepadsForJSON = function(newGamepads) {
@@ -33,7 +32,6 @@ var _formatGamepadsForJSON = function(newGamepads) {
 // Also sends data to griff by emitting to socket-bridge
 var _updateGamepadState = function() {
   let newGamepads = navigator.getGamepads();
-  console.log('Trying to update!');
   if (_needToUpdate(newGamepads)) {
     Ansible.sendMessage('gamepad', _formatGamepadsForJSON(newGamepads));
     GamepadActionCreators.updateGamepads(newGamepads);
