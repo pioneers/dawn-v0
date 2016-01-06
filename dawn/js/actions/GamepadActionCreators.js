@@ -7,7 +7,7 @@ var _timestamps = [0, 0, 0, 0];
 
 var _needToUpdate = function(newGamepads) {
   _.forEach(newGamepads, function(gamepad, index) {
-    if(gamepad && gamepad.timestamp > _timestamps[index]) {
+    if(gamepad && (gamepad.timestamp > _timestamps[index])) {
       _timestamps[index] = gamepad.timestamp;
       return true;
     }
@@ -33,6 +33,7 @@ var _formatGamepadsForJSON = function(newGamepads) {
 var _updateGamepadState = function() {
   let newGamepads = navigator.getGamepads();
   if (_needToUpdate(newGamepads)) {
+    console.log('Need to update gamepads');
     Ansible.sendMessage('gamepad', _formatGamepadsForJSON(newGamepads));
     GamepadActionCreators.updateGamepads(newGamepads);
   }
@@ -40,6 +41,7 @@ var _updateGamepadState = function() {
 
 var GamepadActionCreators = {
   updateGamepads(gamepads) {
+    console.log('Dispatching gamepads');
     AppDispatcher.dispatch({
       type: ActionTypes.UPDATE_GAMEPADS,
       gamepads: gamepads
@@ -51,6 +53,7 @@ var GamepadActionCreators = {
       clearInterval(this._interval);
       this._interval = undefined;
     }
+    console.log('Setting interval for gamepads');
     this._interval = setInterval(_updateGamepadState, delay);
   }
 };

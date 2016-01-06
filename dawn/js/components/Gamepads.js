@@ -11,6 +11,8 @@ export default React.createClass({
   },
   onChange() {
     let gamepads = GamepadStore.getGamepads();
+    console.log('Component received gamepads:');
+    console.log(gamepads);
     this.setState({ gamepads: gamepads });
   },
   componentDidMount() {
