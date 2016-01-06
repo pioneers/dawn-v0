@@ -6,14 +6,13 @@ import _ from 'lodash';
 var _timestamps = [0, 0, 0, 0];
 
 var _needToUpdate = function(newGamepads) {
-  _.forEach(newGamepads, function(gamepad, index) {
+  return _.some(newGamepads, function(gamepad, index) {
     if(!_.isUndefined(gamepad) && (gamepad.timestamp > _timestamps[index])) {
-      console.log('returning true');
       _timestamps[index] = gamepad.timestamp;
       return true;
     }
+    return false;
   });
-  return false;
 };
 
 var _formatGamepadsForJSON = function(newGamepads) {
