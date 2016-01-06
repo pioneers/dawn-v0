@@ -8,6 +8,7 @@ var _timestamps = [0, 0, 0, 0];
 var _needToUpdate = function(newGamepads) {
   _.forEach(newGamepads, function(gamepad, index) {
     if(!_.isUndefined(gamepad) && (gamepad.timestamp > _timestamps[index])) {
+      console.log('returning true');
       _timestamps[index] = gamepad.timestamp;
       return true;
     }
@@ -33,6 +34,7 @@ var _formatGamepadsForJSON = function(newGamepads) {
 var _updateGamepadState = function() {
   let newGamepads = navigator.getGamepads();
   if (_needToUpdate(newGamepads)) {
+    console.log('Needtoupdate returned true');
     Ansible.sendMessage('gamepad', _formatGamepadsForJSON(newGamepads));
     GamepadActionCreators.updateGamepads(newGamepads);
   }
