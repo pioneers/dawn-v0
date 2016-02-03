@@ -1,5 +1,5 @@
 # ------
-# Robot.py class 
+# Robot.py class
 # This runs the robot.
 # Copyright 2015. Pioneers in Engineering.
 # ------
@@ -35,12 +35,12 @@ def set_motor(name, value):
         print("No motor with that name")
 
 # TODO: implement
-def get_sensor(name):
+def get_sensor(UUID):
     """Returns the value, or reading corresponding to the specified sensor.
     """
     all_data = mc.get('sensor_values')
     if name in all_data:
-        return all_data[name]
+        return all_data[UUID]
     return 'Error, sensor with that name not found'
 
 def get_all_motors():
