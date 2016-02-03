@@ -44,7 +44,51 @@ def get_joysticks(index):
     """
     return mc.get('gamepad')[index]['axes']
 
-def get_buttons(index):
+def get_left_x(index):
+    """Returns the position of the left joystick on the x axis.
+
+    The value is between -1 and 1, which represents where the left joystick is along
+    the x axis. -1 means the left joystick is pushed all the way to the left.
+
+    :param index: The index of the gamepad, usually 0, 1, 2, or 3
+    :returns: A double between -1 and 1, negative is pushed to the left.
+    """
+    return get_joysticks(index)[0]
+
+def get_left_y(index):
+    """Returns the position of the left joystick on the y axis.
+
+    The value is between -1 and 1, which represents where the left joystick is along
+    the y axis. -1 means the left joystick is pushed all the way forward.
+
+    :param index: The index of the gamepad, usually 0, 1, 2, or 3
+    :returns: A double between -1 and 1, negative is pushed forward.
+    """
+    return get_joysticks(index)[1]
+
+def get_right_x(index):
+    """Returns the position of the right joystick on the x axis.
+
+    The value is between -1 and 1, which represents where the right joystick is along
+    the x axis. -1 means the right joystick is pushed all the way to the left.
+
+    :param index: The index of the gamepad, usually 0, 1, 2, or 3
+    :returns: A double between -1 and 1, negative is pushed to the left.
+    """
+    return get_joysticks(index)[2]
+
+def get_right_y(index):
+    """Returns the position of the right joystick on the y axis.
+
+    The value is between -1 and 1, which represents where the right joystick is along
+    the x axis. -1 means the right joystick is pushed all the way forward.
+
+    :param index: The index of the gamepad, usually 0, 1, 2, or 3
+    :returns: A decimal between -1 and 1, negative is pushed to the forward
+    """
+    return get_joysticks(index)[3]
+
+def get_all_buttons(index):
     """Returns a list of button values corresponding to the specified gamepad.
 
     Each button value is either a 0 (not pressed) or a 1 (pressed). Unlike
@@ -56,6 +100,20 @@ def get_buttons(index):
     :returns: A list of 0's and 1's, each corresponding to a button
     """
     return mc.get('gamepad')[index]['buttons']
+
+def get_button(index,button):
+    """Returns whether a button is pressed or not.
+
+    For a specific button (each button has has a number) the output is either 
+    True (pressed) or False (not pressed). To see the exact mapping, click on 
+    the 'Details' button next to a gamepad in Dawn, or refer to 
+    https://w3c.github.io/gamepad/#remapping.
+
+    :param index: The index of the gamepad, usually 0, 1, 2, or 3
+    :param button: The number of the button. See above for mappings.
+    :returns: A boolean either True (pressed) or False (not pressed) 
+    """
+    return get_all_buttons(index)[button] == 1;
 
 def get_is_connected(index):
     """Returns whether or not the specified gamepad is connected.

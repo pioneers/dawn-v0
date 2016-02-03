@@ -7,18 +7,17 @@ import os
 # Useful motor mappings
 name_to_grizzly, name_to_values, name_to_ids = {}, {}, {}
 student_proc, console_proc = None, None
-robot_status = 0 # a boolean for whether or not the robot is executing code
+robot_status = 0 # a boolean for whether or not the robot is executing 
+mc.set('flag_values',[]) #set flag color initial status
 
 if 'HIBIKE_SIMULATOR' in os.environ and os.environ['HIBIKE_SIMULATOR'] in ['1', 'True', 'true']:
     import hibike_simulator
     h = hibike_simulator.Hibike()
 else:
     h = hibike.Hibike()
-connectedDevices = h.getEnumeratedDevices()
-print connectedDevices
-# TODO: delay should not always be 20
-connectedDevices = [(device, 20) for (device, device_type) in connectedDevices]
-h.subToDevices(connectedDevices)
+connectedDevices = h.getEnumeratedDevices()    #list of tuples, first val of tuple is UID, second is int Devicetype
+#TODO Device Delay Value
+h.subToDevices([(device, 20) for (device, device_type) in connectedDevices]) 
 
 # connect to memcache
 memcache_port = 12357
@@ -28,10 +27,24 @@ def get_all_data(connectedDevices):
     all_data = {}
     for t in connectedDevices:
         count = 1
-        for i in h.getData(t[0], "dataUpdate"):
-            all_data[str(count) + str(t[0])] = i
+        for i in h.getData(t[0], "dataUpdate"):    # for each smart device UID, adds 1,2,... to front
+            all_data[str(count) + str(t[0])] = i   # i is the data for each sensor
             count += 1
     return all_data
+
+
+def set_flags(values):
+    for i in range(1,values.length):
+        light = values[i]
+        if light != -1:
+            if light == 1:
+                light = -1
+            elif light == 2:
+                light = -64
+            elif light == 3:
+                light = -128
+            h.writeValue(values[0], "s" + string(i), light)
+
 
 # Called on starte of student code, finds and configures all the connected motors
 def initialize_motors():
@@ -135,6 +148,11 @@ while True:
     all_sensor_data = get_all_data(connectedDevices)
     send_peripheral_data(all_sensor_data)
     mc.set('sensor_values', all_sensor_data)
+
+    #Set Team Flag
+    flag_values = mc.get('flag_values')
+    if not flag_values:
+        set_flags(flag_values)
 
     # Send motor values to UI, if the robot is running
     if robot_status:
