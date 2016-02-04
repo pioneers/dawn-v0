@@ -9,6 +9,7 @@ name_to_grizzly, name_to_values, name_to_ids = {}, {}, {}
 student_proc, console_proc = None, None
 robot_status = 0 # a boolean for whether or not the robot is executing 
 mc.set('flag_values',[]) #set flag color initial status
+mc.set('servo_values'[])
 
 if 'HIBIKE_SIMULATOR' in os.environ and os.environ['HIBIKE_SIMULATOR'] in ['1', 'True', 'true']:
     import hibike_simulator
@@ -44,6 +45,10 @@ def set_flags(values):
             elif light == 3:
                 light = -128
             h.writeValue(values[0], "s" + string(i), light)
+
+def set_servos(values):
+    for i in range(0,values.length-1):
+        h.writeValue(values[0],"servo" + string(i), values[i+1])
 
 
 # Called on starte of student code, finds and configures all the connected motors
@@ -153,6 +158,11 @@ while True:
     flag_values = mc.get('flag_values')
     if not flag_values:
         set_flags(flag_values)
+
+    #Set Servos
+    servo_values = mc.get('servo_values')
+    if not servo_values:
+        set_servos(servo_values)
 
     # Send motor values to UI, if the robot is running
     if robot_status:
