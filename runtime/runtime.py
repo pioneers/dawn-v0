@@ -8,8 +8,9 @@ import os
 name_to_grizzly, name_to_values, name_to_ids = {}, {}, {}
 student_proc, console_proc = None, None
 robot_status = 0 # a boolean for whether or not the robot is executing 
+battery_UID = 0 #TODO, what if no battery buzzer, what if not safe battery buzzer
 mc.set('flag_values',[]) #set flag color initial status
-mc.set('servo_values'[])
+mc.set('servo_values',[])
 
 if 'HIBIKE_SIMULATOR' in os.environ and os.environ['HIBIKE_SIMULATOR'] in ['1', 'True', 'true']:
     import hibike_simulator
@@ -17,6 +18,8 @@ if 'HIBIKE_SIMULATOR' in os.environ and os.environ['HIBIKE_SIMULATOR'] in ['1', 
 else:
     h = hibike.Hibike()
 connectedDevices = h.getEnumeratedDevices()    #list of tuples, first val of tuple is UID, second is int Devicetype
+
+init_battery()
 #TODO Device Delay Value
 h.subToDevices([(device, 20) for (device, device_type) in connectedDevices]) 
 
@@ -24,13 +27,18 @@ h.subToDevices([(device, 20) for (device, device_type) in connectedDevices])
 memcache_port = 12357
 mc = memcache.Client(['127.0.0.1:%d' % memcache_port])
 
+def init_battery():
+    for dev in connectedDevices: #TODO What if Battery buzzer not found
+        if dev[1] == 4: #TODO Battery Buzzer device number
+            battery_UID = dev[0]
+    if not battery_UID:
+        raise Exception("No Battery Buzzer Found") #TODO Raise Errors correctly
+    battery_safe = bool(h.getData(battery_UID,dataUpdate)[0]) #TODO What value does battery buzzer return
+
 def get_all_data(connectedDevices):
     all_data = {}
     for t in connectedDevices:
-        count = 1
-        for i in h.getData(t[0], "dataUpdate"):    # for each smart device UID, adds 1,2,... to front
-            all_data[str(count) + str(t[0])] = i   # i is the data for each sensor
-            count += 1
+        all_data[str(t[0])] = h.getData(t[0], "dataUpdate")  # i is the data for each sensor
     return all_data
 
 
@@ -49,8 +57,11 @@ def set_flags(values):
 def set_servos(values):
     for i in range(0,values.length-1):
         h.writeValue(values[0],"servo" + string(i), values[i+1])
+    mc.set("servo_value",[])
 
-
+def test_battery():
+    if not battery_safe:
+        raise Exception('Battery unsafe')
 # Called on starte of student code, finds and configures all the connected motors
 def initialize_motors():
     try:
@@ -132,6 +143,7 @@ def send_peripheral_data(data):
             })
 
 while True:
+    test_battery()
     msg = ansible.recv()
     # Handle any incoming commands from the UI
     if msg:
@@ -145,10 +157,10 @@ while True:
     # Send battery level
     ansible.send_message('UPDATE_BATTERY', {
         'battery': {
-            'value': 100 # TODO: Make this not a lie
+            'value': h.getData(battery_UID,dataUpdate)[5] # TODO: Make this not a lie
         }
     })
-
+    battery_safe = bool(h.getData(battery_UID,dataUpdate)[0])
     # Update sensor values, and send to UI
     all_sensor_data = get_all_data(connectedDevices)
     send_peripheral_data(all_sensor_data)
