@@ -39,6 +39,11 @@
             
   <div class="section" id="module-api.Gamepads">
 <span id="gamepads-module"></span><h1>Gamepads module<a class="headerlink" href="#module-api.Gamepads" title="Permalink to this headline">¶</a></h1>
+<p>This module contains functions for getting gamepad data.</p>
+<p>To use this module, you must first import it:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">api</span> <span class="kn">import</span> <span class="n">Gamepads</span>
+</pre></div>
+</div>
 <dl class="function">
 <dt id="api.Gamepads.get_all">
 <code class="descclassname">api.Gamepads.</code><code class="descname">get_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/Gamepads.html#get_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.Gamepads.get_all" title="Permalink to this definition">¶</a></dt>
@@ -63,8 +68,8 @@
 <dt id="api.Gamepads.get_all_buttons">
 <code class="descclassname">api.Gamepads.</code><code class="descname">get_all_buttons</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/Gamepads.html#get_all_buttons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.Gamepads.get_all_buttons" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a list of button values corresponding to the specified gamepad.</p>
-<p>Each button value is either a 0 (not pressed) or a 1 (pressed). Unlike
-joysticks, there are no in-between values&#8211;it can only be a 0 or a 1. To
+<p>Each button value is either False (not pressed) or True (pressed). Unlike
+joysticks, there are no in-between values&#8211;it can only be False or True. To
 see the exact mapping, click on the &#8216;Details&#8217; button next to a gamepad in
 Dawn, or refer to <a class="reference external" href="https://w3c.github.io/gamepad/#remapping">https://w3c.github.io/gamepad/#remapping</a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -73,10 +78,19 @@ Dawn, or refer to <a class="reference external" href="https://w3c.github.io/game
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> &#8211; The index of the gamepad, usually 0, 1, 2, or 3</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of 0&#8217;s and 1&#8217;s, each corresponding to a button</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of booleans, each corresponding to a button being pressed or not pressed</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
 </tr>
 </tbody>
 </table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">all_buttons</span> <span class="o">=</span> <span class="n">Gamepads</span><span class="o">.</span><span class="n">get_all_buttons</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">all_buttons</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">all_buttons</span>
+<span class="go">[False, True, False, False, False, True, False, False, True, False, False, False]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -97,11 +111,18 @@ the &#8216;Details&#8217; button next to a gamepad in Dawn, or refer to
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A boolean either True (pressed) or False (not pressed)</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A boolean either True (pressed) or False (not pressed)</p>
 </td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
 </tr>
 </tbody>
 </table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">button</span> <span class="o">=</span> <span class="n">Gamepads</span><span class="o">.</span><span class="n">get_button</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">button</span>
+<span class="go">False</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -165,8 +186,13 @@ the x axis. -1 means the left joystick is pushed all the way to the left.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A double between -1 and 1, negative is pushed to the left.</td>
 </tr>
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
 </tbody>
 </table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">left_x</span> <span class="o">=</span> <span class="n">Gamepads</span><span class="o">.</span><span class="n">get_left_x</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -183,8 +209,13 @@ the y axis. -1 means the left joystick is pushed all the way forward.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A double between -1 and 1, negative is pushed forward.</td>
 </tr>
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
 </tbody>
 </table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">left_y</span> <span class="o">=</span> <span class="n">Gamepads</span><span class="o">.</span><span class="n">get_left_y</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -207,8 +238,13 @@ the x axis. -1 means the right joystick is pushed all the way to the left.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A double between -1 and 1, negative is pushed to the left.</td>
 </tr>
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
 </tbody>
 </table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">right_x</span> <span class="o">=</span> <span class="n">Gamepads</span><span class="o">.</span><span class="n">get_right_x</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -225,13 +261,24 @@ the x axis. -1 means the right joystick is pushed all the way forward.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A decimal between -1 and 1, negative is pushed to the forward</td>
 </tr>
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
 </tbody>
 </table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">right_y</span> <span class="o">=</span> <span class="n">Gamepads</span><span class="o">.</span><span class="n">get_right_y</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
 <div class="section" id="module-api.Robot">
 <span id="robot-module"></span><h1>Robot module<a class="headerlink" href="#module-api.Robot" title="Permalink to this headline">¶</a></h1>
+<p>This module contains functions for reading data from the robot, and for
+manipulating the robot.</p>
+<p>To use this module, you must first import it:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">api</span> <span class="kn">import</span> <span class="n">Robot</span>
+</pre></div>
+</div>
 <dl class="exception">
 <dt id="api.Robot.SensorValueOutOfBounds">
 <em class="property">exception </em><code class="descclassname">api.Robot.</code><code class="descname">SensorValueOutOfBounds</code><a class="reference internal" href="_modules/api/Robot.html#SensorValueOutOfBounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.Robot.SensorValueOutOfBounds" title="Permalink to this definition">¶</a></dt>
@@ -387,6 +434,16 @@ a decimal between 0 and 1, where 1 indicates higher intensity.</p>
 <dt id="api.Robot.get_sensor">
 <code class="descclassname">api.Robot.</code><code class="descname">get_sensor</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/Robot.html#get_sensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.Robot.get_sensor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the value, or reading corresponding to the specified sensor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> &#8211; A string that identifies the sensor.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The reading of the sensor at the current point in time.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">

@@ -59,6 +59,11 @@ def get_left_x(index):
 
     :param index: The index of the gamepad, usually 0, 1, 2, or 3
     :returns: A double between -1 and 1, negative is pushed to the left.
+
+    :Examples:
+
+    >>> left_x = Gamepads.get_left_x(0)
+
     """
     return get_joysticks(index)[0]
 
@@ -70,6 +75,11 @@ def get_left_y(index):
 
     :param index: The index of the gamepad, usually 0, 1, 2, or 3
     :returns: A double between -1 and 1, negative is pushed forward.
+
+    :Examples:
+
+    >>> left_y = Gamepads.get_left_y(0)
+
     """
     return get_joysticks(index)[1]
 
@@ -81,6 +91,11 @@ def get_right_x(index):
 
     :param index: The index of the gamepad, usually 0, 1, 2, or 3
     :returns: A double between -1 and 1, negative is pushed to the left.
+
+    :Examples:
+
+    >>> right_x = Gamepads.get_right_x(0)
+
     """
     return get_joysticks(index)[2]
 
@@ -92,21 +107,35 @@ def get_right_y(index):
 
     :param index: The index of the gamepad, usually 0, 1, 2, or 3
     :returns: A decimal between -1 and 1, negative is pushed to the forward
+
+    :Examples:
+
+    >>> right_y = Gamepads.get_right_y(0)
+
     """
     return get_joysticks(index)[3]
 
 def get_all_buttons(index):
     """Returns a list of button values corresponding to the specified gamepad.
 
-    Each button value is either a 0 (not pressed) or a 1 (pressed). Unlike
-    joysticks, there are no in-between values--it can only be a 0 or a 1. To
+    Each button value is either False (not pressed) or True (pressed). Unlike
+    joysticks, there are no in-between values--it can only be False or True. To
     see the exact mapping, click on the 'Details' button next to a gamepad in
     Dawn, or refer to https://w3c.github.io/gamepad/#remapping.
 
     :param index: The index of the gamepad, usually 0, 1, 2, or 3
-    :returns: A list of 0's and 1's, each corresponding to a button
+    :returns: A list of booleans, each corresponding to a button being pressed or not pressed
+
+    :Examples:
+
+    >>> all_buttons = Gamepads.get_all_buttons(0)
+    >>> all_buttons[1]
+    True
+    >>> all_buttons
+    [False, True, False, False, False, True, False, False, True, False, False, False]
+
     """
-    return mc.get('gamepad')[index]['buttons']
+    return [x == 1 for x in mc.get('gamepad')[index]['buttons']]
 
 def get_button(index,button):
     """Returns whether a button is pressed or not.
@@ -119,6 +148,13 @@ def get_button(index,button):
     :param index: The index of the gamepad, usually 0, 1, 2, or 3
     :param button: The number of the button. See above for mappings.
     :returns: A boolean either True (pressed) or False (not pressed) 
+
+    :Examples:
+
+    >>> button = Gamepads.get_button(0,6)
+    >>> button
+    False
+
     """
     return get_all_buttons(index)[button] == 1;
 

@@ -23,9 +23,9 @@ init_battery()
 #TODO Device Delay Value
 h.subToDevices([(device, 20) for (device, device_type) in connectedDevices]) 
 
-# connect to memcache
+connect to memcache
 memcache_port = 12357
-#mc = memcache.Client(['127.0.0.1:%d' % memcache_port])
+mc = memcache.Client(['127.0.0.1:%d' % memcache_port])
 
 def init_battery():
     for _, dev in connectedDevices: #TODO What if Battery buzzer not found

@@ -42,6 +42,13 @@
 <span class="c1"># Gamepad.py class.</span>
 <span class="c1"># Copyright 2015. Pioneers in Engineering</span>
 <span class="c1"># ------</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">This module contains functions for getting gamepad data.</span>
+
+<span class="sd">To use this module, you must first import it:</span>
+
+<span class="sd">&gt;&gt;&gt; from api import Gamepads</span>
+<span class="sd">&#39;&#39;&#39;</span>
 <span class="c1">#import memcache</span>
 
 <span class="c1"># Connect to memcache</span>
@@ -92,6 +99,11 @@
 
 <span class="sd">    :param index: The index of the gamepad, usually 0, 1, 2, or 3</span>
 <span class="sd">    :returns: A double between -1 and 1, negative is pushed to the left.</span>
+
+<span class="sd">    :Examples:</span>
+
+<span class="sd">    &gt;&gt;&gt; left_x = Gamepads.get_left_x(0)</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">get_joysticks</span><span class="p">(</span><span class="n">index</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
 
@@ -103,6 +115,11 @@
 
 <span class="sd">    :param index: The index of the gamepad, usually 0, 1, 2, or 3</span>
 <span class="sd">    :returns: A double between -1 and 1, negative is pushed forward.</span>
+
+<span class="sd">    :Examples:</span>
+
+<span class="sd">    &gt;&gt;&gt; left_y = Gamepads.get_left_y(0)</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">get_joysticks</span><span class="p">(</span><span class="n">index</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span></div>
 
@@ -114,6 +131,11 @@
 
 <span class="sd">    :param index: The index of the gamepad, usually 0, 1, 2, or 3</span>
 <span class="sd">    :returns: A double between -1 and 1, negative is pushed to the left.</span>
+
+<span class="sd">    :Examples:</span>
+
+<span class="sd">    &gt;&gt;&gt; right_x = Gamepads.get_right_x(0)</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">get_joysticks</span><span class="p">(</span><span class="n">index</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span></div>
 
@@ -125,21 +147,35 @@
 
 <span class="sd">    :param index: The index of the gamepad, usually 0, 1, 2, or 3</span>
 <span class="sd">    :returns: A decimal between -1 and 1, negative is pushed to the forward</span>
+
+<span class="sd">    :Examples:</span>
+
+<span class="sd">    &gt;&gt;&gt; right_y = Gamepads.get_right_y(0)</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">get_joysticks</span><span class="p">(</span><span class="n">index</span><span class="p">)[</span><span class="mi">3</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="get_all_buttons"><a class="viewcode-back" href="../../api.html#api.Gamepads.get_all_buttons">[docs]</a><span class="k">def</span> <span class="nf">get_all_buttons</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns a list of button values corresponding to the specified gamepad.</span>
 
-<span class="sd">    Each button value is either a 0 (not pressed) or a 1 (pressed). Unlike</span>
-<span class="sd">    joysticks, there are no in-between values--it can only be a 0 or a 1. To</span>
+<span class="sd">    Each button value is either False (not pressed) or True (pressed). Unlike</span>
+<span class="sd">    joysticks, there are no in-between values--it can only be False or True. To</span>
 <span class="sd">    see the exact mapping, click on the &#39;Details&#39; button next to a gamepad in</span>
 <span class="sd">    Dawn, or refer to https://w3c.github.io/gamepad/#remapping.</span>
 
 <span class="sd">    :param index: The index of the gamepad, usually 0, 1, 2, or 3</span>
-<span class="sd">    :returns: A list of 0&#39;s and 1&#39;s, each corresponding to a button</span>
+<span class="sd">    :returns: A list of booleans, each corresponding to a button being pressed or not pressed</span>
+
+<span class="sd">    :Examples:</span>
+
+<span class="sd">    &gt;&gt;&gt; all_buttons = Gamepads.get_all_buttons(0)</span>
+<span class="sd">    &gt;&gt;&gt; all_buttons[1]</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; all_buttons</span>
+<span class="sd">    [False, True, False, False, False, True, False, False, True, False, False, False]</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gamepad&#39;</span><span class="p">)[</span><span class="n">index</span><span class="p">][</span><span class="s1">&#39;buttons&#39;</span><span class="p">]</span></div>
+    <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gamepad&#39;</span><span class="p">)[</span><span class="n">index</span><span class="p">][</span><span class="s1">&#39;buttons&#39;</span><span class="p">]]</span></div>
 
 <div class="viewcode-block" id="get_button"><a class="viewcode-back" href="../../api.html#api.Gamepads.get_button">[docs]</a><span class="k">def</span> <span class="nf">get_button</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="n">button</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns whether a button is pressed or not.</span>
@@ -152,6 +188,13 @@
 <span class="sd">    :param index: The index of the gamepad, usually 0, 1, 2, or 3</span>
 <span class="sd">    :param button: The number of the button. See above for mappings.</span>
 <span class="sd">    :returns: A boolean either True (pressed) or False (not pressed) </span>
+
+<span class="sd">    :Examples:</span>
+
+<span class="sd">    &gt;&gt;&gt; button = Gamepads.get_button(0,6)</span>
+<span class="sd">    &gt;&gt;&gt; button</span>
+<span class="sd">    False</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">get_all_buttons</span><span class="p">(</span><span class="n">index</span><span class="p">)[</span><span class="n">button</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">;</span></div>
 

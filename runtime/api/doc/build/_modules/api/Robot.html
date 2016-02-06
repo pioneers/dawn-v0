@@ -39,12 +39,19 @@
             
   <h1>Source code for api.Robot</h1><div class="highlight"><pre>
 <span class="c1"># ------</span>
-<span class="c1"># Robot.py class </span>
+<span class="c1"># Robot.py class</span>
 <span class="c1"># This runs the robot.</span>
 <span class="c1"># Copyright 2015. Pioneers in Engineering.</span>
 <span class="c1"># ------</span>
-<span class="c1">#import memcache</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">This module contains functions for reading data from the robot, and for</span>
+<span class="sd">manipulating the robot.</span>
 
+<span class="sd">To use this module, you must first import it:</span>
+
+<span class="sd">&gt;&gt;&gt; from api import Robot</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="c1">#import memcache</span>
 <span class="n">memcache_port</span> <span class="o">=</span> <span class="mi">12357</span>
 <span class="c1">#mc = memcache.Client([&#39;127.0.0.1:%d&#39; % memcache_port]) # connect to memcache</span>
 
@@ -85,6 +92,9 @@
 <span class="c1"># TODO: implement</span>
 <div class="viewcode-block" id="get_sensor"><a class="viewcode-back" href="../../api.html#api.Robot.get_sensor">[docs]</a><span class="k">def</span> <span class="nf">get_sensor</span><span class="p">(</span><span class="n">name</span><span class="p">):</span> <span class="c1">#name is raw UID, with count added in front</span>
     <span class="sd">&quot;&quot;&quot;Returns the value, or reading corresponding to the specified sensor.</span>
+
+<span class="sd">    :param name: A string that identifies the sensor.</span>
+<span class="sd">    :returns: The reading of the sensor at the current point in time.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">_lookup</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
     <span class="n">all_data</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sensor_values&#39;</span><span class="p">)</span>
