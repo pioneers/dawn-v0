@@ -49,7 +49,7 @@ def get_sensor(name): #name is raw UID, with count added in front
     name = _lookup(name)
     all_data = mc.get('sensor_values')
     try:
-        return all_data[UUID]
+        return all_data[name]
     except KeyError:
         raise KeyError("No Sensor with that name")
 
@@ -132,21 +132,6 @@ def set_servo(name,servo,value):
     servo_data[servo + 1] = value
     mc.set('servo_values',servo_data)
 
-#TODO Figure out how data is from battery buzzer
-def get_battery():
-    """Returns the battery level of the battery.
-
-    This returns the total level (in volts) of the battery. This value ranges from 0-12 volts
-    :returns: A double between 0-12 represneting the current voltage level of the battery
-    """
-
-def battery_safe():
-    """Returns a boolean indicating whether the battery is safe or not.
-
-    Returns either True (battery is safe) or False (battery is not safe) based on 
-    the battery level.
-    """
-
 def get_color_sensor(name,color):
     """Returns the value from the color sensor for a specific color.
 
@@ -162,9 +147,10 @@ def get_color_sensor(name,color):
     """
     all_data = mc.get('sensor_values')
     name = _lookup(name)
-    if name in all_data:
+    try:
         return all_data[name][color]
-    return 'Sensor not found.'
+    except KeyError:
+        raise KeyError("No sensor with that name")
 
 def get_luminosity(name):
     """Returns the luminosity for the specified color sensor.
@@ -177,9 +163,10 @@ def get_luminosity(name):
     """
     all_data = mc.get('sensor_values')
     name = _lookup(name)
-    if name in all_data:
+    try:
         return all_data[name][3]
-    return 'Sensor not found.'
+    except KeyError:
+        raise KeyError("No sensor with that name")
 
 def get_hue(name):
     """Returns the hue detected at the specified color sensor.
@@ -193,7 +180,7 @@ def get_hue(name):
     """
     all_data = mc.get('sensor_values')
     name = _lookup(name)
-    if name in all_data:
+    try:
         r = all_data[name][0]
         g = all_data[name][1]
         b = all_data[name][2]
@@ -204,7 +191,26 @@ def get_hue(name):
             return 2.0 + (b - r)/denom
         else:
             return 4.0 + (r - g)/denom
-    return 'Sensor not found.'
+    except KeyError:
+        raise KeyError("No Sensor with that name")
+
+def get_distance_sensor(name):
+    """Returns the distance away from the sensor an object is, measured in centimeters
+
+    :param name: A String that identifies the distance sensor
+    :returns: A double representing how many centimeters away the object is from the sensor
+    """
+    all_data = mc.get('sensor_values')
+    name = _lookup(name)
+    try:
+        return all_data[name][0]
+    except KeyError:
+        raise KeyError("No Sensor with that name")
+
+def get_all_switches(name):
+    """Returns"""
+
+def get_limiti_switch(name,switch):
 
 
 
