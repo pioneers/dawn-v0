@@ -1,12 +1,19 @@
 # ------
-# Robot.py class 
+# Robot.py class
 # This runs the robot.
 # Copyright 2015. Pioneers in Engineering.
 # ------
-#import memcache
+'''
+This module contains functions for reading data from the robot, and for
+manipulating the robot.
 
+To use this module, you must first import it:
+
+>>> from api import Robot
+'''
+import memcache
 memcache_port = 12357
-#mc = memcache.Client(['127.0.0.1:%d' % memcache_port]) # connect to memcache
+mc = memcache.Client(['127.0.0.1:%d' % memcache_port]) # connect to memcache
 
 motor = {}
 
@@ -45,6 +52,9 @@ def set_motor(name, value):
 # TODO: implement
 def get_sensor(name): #name is raw UID, with count added in front
     """Returns the value, or reading corresponding to the specified sensor.
+
+    :param name: A string that identifies the sensor.
+    :returns: The reading of the sensor at the current point in time.
     """
     name = _lookup(name)
     all_data = mc.get('sensor_values')

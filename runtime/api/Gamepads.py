@@ -2,11 +2,18 @@
 # Gamepad.py class.
 # Copyright 2015. Pioneers in Engineering
 # ------
-#import memcache
+'''
+This module contains functions for getting gamepad data.
+
+To use this module, you must first import it:
+
+>>> from api import Gamepads
+'''
+import memcache
 
 # Connect to memcache
 memcache_port = 12357
-#mc = memcache.Client(['127.0.0.1:%d' % memcache_port])
+mc = memcache.Client(['127.0.0.1:%d' % memcache_port])
 
 def get_all():
     """Returns a list a list of values for every gamepad connected.
