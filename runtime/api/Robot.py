@@ -3,10 +3,10 @@
 # This runs the robot.
 # Copyright 2015. Pioneers in Engineering.
 # ------
-import memcache
+#import memcache
 
 memcache_port = 12357
-mc = memcache.Client(['127.0.0.1:%d' % memcache_port]) # connect to memcache
+#mc = memcache.Client(['127.0.0.1:%d' % memcache_port]) # connect to memcache
 
 motor = {}
 
@@ -59,23 +59,23 @@ def get_all_motors():
     """
     return mc.get('motor_values')
 
-def set_flag(name,light1,light2,light3,light4):  #TODO UID convert to int
+def set_flag(name,light0,light1,light2,light3):  #TODO UID convert to int
     """Sets the brightness of every LED on the team flag.
 
     Each LED has four levels, represented by integers. Each light is set to 0 (off), 
     1 (low), 2 (medium), or 3 (high)
 
     :param name: A string that identifies the team flag. 
+    :param light0: An integer (0,1,2,3) which sets brightness for LED 0
     :param light1: An integer (0,1,2,3) which sets brightness for LED 1
     :param light2: An integer (0,1,2,3) which sets brightness for LED 2
     :param light3: An integer (0,1,2,3) which sets brightness for LED 3
-    :param light4: An integer (0,1,2,3) which sets brightness for LED 4
     """
     correct_range = range(4)
-    assert light1 in correct_range, "Error: input for light1 must be an integer between 0 and 3 inclusive"
-    assert light2 in correct_range, "Error: input for light2 must be an integer between 0 and 3 inclusive"
-    assert light3 in correct_range, "Error: input for light3 must be an integer between 0 and 3 inclusive"
-    assert light4 in correct_range, "Error: input for light4 must be an integer between 0 and 3 inclusive"
+    assert light1 in correct_range, "Error: input for light0 must be an integer between 0 and 3 inclusive"
+    assert light2 in correct_range, "Error: input for light1 must be an integer between 0 and 3 inclusive"
+    assert light3 in correct_range, "Error: input for light2 must be an integer between 0 and 3 inclusive"
+    assert light4 in correct_range, "Error: input for light3 must be an integer between 0 and 3 inclusive"
     name = _lookup(name)
     flag_data = list(name) + list(light1) + list(light2) + list(light3) + list(light4)
     mc.set('flag_values',flag_data)
@@ -85,10 +85,10 @@ def set_LED(name,light,value): #TODO UID convert to int
 
     Each LED has four levels, represented by integers. Each light is set to 0 (off),
     1 (low), 2 (medium), or 3 (high). Each light has a specific index associated with it, 
-    an integer 1, 2, 3, 4.
+    an integer 0, 1, 2, 3.
 
     :param name: A string that identifies the team flag.
-    :param light: An integer (1,2,3,4) which identifies which LED top set.
+    :param light: An integer (0,1,2,3) which identifies which LED top set.
     :param value: An integer (0,1,2,3) which sets brightness for the specified LED
     """
     name = _lookup(name)
@@ -208,11 +208,30 @@ def get_distance_sensor(name):
         raise KeyError("No Sensor with that name")
 
 def get_all_switches(name):
-    """Returns"""
+    """Returns whether each limit switch on the identified device is pressed or not
 
-def get_limiti_switch(name,switch):
+    Each of the four limit switches on the device return either True (pressed)
+    or False (not pressed). Each limit switch is specified with an intger, 
+    either 0, 1, 2, 3.
 
+    :param name: A String that identifies the limit switch smart device (contains four limit switches)
+    :returns: A list of boolean values, where True is pressed and False is not pressed. 
+              The value at index 0 corresponds to limit switch 0, index 1 to switch 1, and so forth.
+    """
+    return [0,0,0,0] #TODO Implement
 
+def get_limit_switch(name,switch):
+    """Returns whether a specified limit switch on the identified device is pressed or not
+
+    The specified limit switch returns a boolean, either True (pressed) 
+    or False (not pressed). Each limit switch is specified with an integer, either
+    0, 1, 2, 3.
+
+    :param name: A String that identifies the limit switch smart device (contains four limit switches)
+    :param switch: A integer (0,1,2,3) which specifies the limit switch (out of four)
+    :returns: A boolean value, where True is pressed and False is not pressed. 
+    """
+    return False #TODO Implement
 
 class SensorValueOutOfBounds(Exception):
     pass
