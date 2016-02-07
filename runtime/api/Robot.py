@@ -3,6 +3,7 @@
 # This runs the robot.
 # Copyright 2015. Pioneers in Engineering.
 # ------
+
 import memcache
 
 memcache_port = 12357
@@ -27,6 +28,7 @@ def get_motor(name):
         raise KeyError("Motor name not found.")
 
 def set_motor(name, value):
+
     """Sets a motor to the specified power value.
 
     :param name: A string that identifies the motor.
@@ -42,17 +44,23 @@ def set_motor(name, value):
     except KeyError:
         raise KeyError("No motor with that name")
 
-# TODO: implement
-def get_sensor(name): #name is raw UID, with count added in front
+
+def get_sensor(name):
+
     """Returns the value, or reading corresponding to the specified sensor.
     """
     name = _lookup(name)
     all_data = mc.get('sensor_values')
     try:
         return all_data[name]
+<<<<<<< HEAD
     except KeyError:
         raise KeyError("No Sensor with that name")
 
+=======
+    return 'Error, sensor with that name not found'
+>>>>>>> 66ed4583d69c63f850071aac0f67b2f933e1de20
+>>>>>>> 1d835d7881440fd35c8edf2cc3a20c35980f89a6
 
 def get_all_motors():
     """Returns the current power values for every connected motor.
