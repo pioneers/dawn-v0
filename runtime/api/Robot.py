@@ -39,6 +39,7 @@ def get_motor(name):
         raise KeyError("Motor name not found.")
 
 def set_motor(name, value):
+
     """Sets a motor to the specified power value.
 
     :param name: A string that identifies the motor.
@@ -59,8 +60,9 @@ def set_motor(name, value):
     except KeyError:
         raise KeyError("No motor with that name")
 
-# TODO: implement
-def get_sensor(name): #name is raw UID, with count added in front
+
+def get_sensor(name):
+
     """Returns the value, or reading corresponding to the specified sensor.
 
     :param name: A string that identifies the sensor.
@@ -72,7 +74,6 @@ def get_sensor(name): #name is raw UID, with count added in front
         return all_data[name]
     except KeyError:
         raise KeyError("No Sensor with that name")
-
 
 def get_all_motors():
     """Returns the current power values for every connected motor.
@@ -172,6 +173,7 @@ def set_servo(name,servo,value):
     servo_data = list(name) + [-1,-1,-1,-1]
     servo_data[servo + 1] = value
     mc.set('servo_values',servo_data)
+
 
 def get_color_sensor(name,color):
     """Returns the value from the color sensor for a specific color.
@@ -313,6 +315,60 @@ def get_limit_switch(name,switch):
 
     """
     return False #TODO Implement
+
+def drive_distance_all(distances, motors):
+    """Drives all motors in the list a set number of encoder ticks set by the distances list.
+  
+    The specified motors will run until it reaches the specified number of encoder ticks.
+    The number of encoder ticks per degree of rotation is different for each motor, due to
+    differences in gear ratios and encoders but in general, it is analogous to degrees for 
+    rotation except there could be more or less than 360 encoder ticks per rotation. 
+    
+    :param ticks: A list of integers corresponding to the number of ticks to be moved. 
+                The index of the distance should match the index of the motor names.
+    :param motor: A list of strings corresponding to the motor names to be rotated. 
+                The index of the motor names should match the index of the distance.
+
+    """
+    return null
+  
+  #TODO, need to reset positions each time these two methods are called.
+def drive_distance(degrees, motor, gear_ratio): #TODO Finish documentation
+    """Drives the specified motor a set number of rotations and holds the motor there. 
+  
+    The specified motor will run until it reaches the specified degree of rotation and will hold the motor there.
+    The gear ratio should be indicated on the physical motor itself. If the user is using PID mode, 
+
+    pololu.com. 19:1 and 67:1 motors 37D motors geared. Be able to change PID constants. Move and stay - set point. once it is called again, reset and redo function. 
+    
+    :param ticks: An integer corresponding to the number of ticks to be moved
+    :param motor: A String corresponding to the motor name to be rotated
+
+    """
+  return null
+
+
+
+def set_drive_mode(mode):
+  """Sets the drive mode of all the motors between coasting, full braking, 
+  
+  
+  """
+def change_PID_mode(mode):
+    return null;
+
+def change PID constants(value, constant):
+    return null;
+
+def get_all_potentiometers(name):
+  return null
+
+def get_potentiometer(name, potentiometer):
+  return null
+
+#TODO: ask wth this is and if it is even included since we can't find it in hibike
+def get_metal_detector(name):
+  return null
 
 class SensorValueOutOfBounds(Exception):
     pass
