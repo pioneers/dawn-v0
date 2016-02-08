@@ -25,6 +25,11 @@ def get_motor(name):
 
     :param name: A string that identifies the motor
     :returns: A value between -100 and 100, which is the power level of that motor.
+
+    :Examples:
+
+    >>> motor = get_motor(motor1)
+
     """
     name_to_value = mc.get('motor_values')
     assert type(name) is str, "Type Mismatch: Must pass in a string"
@@ -38,6 +43,11 @@ def set_motor(name, value):
 
     :param name: A string that identifies the motor.
     :param value: A decimal value between -100 and 100, the power level you want to set.
+
+    :Examples:
+
+    >>> set_motor("motor1", 50)
+
     """
     assert type(name) is str, "Type Mismatch: Must pass in a string to name."
     assert type(value) is int or type(name) is float, "Type Mismatch: Must pass in an integer or float to value."
@@ -80,6 +90,11 @@ def set_flag(name,light0,light1,light2,light3):  #TODO UID convert to int
     :param light1: An integer (0,1,2,3) which sets brightness for LED 1
     :param light2: An integer (0,1,2,3) which sets brightness for LED 2
     :param light3: An integer (0,1,2,3) which sets brightness for LED 3
+
+    :Examples:
+
+    >>> set_flag("flag1",3,2,3,0)
+
     """
     correct_range = range(4)
     assert light1 in correct_range, "Error: input for light0 must be an integer between 0 and 3 inclusive"
@@ -100,6 +115,11 @@ def set_LED(name,light,value): #TODO UID convert to int
     :param name: A string that identifies the team flag.
     :param light: An integer (0,1,2,3) which identifies which LED top set.
     :param value: An integer (0,1,2,3) which sets brightness for the specified LED
+
+    :Examples: 
+
+    >>> set_LED("flag1",2,2)
+    >>> set_LED("flag1",3,2)
     """
     name = _lookup(name)
     assert light in range(1,5), "Error: light number must be an Integer between 1 and 4 inclusive"
@@ -118,6 +138,11 @@ def set_all_servos(name,servo0,servo1,servo2,servo3): #TODO How does the servos 
     :param servo1: An integer between 0 and 180 which sets the amount to (turn in degrees) for servo 1
     :param servo2: An integer between 0 and 180 which sets the amount to (turn in degrees) for servo 2
     :param servo3: An integer between 0 and 180 which sets the amount to (turn in degrees) for servo 3
+    
+    :Examples:
+
+    >>> set_all_servos("servo1",90,40,30,20)
+
     """
     name = _lookup(name)
     correct_range = range(181)
@@ -136,6 +161,12 @@ def set_servo(name,servo,value):
     :param name: A string that identifies the servo
     :param servo: A integer (0,1,2,3) which identifies which servo to turn
     :param value: An integer between 0 and 180 which sets the amount to turn (in degrees)
+
+    :Examples:
+
+    >>> set_servo("servo1",3,90)
+    >>> set_servo("servo1",2,150)
+
     """
     name = _lookup(name)
     servo_data = list(name) + [-1,-1,-1,-1]
@@ -154,6 +185,13 @@ def get_color_sensor(name,color):
                   where 0 specifies the red sensor, 1 specifies the green sensor, 
                   and 2 specifies the blue sensor
     :returns: A double between 0 and 1, where 1 indicates a higher intensity
+
+    :Examples:
+
+    >>> color = get_color_sensor("color1",1)
+    >>> color
+    0.873748
+
     """
     all_data = mc.get('sensor_values')
     name = _lookup(name)
@@ -170,6 +208,13 @@ def get_luminosity(name):
 
     :param name: A string that identifies the color sensor
     :returns: A double between 0 and 1, where 1 indicates a higher intensity
+
+    :Examples:
+
+    >>> lum = get_luminosity("color1")
+    >>> lum
+    0.89783
+
     """
     all_data = mc.get('sensor_values')
     name = _lookup(name)
@@ -187,6 +232,13 @@ def get_hue(name):
 
     :param name: A string that identifies the color sensor
     :returns: A double between 0 and 360 representing the detected hue
+
+    :Examples:
+
+    >>> hue = get_hue("color1")
+    >>> hue
+    254.01
+
     """
     all_data = mc.get('sensor_values')
     name = _lookup(name)
@@ -209,6 +261,11 @@ def get_distance_sensor(name):
 
     :param name: A String that identifies the distance sensor
     :returns: A double representing how many centimeters away the object is from the sensor
+
+    :Examples: 
+
+    >>> distance = get_distance_sensor("distance1")
+
     """
     all_data = mc.get('sensor_values')
     name = _lookup(name)
@@ -227,8 +284,15 @@ def get_all_switches(name):
     :param name: A String that identifies the limit switch smart device (contains four limit switches)
     :returns: A list of boolean values, where True is pressed and False is not pressed. 
               The value at index 0 corresponds to limit switch 0, index 1 to switch 1, and so forth.
+
+    :Examples:
+
+    >>> switches = get_all_switches("switch1")
+    >>> switches
+    [True,True,False,True]
+
     """
-    return [0,0,0,0] #TODO Implement
+    return [False,False,False,False] #TODO Implement
 
 def get_limit_switch(name,switch):
     """Returns whether a specified limit switch on the identified device is pressed or not
@@ -239,7 +303,14 @@ def get_limit_switch(name,switch):
 
     :param name: A String that identifies the limit switch smart device (contains four limit switches)
     :param switch: A integer (0,1,2,3) which specifies the limit switch (out of four)
-    :returns: A boolean value, where True is pressed and False is not pressed. 
+    :returns: A boolean value, where True is pressed and False is not pressed.
+
+    :Examples:
+
+    >>> switch = get_limit_switch("switch1",3)
+    >>> switch
+    True
+
     """
     return False #TODO Implement
 
