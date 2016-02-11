@@ -1,5 +1,8 @@
 import subprocess, multiprocessing, time
-import memcache, ansible, hibike
+import memcache, ansible
+import sys
+sys.path.append('../../hibike')
+import hibike
 from grizzly import *
 import usb
 import os
@@ -67,6 +70,7 @@ def log_output(stream):
     #TODO: figure out a way to limit speed of sending messages, so
     # ansible is not overflowed by printing too fast
     for line in stream:
+        print "sending console:", line
         ansible.send_message('UPDATE_CONSOLE', {
             'console_output': {
                 'value': line
@@ -74,12 +78,13 @@ def log_output(stream):
         })
 
 def msg_handling(msg):
+    print "ANSIBLE RECVIEVED:", msg
     global robot_status, student_proc, console_proc
     msg_type, content = msg['header']['msg_type'], msg['content']
     if msg_type == 'execute' and not robot_status:
         with open('student_code.py', 'w+') as f:
             f.write(msg['content']['code'])
-        student_proc = subprocess.Popen(['python', '-u', 'student_code/student_code.py'],
+        student_proc = subprocess.Popen(['python', '-u', 'student_code.py'],
                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         # turns student process stdout into a stream for sending to frontend
         lines_iter = iter(student_proc.stdout.readline, b'')
