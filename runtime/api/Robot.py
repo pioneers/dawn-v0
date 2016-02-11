@@ -389,53 +389,117 @@ def get_all_reflecting(name): #TODO hibike implement
     :returns: A list of decimals which represents how much light is reflected.
     """
 
-def drive_distance_all(distances, motors):
-    """Drives all motors in the list a set number of encoder ticks set by the distances list.
-  
-    The specified motors will run until it reaches the specified number of encoder ticks.
-    The number of encoder ticks per degree of rotation is different for each motor, due to
-    differences in gear ratios and encoders but in general, it is analogous to degrees for 
-    rotation except there could be more or less than 360 encoder ticks per rotation. 
-    
-    :param ticks: A list of integers corresponding to the number of ticks to be moved. 
-                The index of the distance should match the index of the motor names.
-    :param motor: A list of strings corresponding to the motor names to be rotated. 
-                The index of the motor names should match the index of the distance.
 
+def drive_distance_all(degrees, motors, gear_ratios):
+    """Drives all motors in the list a set number of degrees set by the corresponding index in the distances list.
+  
+    The specified motor will run until it reaches the specified degree of rotation and will hold the motor 
+    there until a grizzly motor method is called again.
+    The gear ratio should be indicated on the physical motor itself. Implementation of this method for users in PID mode: 
+    this method translates degrees into encoder ticks and then sets the target in said encoder ticks. When this method is called again
+    on the same motor, current encoder tick position is reset to 0 and the method reruns. 
+    
+    :param degrees: A list of integers corresponding to the number of ticks to be moved. The integer at the index of 
+        this list should match the motor's index.
+    :param motor: A list of strings corresponding to the motor names to be rotated. The index of the motor names
+        should match the index of the distance.
+    :param gear_ratios: A list of integers corresponding to the gear ratios of the motors. The integer at the 
+        index of this list should match the motor's index.
     """
     return null
   
   #TODO, need to reset positions each time these two methods are called.
-def drive_distance(degrees, motor, gear_ratio): #TODO Finish documentation
+def drive_distance_degrees(degrees, motor, gear_ratio):
+  """Drives the specified motor a set number of degrees and holds the motor there. 
+  
+    The specified motor will run until it reaches the specified degree of rotation and will hold the motor there until a grizzly motor method is called again.
+    The gear ratio should be indicated on the physical motor itself. Implementation of this method for users in PID mode: 
+    this method translates degrees into encoder ticks and then sets the target in said encoder ticks. When this method is called again
+    on the same motor, current encoder tick position is reset to 0 and the method reruns. 
+
+    :param degrees: An integer corresponding to the number of degrees to be moved
+    :param motor: A String corresponding to the motor name to be rotated
+    :param gear_ratio: An integer corresponding to the gear ratio of the motor (19 or 67)
+    """
+    return null
+    
+def drive_distance_rotations(rotations, motor, gear_ratio):
     """Drives the specified motor a set number of rotations and holds the motor there. 
   
-    The specified motor will run until it reaches the specified degree of rotation and will hold the motor there.
-    The gear ratio should be indicated on the physical motor itself. If the user is using PID mode, 
+    The specified motor will run until it reaches the specified degree of rotation and will hold the motor there until a grizzly motor method is called again.
+    The gear ratio should be indicated on the physical motor itself. Implementation of this method for users in PID mode: 
+    this method translates degrees into encoder ticks and then sets the target in said encoder ticks. When this method is called again
+    on the same motor, current encoder tick position is reset to 0 and the method reruns. 
 
-    pololu.com. 19:1 and 67:1 motors 37D motors geared. Be able to change PID constants. Move and stay - set point. once it is called again, reset and redo function. 
-    
-    :param ticks: An integer corresponding to the number of ticks to be moved
+    :param rotations: An integer corresponding to the number of rotations to be moved
     :param motor: A String corresponding to the motor name to be rotated
-
+    :param gear_ratio: An integer corresponding to the gear ratio of the motor (19 or 67)
     """
-  return null
-
+    return null
 
 
 def set_drive_mode(mode):
-  """Sets the drive mode of all the motors between coasting, full braking, 
-  
-  
-  """
-def change_PID_mode(mode):
+    """Sets the drive mode of all the motors between coasting and full breaking.
+
+    Enter a string ("coast" or "break") to specify if the motors should fully break after movement or coast to a stop. Default mode is breaking after
+    movement
+
+    :param mode: A String ("coast" or "break") corresponding to the selected drive mode.
+    """
+  return null
+
+def change_control_mode_all(mode):
+    """Changes PID mode for all motors connected to the robot
+
+    This changes the control mode for inputing values into all of the motors. 
+    Default mode - No_PID which means one inputs a range of integers from -100 to 100 and the motor runs at a proportion corresponding to that range.
+    Speed PID - Motors run at encoder ticks per second instead of an integer range. Encoder ticks are a proportion of a rotation, similar to degrees
+               to check for encoder ticks for each motor, see this website: https://www.pololu.com/category/116/37d-mm-gearmotors
+    Position PID - Motors run until at a certain position, using encoder ticks as units. See above website for number of ticks per degree of rotation.
+
+    :param mode: A String ("default", "speed", "position") corresponding to the wanted control mode for all motors.
+    """
+    return null;
+def change_control_mode(mode, motor):
+    """Changes PID mode for specified motors connected to the robot
+
+    This changes the control mode for inputing values into the specified motors. 
+    Default mode - No_PID which means one inputs a range of integers from -100 to 100 and the motor runs at a proportion corresponding to that range.
+    Speed PID - Motors run at encoder ticks per second instead of an integer range. Encoder ticks are a proportion of a rotation, similar to degrees
+               to check for encoder ticks for each motor, see this website: https://www.pololu.com/category/116/37d-mm-gearmotors
+    Position PID - Motors run until at a certain position, using encoder ticks as units. See above website for number of ticks per degree of rotation.
+
+    :param mode: A String ("default", "speed", "position") corresponding to the wanted control mode for the specified motor.
+    """
+def change_PID_constants(value, constant):
+    """Changes a PID constant which error corrects for motor positions.
+
+    P - Proportion - changes the constant for present error correcting
+    I - Integral - changes the constant for past error correcting
+    D - Derivative - changes the constant for future errors - decreases response time
+    For more information, refer to a mentor or the wiki page: https://en.wikipedia.org/wiki/PID_controller
+
+    :param value: A decimal corresponding to the new coefficient of a PID constant.
+    :param constant: A String ("P", "I", "D") corresponding to the constant to be changed.
+    """
     return null;
 
-def change PID constants(value, constant):
-    return null;
-
+<<<<<<< HEAD
 
 #TODO: ask wth this is and if it is even included since we can't find it in hibike
+=======
+def get_all_potentiometers(name):
+    return null
+
+def get_potentiometer(name, potentiometer):
+    return null
+
+#TODO: ask wth this is and if it is even included since we can't find it in hibike
+def get_metal_detector(name):
+    return null
+>>>>>>> 40fd2409749744c91e546ad7e63bae22ea9195e5
 
 
 class SensorValueOutOfBounds(Exception):
     pass
+# pololu.com. 19:1 and 67:1 motors 37D motors geared. Be able to change PID constants. Move and stay - set point. once it is called again, reset and redo function. 
