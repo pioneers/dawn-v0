@@ -51,6 +51,26 @@ def get_joysticks(index):
     """
     return mc.get('gamepad')[index]['axes']
 
+def get_axis(index,axis):
+    """Returns the position of a specified joystick.
+
+    Each returned value is between -1 and 1, which represents where the joystick
+    is along that axis. In order to get a better sense of
+    the joystick mappings, click the 'Details' button next to a gamepad in Dawn
+    or refer to https://w3c.github.io/gamepad/#remapping.
+
+    On a standard gamepad:
+    - axes[0] represents the horizontal axis of the left joystick
+    - axes[1] represents the vertical axis of the left joystick
+    - axes[2] represents the horizontal axis of the right joystick
+    - axes[3] represent the vertical axis of the right joystick
+
+    :param index: The index of the gamepad, usually 0, 1, 2, or 3
+    :param axis: An integer (0,1,2,3) which specifies the axis.
+    :returns: A list of 4 decimal values, each corresponding to a joystick axis.
+    """
+    return get_joysticks(index)[axis]
+
 def get_left_x(index):
     """Returns the position of the left joystick on the x axis.
 

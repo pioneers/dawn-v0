@@ -62,7 +62,6 @@ def set_motor(name, value):
 
 
 def get_sensor(name):
-
     """Returns the value, or reading corresponding to the specified sensor.
 
     :param name: A string that identifies the sensor.
@@ -132,13 +131,13 @@ def set_LED(name,light,value): #TODO UID convert to int
 def set_all_servos(name,servo0,servo1,servo2,servo3): #TODO How does the servos specifically work
     """Sets a degree for each servo to turn.
 
-    Each servo (0,1,2,3) is set to turn an interger amount of degrees (0-180)
+    Each servo (0,1,2,3) is set to turn to an interger amount of degrees (0-180)
 
     :param name: A string that identifies the servos.
-    :param servo0: An integer between 0 and 180 which sets the amount to (turn in degrees) for servo 0
-    :param servo1: An integer between 0 and 180 which sets the amount to (turn in degrees) for servo 1
-    :param servo2: An integer between 0 and 180 which sets the amount to (turn in degrees) for servo 2
-    :param servo3: An integer between 0 and 180 which sets the amount to (turn in degrees) for servo 3
+    :param servo0: An integer between 0 and 180 which sets the amount to turn to in degrees for servo 0
+    :param servo1: An integer between 0 and 180 which sets the amount to turn to in degrees for servo 1
+    :param servo2: An integer between 0 and 180 which sets the amount to turn to in degrees for servo 2
+    :param servo3: An integer between 0 and 180 which sets the amount to turn to in degrees for servo 3
     
     :Examples:
 
@@ -157,11 +156,11 @@ def set_all_servos(name,servo0,servo1,servo2,servo3): #TODO How does the servos 
 def set_servo(name,servo,value):
     """Sets a degree for a specific servo to turn.
 
-    One servo as specified by its number (0,1,2,3) is set to turn an integer amount of degrees (0-180)
+    One servo as specified by its number (0,1,2,3) is set to turn to an integer amount of degrees (0-180)
 
     :param name: A string that identifies the servo
     :param servo: A integer (0,1,2,3) which identifies which servo to turn
-    :param value: An integer between 0 and 180 which sets the amount to turn (in degrees)
+    :param value: An integer between 0 and 180 which sets the amount to turn to in degrees
 
     :Examples:
 
@@ -213,8 +212,7 @@ def get_luminosity(name):
 
     :Examples:
 
-    >>> lum = get_luminosity("color1")
-    >>> lum
+    >>> get_luminosity("color1")
     0.89783
 
     """
@@ -294,7 +292,12 @@ def get_all_switches(name):
     [True,True,False,True]
 
     """
-    return [False,False,False,False] #TODO Implement
+    all_data = mc.get('sensor_values')
+    name = _lookup(name)
+    try:
+        return all_data[name]
+    except KeyError:
+        raise KeyError("No Sensor with that name")
 
 def get_limit_switch(name,switch):
     """Returns whether a specified limit switch on the identified device is pressed or not
@@ -314,7 +317,77 @@ def get_limit_switch(name,switch):
     True
 
     """
-    return False #TODO Implement
+    all_data = mc.get('sensor_values')
+    name = _lookup(name)
+    try:
+        return all_data[name][switch]
+    except KeyError:
+        raise KeyError("No Sensor with that name")
+
+def get_all_potentiometers(name):
+    """Returns the sensor reading of all potentiometers on the specified smart device
+
+    Each potentiometer has an index of either 0,1,2,3. The potentiometer returns 
+    a decimal between 0 and 1, indicating the angle detected, where 0 and 1
+    are the two extremes. 
+
+    :param name: A string that identifies the potentiometer smart device (contains four potentiometers)
+    :returns: A list of decimals, each number between 0 and 1 representing the angle. Each potentiometer 
+              corresponds to a certain index (0,1,2,3)
+
+    """
+    all_data = mc.get('sensor_values')
+    name = _lookup(name)
+    try:
+        return all_data[name]
+    except KeyError:
+        raise KeyError("No Sensor with that name")
+
+def get_potentiometer(name, index):
+    """Returns the sensor reading of all potentiometers on the specified smart device
+
+    Each potentiometer has an index of either 0,1,2,3. The potentiometer returns 
+    a decimal between 0 and 1, indicating the angle detected, where 0 and 1
+    are the two extreme angles. 
+
+    :param name: A string that identifies the potentiometer smart device (contains four potentiometers)
+    :param index: An integer 0,1,2,3 which identifies a specific potentiometer.
+    :returns: A decimal between 0 and 1 representing the angle.
+
+    """
+    all_data = mc.get('sensor_values')
+    name = _lookup(name)
+    try:
+        return all_data[name][index]
+    except KeyError:
+        raise KeyError("No Sensor with that name")
+
+def get_metal_detector(name): #TODO metal detector documentation
+    """Returns the sensor reading of the specified metal detector
+
+    Each metal detector returns an integer, which changes based on the prescence of metal.
+
+    :param name: A String that identifies the metal detector smart device.
+    :returns: An integer (large) which represents whether metal is detected or not. 
+
+    """ 
+    all_data = mc.get('sensor_values')
+    name = _lookup(name)
+    try:
+        return all_data[name]
+    except KeyError:
+        raise KeyError("No Sensor with that name")
+
+def get_all_reflecting(name): #TODO hibike implement
+    """Returns how much light is reflected onto the sensor_values
+
+    A light/reflective material will return higher values, while a dark material
+    will return a lower value. Each reflecting sensor returns a list, with each index
+    corresponding to a specifie reflecting sensor.
+
+    :param name: A String that identifies the reflecting smart device.
+    :returns: A list of decimals which represents how much light is reflected.
+    """
 
 def drive_distance_all(distances, motors):
     """Drives all motors in the list a set number of encoder ticks set by the distances list.
@@ -360,15 +433,9 @@ def change_PID_mode(mode):
 def change PID constants(value, constant):
     return null;
 
-def get_all_potentiometers(name):
-  return null
-
-def get_potentiometer(name, potentiometer):
-  return null
 
 #TODO: ask wth this is and if it is even included since we can't find it in hibike
-def get_metal_detector(name):
-  return null
+
 
 class SensorValueOutOfBounds(Exception):
     pass

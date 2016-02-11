@@ -40,7 +40,7 @@ def init_battery():
 def get_all_data(connectedDevices):
     all_data = {}
     for t in connectedDevices:
-        all_data[str(t[0])] = h.getData(t[0], "dataUpdate")  # i is the data for each sensor
+        all_data[str(t[0])] = h.getData(t[0], "dataUpdate")
     return all_data
 
 
@@ -64,9 +64,23 @@ def set_servos(values):
 def test_battery():
     if battery_UID not in mc.get('sensor_values'):
         stop_motors()
-        raise Exception('Battery buzzer not connected')
+        ansible.send_message('UPDATE_BATTERY', {
+        'battery': {
+            'value': h.getData(battery_UID,dataUpdate)[5], # TODO: Make this not a lie
+            'connected': False, #TODO Implement On UI Side 
+            'safe': battery_safe
+            }
+        })
+        raise Exception('Battery buzzer not connected') #TODO Send to UI
     if not battery_safe:
         stop_motors()
+        ansible.send_message('UPDATE_BATTERY', {
+        'battery': {
+            'value': h.getData(battery_UID,dataUpdate)[5], # TODO: Make this not a lie
+            'connected': battery_UID in mc.get('sensor_values'), #TODO Implement On UI Side 
+            'safe': False
+            }
+        })
         raise Exception('Battery unsafe')
 # Called on starte of student code, finds and configures all the connected motors
 def initialize_motors():
@@ -78,7 +92,7 @@ def initialize_motors():
 
     # Brute force to find all
     for index in range(len(addrs)):
-        # default name for motors is motor0, motor1, motor2, etc
+        # default name for motors is motor0, motor1, motor2, getEnumeratedDevices
         grizzly_motor = Grizzly(addrs[index])
         grizzly_motor.set_mode(ControlMode.NO_PID, DriveMode.DRIVE_COAST)
         grizzly_motor.set_target(0)
