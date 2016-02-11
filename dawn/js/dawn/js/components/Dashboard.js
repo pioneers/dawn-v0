@@ -6,7 +6,7 @@ import Peripheral from './Peripheral';
 import Gamepads from './Gamepads';
 import RobotActions from '../actions/RobotActions';
 import Editor from './Editor';
-import Timer from './Timer';
+import Timer from './FieldControl';
 
 export default React.createClass({
   displayName: 'Dashboard',
