@@ -11,9 +11,9 @@ To use this module, you must first import it:
 
 >>> from api import Robot
 '''
-import memcache
+#import memcache
 memcache_port = 12357
-mc = memcache.Client(['127.0.0.1:%d' % memcache_port]) # connect to memcache
+#mc = memcache.Client(['127.0.0.1:%d' % memcache_port]) # connect to memcache
 
 motor = {}
 
@@ -39,7 +39,6 @@ def get_motor(name):
         raise KeyError("Motor name not found.")
 
 def set_motor(name, value):
-
     """Sets a motor to the specified power value.
 
     :param name: A string that identifies the motor.
@@ -388,6 +387,7 @@ def get_all_reflecting(name): #TODO hibike implement
     :param name: A String that identifies the reflecting smart device.
     :returns: A list of decimals which represents how much light is reflected.
     """
+    return null
 
 
 def drive_distance_all(degrees, motors, gear_ratios):
@@ -410,7 +410,7 @@ def drive_distance_all(degrees, motors, gear_ratios):
   
   #TODO, need to reset positions each time these two methods are called.
 def drive_distance_degrees(degrees, motor, gear_ratio):
-  """Drives the specified motor a set number of degrees and holds the motor there. 
+    """Drives the specified motor a set number of degrees and holds the motor there. 
   
     The specified motor will run until it reaches the specified degree of rotation and will hold the motor there until a grizzly motor method is called again.
     The gear ratio should be indicated on the physical motor itself. Implementation of this method for users in PID mode: 
@@ -422,7 +422,7 @@ def drive_distance_degrees(degrees, motor, gear_ratio):
     :param gear_ratio: An integer corresponding to the gear ratio of the motor (19 or 67)
     """
     return null
-    
+
 def drive_distance_rotations(rotations, motor, gear_ratio):
     """Drives the specified motor a set number of rotations and holds the motor there. 
   
@@ -446,31 +446,41 @@ def set_drive_mode(mode):
 
     :param mode: A String ("coast" or "break") corresponding to the selected drive mode.
     """
-  return null
+    return null
 
 def change_control_mode_all(mode):
     """Changes PID mode for all motors connected to the robot
 
     This changes the control mode for inputing values into all of the motors. 
     Default mode - No_PID which means one inputs a range of integers from -100 to 100 and the motor runs at a proportion corresponding to that range.
+    
     Speed PID - Motors run at encoder ticks per second instead of an integer range. Encoder ticks are a proportion of a rotation, similar to degrees
-               to check for encoder ticks for each motor, see this website: https://www.pololu.com/category/116/37d-mm-gearmotors
+    to check for encoder ticks for each motor, see this website: https://www.pololu.com/category/116/37d-mm-gearmotors
+    
     Position PID - Motors run until at a certain position, using encoder ticks as units. See above website for number of ticks per degree of rotation.
 
     :param mode: A String ("default", "speed", "position") corresponding to the wanted control mode for all motors.
+
     """
-    return null;
+    return null
+
 def change_control_mode(mode, motor):
-    """Changes PID mode for specified motors connected to the robot
+    """Changes PID mode for specified motors connected to the robot 
 
     This changes the control mode for inputing values into the specified motors. 
+
     Default mode - No_PID which means one inputs a range of integers from -100 to 100 and the motor runs at a proportion corresponding to that range.
+    
     Speed PID - Motors run at encoder ticks per second instead of an integer range. Encoder ticks are a proportion of a rotation, similar to degrees
-               to check for encoder ticks for each motor, see this website: https://www.pololu.com/category/116/37d-mm-gearmotors
+    to check for encoder ticks for each motor, see this website: https://www.pololu.com/category/116/37d-mm-gearmotors
+    
     Position PID - Motors run until at a certain position, using encoder ticks as units. See above website for number of ticks per degree of rotation.
 
-    :param mode: A String ("default", "speed", "position") corresponding to the wanted control mode for the specified motor.
+    :param mode: A String ('default', 'speed', 'position') corresponding to the wanted control mode for the specified motor.
+
     """
+    return null
+
 def change_PID_constants(value, constant):
     """Changes a PID constant which error corrects for motor positions.
 
@@ -482,23 +492,7 @@ def change_PID_constants(value, constant):
     :param value: A decimal corresponding to the new coefficient of a PID constant.
     :param constant: A String ("P", "I", "D") corresponding to the constant to be changed.
     """
-    return null;
-
-<<<<<<< HEAD
-
-#TODO: ask wth this is and if it is even included since we can't find it in hibike
-=======
-def get_all_potentiometers(name):
     return null
-
-def get_potentiometer(name, potentiometer):
-    return null
-
-#TODO: ask wth this is and if it is even included since we can't find it in hibike
-def get_metal_detector(name):
-    return null
->>>>>>> 40fd2409749744c91e546ad7e63bae22ea9195e5
-
 
 class SensorValueOutOfBounds(Exception):
     pass
