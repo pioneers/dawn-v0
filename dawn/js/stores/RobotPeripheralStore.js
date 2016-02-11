@@ -76,6 +76,11 @@ function handleUpdatePeripheral(action) {
   RobotPeripheralStore.emitChange();
 }
 
+function handleUpdateName(action) {
+  _peripheralData.idsToName[action.id] = action.newName;
+  RobotPeripheralStore.emitChange();
+}
+
 RobotPeripheralStore.dispatchToken = AppDispatcher.register((action) => {
   switch (action.type) {
     case ActionTypes.UPDATE_MOTOR:
