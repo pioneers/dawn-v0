@@ -1,6 +1,7 @@
 import React from 'react';
 import InlineEdit from 'react-edit-inline';
 import Ansible from '../../utils/Ansible';
+import smalltalk from 'smalltalk';
 
 var NameEdit = React.createClass({
   propTypes: {
@@ -8,10 +9,22 @@ var NameEdit = React.createClass({
     id: React.PropTypes.string
   },
   dataChange(data) {
-    Ansible.sendMessage('custom_names', {
+    var valid_name = true;
+    for (var checker = 0; checker < data.name.length; checker++){
+      if (data.name.charAt(checker) === " " || data.name.charAt(checker) === "\\"){
+        valid_name = false;
+        smalltalk.alert(
+        'Names cannot contain spaces or backslashes.',
+        'Please choose another name.'
+      )
+      } 
+    }
+    if (valid_name){
+      Ansible.sendMessage('custom_names', {
       id: this.props.id,
       name: data.name
     });
+    }
   },
   render() {
     return (
