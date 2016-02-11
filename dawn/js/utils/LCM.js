@@ -3,7 +3,7 @@ import LCM from './lcm_ws_bridge'
 import FieldActions from '../actions/FieldActions.js'
 
 let bridgeAddress = localStorage.getItem('bridgeAddress') || '127.0.0.1';
-let lcm = LCM('ws://' + runtimeAddress + ':8000/');
+let lcm = new LCM('ws://' + bridgeAddress + ':8000/');
 
 lcm.on_ready(function(){
     console.log('Connected to LCM Bridge')

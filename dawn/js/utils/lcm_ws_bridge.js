@@ -135,3 +135,4 @@ LCM.prototype.publish = function(channel, data) {
 if (typeof require !== "undefined") {
   exports.LCM = LCM;
 }
+export default LCM
