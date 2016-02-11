@@ -91,6 +91,26 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gamepad&#39;</span><span class="p">)[</span><span class="n">index</span><span class="p">][</span><span class="s1">&#39;axes&#39;</span><span class="p">]</span></div>
 
+<div class="viewcode-block" id="get_axis"><a class="viewcode-back" href="../../api.html#api.Gamepads.get_axis">[docs]</a><span class="k">def</span> <span class="nf">get_axis</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="n">axis</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns the position of a specified joystick.</span>
+
+<span class="sd">    Each returned value is between -1 and 1, which represents where the joystick</span>
+<span class="sd">    is along that axis. In order to get a better sense of</span>
+<span class="sd">    the joystick mappings, click the &#39;Details&#39; button next to a gamepad in Dawn</span>
+<span class="sd">    or refer to https://w3c.github.io/gamepad/#remapping.</span>
+
+<span class="sd">    On a standard gamepad:</span>
+<span class="sd">    - axes[0] represents the horizontal axis of the left joystick</span>
+<span class="sd">    - axes[1] represents the vertical axis of the left joystick</span>
+<span class="sd">    - axes[2] represents the horizontal axis of the right joystick</span>
+<span class="sd">    - axes[3] represent the vertical axis of the right joystick</span>
+
+<span class="sd">    :param index: The index of the gamepad, usually 0, 1, 2, or 3</span>
+<span class="sd">    :param axis: An integer (0,1,2,3) which specifies the axis.</span>
+<span class="sd">    :returns: A list of 4 decimal values, each corresponding to a joystick axis.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">get_joysticks</span><span class="p">(</span><span class="n">index</span><span class="p">)[</span><span class="n">axis</span><span class="p">]</span></div>
+
 <div class="viewcode-block" id="get_left_x"><a class="viewcode-back" href="../../api.html#api.Gamepads.get_left_x">[docs]</a><span class="k">def</span> <span class="nf">get_left_x</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns the position of the left joystick on the x axis.</span>
 
