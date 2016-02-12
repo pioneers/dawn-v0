@@ -102,7 +102,7 @@ def set_flags(values):
 def set_servos(values):
     for i in range(1,len(values)):
         if values[i] != -1:
-            print(values[0])
+            print("writing hibike with: " + values[0])
 	    h.writeValue(int(values[0]),"servo" + str(i), values[i])
     mc.set("servo_value",[])
 
