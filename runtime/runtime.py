@@ -16,8 +16,8 @@ student_proc, console_proc = None, None
 robot_status = 0 # a boolean for whether or not the robot is executing 
 battery_UID = 0 #TODO, what if no battery buzzer, what if not safe battery buzzer
 battery_safe = False
-battery_buffer = 0 #Prevents immediately crashing runtmie from bad UID lookup
-BUFFER_CONSTANT = 50
+#battery_buffer = 0 #Prevents immediately crashing runtmie from bad UID lookup
+#BUFFER_CONSTANT = 50
 mc.set('flag_values',[]) #set flag color initial status
 mc.set('servo_values',[])
 mc.set('PID_constants',[("P", 1), ("I", 0), ("D", 0)])
@@ -29,8 +29,6 @@ all_modes = {"default": ControlMode.NO_PID, "speed": ControlMode.SPEED_PID, "pos
         "brake": DriveMode.DRIVE_BRAKE, "coast": DriveMode.DRIVE_COAST}
 PID_constants = {"P": 1, "I": 0, "D": 0}
 
-
-
 if 'HIBIKE_SIMULATOR' in os.environ and os.environ['HIBIKE_SIMULATOR'] in ['1', 'True', 'true']:
     import hibike_simulator
     h = hibike_simulator.Hibike()
@@ -38,6 +36,7 @@ else:
     h = hibike.Hibike()
 connectedDevices = h.getEnumeratedDevices()    #list of tuples, first val of tuple is UID, second is int Devicetype
 h.subToDevices([(device, 50) for (device, device_type) in connectedDevices]) 
+print(connectedDevices)
 
 def init_battery():
     global battery_UID
@@ -45,6 +44,7 @@ def init_battery():
     for UID, dev in connectedDevices: 
         if h.getDeviceName(int(dev)) == "BatteryBuzzer": 
             battery_UID = UID
+    print(battery_UID)
     if not bool(battery_UID):
         stop_motors()
         ansible.send_message('Add_ALERT', {
@@ -158,6 +158,8 @@ def test_battery():
         })
         time.sleep(1)
         raise Exception('Battery unsafe')
+    battery_safe = bool(h.getData(battery_UID, "dataUpdate")[0][0])
+    """ 
     try:
         battery_safe = bool(h.getData(battery_UID,"dataUpdate")[0][0])
         battery_buffer = 0
@@ -165,6 +167,7 @@ def test_battery():
         battery_buffer += 1
         if battery_buzzer > BUFFER_CONSTANT:
             battery_safe = False
+    """
 
 # Called on start of student code, finds and configures all the connected motors
 def initialize_motors():
@@ -257,17 +260,11 @@ def send_peripheral_data(data):
 init_battery()
 while True:
     test_battery()
-    try:
-        ansible.send_message('UPDATE_BATTERY', {
-            'battery': {
-                'value': h.getData(battery_UID,"dataUpdate")[0][5]
-            }
-        })
-        battery_buffer = 0
-    except:
-        battery_buffer += 1
-        if battery_buzzer > BUFFER_CONSTANT:
-            battery_safe = False
+    ansible.send_message('UPDATE_BATTERY', {
+        'battery': {
+            'value': h.getData(battery_UID,"dataUpdate")[0][5]
+        }
+    })
             
     msg = ansible.recv()
     # Handle any incoming commands from the UI
