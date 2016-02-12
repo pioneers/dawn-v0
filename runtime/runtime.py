@@ -238,6 +238,7 @@ def stop_motors():
 def log_output(stream):
     #TODO: figure out a way to limit speed of sending messages, so
     # ansible is not overflowed by printing too fast
+    return
     for line in stream:
         ansible.send_message('UPDATE_CONSOLE', {
             'console_output': {
