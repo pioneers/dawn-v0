@@ -13,11 +13,6 @@ memcache_port = 12357
 mc = memcache.Client(['127.0.0.1:%d' % memcache_port])
 mc.set('gamepad', {'0': {'axes': [0,0,0,0], 'buttons': None, 'connected': None, 'mapping': None}})
 
-#connect to memcache
-memcache_port = 12357
-mc = memcache.Client(['127.0.0.1:%d' % memcache_port])
-mc.set('gamepad', {'0': {'axes': [0,0,0,0], 'buttons': None, 'connected': None, 'mapping': None}})
-
 # Useful motor mappings
 name_to_grizzly, name_to_values, name_to_ids, name_to_modes = {}, {}, {}, {}
 student_proc, console_proc = None, None
@@ -93,7 +88,7 @@ def get_all_data(connectedDevices):
 
 
 def set_flags(values):
-    for i in range(1,values.length):
+    for i in range(1,len(values)):
         light = values[i]
         if light != -1:
             if light == 1:
@@ -102,12 +97,13 @@ def set_flags(values):
                 light = -64
             elif light == 3:
                 light = -128
-            h.writeValue(int(values[0]), "s" + string(i), light)
+            h.writeValue(int(values[0]), "s" + str(i), light)
 
 def set_servos(values):
-    for i in range(0,values.length-1):
-        if values[i+1] != -1:
-            h.writeValue(int(values[0]),"servo" + string(i), values[i+1])
+    for i in range(1,len(values)):
+        if values[i] != -1:
+            print(values[0])
+	    h.writeValue(int(values[0]),"servo" + str(i), values[i])
     mc.set("servo_value",[])
 
 def drive_set_distance(list_tuples):
