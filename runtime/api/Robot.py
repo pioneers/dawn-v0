@@ -50,7 +50,7 @@ def set_motor(name, value):
 
     """
     assert type(name) is str, "Type Mismatch: Must pass in a string to name."
-    assert type(value) is int or type(name) is float, "Type Mismatch: Must pass in an integer or float to value."
+    assert type(value) is int or type(value) is float, "Type Mismatch: Must pass in an integer or float to value."
     assert value <= 1 and value >= -1, "Motor value must be a decimal between -1 and 1 inclusive."
     name_to_value = mc.get('motor_values')
     try:

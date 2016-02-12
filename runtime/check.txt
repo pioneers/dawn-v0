@@ -1,0 +1,114 @@
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  2.5  0.5   3560  2724 ?        Ss   03:30   0:08 /sbin/init
+root         2  0.0  0.0      0     0 ?        S    03:30   0:00 [kthreadd]
+root         3  0.8  0.0      0     0 ?        S    03:30   0:02 [ksoftirqd/0]
+root         5  0.0  0.0      0     0 ?        S<   03:30   0:00 [kworker/0:0H]
+root         7  0.0  0.0      0     0 ?        S    03:30   0:00 [rcu_preempt]
+root         8  0.0  0.0      0     0 ?        S    03:30   0:00 [rcu_sched]
+root         9  0.0  0.0      0     0 ?        S    03:30   0:00 [rcu_bh]
+root        10  0.0  0.0      0     0 ?        S    03:30   0:00 [rcuc/0]
+root        11  0.0  0.0      0     0 ?        S    03:30   0:00 [kclksetdelayd]
+root        12  0.0  0.0      0     0 ?        S    03:30   0:00 [posixcputmr/0]
+root        13  0.0  0.0      0     0 ?        S    03:30   0:00 [kcmosdelayd]
+root        14  0.0  0.0      0     0 ?        S    03:30   0:00 [migration/0]
+root        15  0.0  0.0      0     0 ?        S    03:30   0:00 [watchdog/0]
+root        16  0.0  0.0      0     0 ?        S<   03:30   0:00 [khelper]
+root        17  0.0  0.0      0     0 ?        S    03:30   0:00 [kdevtmpfs]
+root        18  0.0  0.0      0     0 ?        S<   03:30   0:00 [netns]
+root        19  0.0  0.0      0     0 ?        S    03:30   0:00 [kswork]
+root        20  0.0  0.0      0     0 ?        S<   03:30   0:00 [perf]
+root        21  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/26-44e07000]
+root        23  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/59-4804c000]
+root        24  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/92-481ac000]
+root        25  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/125-481ae00]
+root        26  0.0  0.0      0     0 ?        S    03:30   0:00 [khungtaskd]
+root        27  0.0  0.0      0     0 ?        S<   03:30   0:00 [writeback]
+root        28  0.0  0.0      0     0 ?        SN   03:30   0:00 [ksmd]
+root        29  0.0  0.0      0     0 ?        S<   03:30   0:00 [crypto]
+root        30  0.0  0.0      0     0 ?        S<   03:30   0:00 [kintegrityd]
+root        31  0.0  0.0      0     0 ?        S<   03:30   0:00 [bioset]
+root        32  0.0  0.0      0     0 ?        S<   03:30   0:00 [kblockd]
+root        33  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/20-49000000]
+root        34  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/22-49000000]
+root        35  0.0  0.0      0     0 ?        S<   03:30   0:00 [ata_sff]
+root        36  0.0  0.0      0     0 ?        S<   03:30   0:00 [devfreq_wq]
+root        37  0.0  0.0      0     0 ?        S<   03:30   0:00 [rpciod]
+root        38  0.0  0.0      0     0 ?        S    03:30   0:00 [kswapd0]
+root        39  0.0  0.0      0     0 ?        S    03:30   0:00 [fsnotify_mark]
+root        40  0.0  0.0      0     0 ?        S<   03:30   0:00 [nfsiod]
+root        41  0.0  0.0      0     0 ?        S<   03:30   0:00 [xfsalloc]
+root        42  0.0  0.0      0     0 ?        S<   03:30   0:00 [xfs_mru_cache]
+root        56  0.0  0.0      0     0 ?        S<   03:30   0:00 [kthrotld]
+root        59  0.0  0.0      0     0 ?        S    03:30   0:00 [kapmd]
+root        60  0.0  0.0      0     0 ?        S    03:30   0:00 [kworker/u2:1]
+root        63  0.1  0.0      0     0 ?        S    03:30   0:00 [irq/175-4a10000]
+root        64  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/176-4a10000]
+root        65  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/195-musb-hd]
+root        66  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/196-musb-hd]
+root        67  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/197-4740000]
+root        68  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/170-rtc0]
+root        69  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/171-rtc0]
+root        70  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/161-mmc0]
+root        71  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/33-48060000]
+root        72  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/162-mmc1]
+root        78  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/187-5310000]
+root        87  0.0  0.0      0     0 ?        S<   03:30   0:00 [binder]
+root        88  0.0  0.0      0     0 ?        S<   03:30   0:00 [ipv6_addrconf]
+root        89  0.0  0.0      0     0 ?        S<   03:30   0:00 [bioset]
+root        90  0.0  0.0      0     0 ?        S    03:30   0:00 [kworker/u2:2]
+root        95  0.1  0.0      0     0 ?        S    03:30   0:00 [kworker/0:2]
+root        96  0.2  0.0      0     0 ?        S    03:30   0:00 [mmcqd/1]
+root        97  0.0  0.0      0     0 ?        S    03:30   0:00 [mmcqd/1boot0]
+root        99  0.0  0.0      0     0 ?        S    03:30   0:00 [mmcqd/1boot1]
+root       107  0.0  0.0      0     0 ?        S<   03:30   0:00 [deferwq]
+root       108  0.2  0.0      0     0 ?        S    03:30   0:00 [irq/159-44e0b00]
+root       109  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/198-tps6521]
+root       110  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/160-4819c00]
+root       111  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/19-wkup_m3_]
+root       112  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/164-wkup_m3]
+root       159  0.0  0.0      0     0 ?        S<   03:30   0:00 [kworker/0:1H]
+root       165  0.0  0.0      0     0 ?        S    03:30   0:00 [jbd2/mmcblk0p1-]
+root       166  0.0  0.0      0     0 ?        S<   03:30   0:00 [ext4-rsv-conver]
+memcache   186  1.0  0.7  47496  3788 ?        Ssl  03:30   0:03 memcached -p 12357
+root       209  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/158-44e0900]
+root       337  0.3  0.2   2104  1468 ?        S    03:30   0:01 upstart-udev-bridge --daemon
+root       341  0.1  0.5  10164  2608 ?        Ss   03:30   0:00 /lib/systemd/systemd-udevd --daemon
+message+   398  0.1  0.3   3296  1636 ?        Ss   03:30   0:00 dbus-daemon --system --fork
+root       409  0.0  0.0      0     0 ?        S    03:30   0:00 [spi1]
+root       411  0.0  0.0      0     0 ?        S    03:30   0:00 [spi2]
+root       413  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/190-4803800]
+root       414  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/189-4803800]
+root       415  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/192-4803c00]
+root       416  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/191-4803c00]
+syslog     418  0.0  0.4  29592  2260 ?        Ssl  03:30   0:00 rsyslogd
+avahi      424  0.0  0.4   2708  2040 ?        S    03:30   0:00 avahi-daemon: running [arm.local]
+avahi      425  0.0  0.2   2708  1352 ?        S    03:30   0:00 avahi-daemon: chroot helper
+root       430  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/186-tilcdc]
+root       431  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/193-4831000]
+root       432  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/178-4a30000]
+root       433  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/179-4a30000]
+root       434  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/180-4a30000]
+root       435  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/181-4a30000]
+root       436  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/182-4a30000]
+root       437  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/183-4a30000]
+root       438  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/184-4a30000]
+root       439  0.0  0.0      0     0 ?        S    03:30   0:00 [irq/185-4a30000]
+root       644  0.0  0.2   3388  1360 tty4     Ss+  03:30   0:00 /sbin/getty -8 38400 tty4
+root       645  0.0  0.2   3388  1364 tty5     Ss+  03:30   0:00 /sbin/getty -8 38400 tty5
+root       650  0.0  0.2   3388  1364 tty2     Ss+  03:30   0:00 /sbin/getty -8 38400 tty2
+root       651  0.0  0.2   3388  1348 tty3     Ss+  03:30   0:00 /sbin/getty -8 38400 tty3
+root       655  0.0  0.2   3388  1372 tty6     Ss+  03:30   0:00 /sbin/getty -8 38400 tty6
+root       675  0.2  0.0      0     0 ?        S    03:30   0:00 [kworker/0:5]
+root       679  0.0  0.3   2264  1516 ?        Ss   03:30   0:00 cron
+root       700  0.0  0.2   1360  1028 ?        Ss   03:30   0:00 acpid -c /etc/acpi/events -s /var/run/acpid.socket
+dnsmasq    840  0.0  0.3   4152  1684 ?        S    03:31   0:00 /usr/sbin/dnsmasq -x /var/run/dnsmasq/dnsmasq.pid -u dnsmasq -r /var/run/dnsmasq/resolv.conf -7 /etc/dnsmasq.d,.dpkg-dist,.dpkg-old,.dpkg-new
+root       907  0.0  0.3   2624  1804 ?        S    03:31   0:00 upstart-file-bridge --daemon
+root       997  0.0  0.7   5888  3700 ?        Ss   03:31   0:00 /usr/sbin/sshd -D
+root      1048  0.0  0.2   3388  1352 tty1     Ss+  03:31   0:00 /sbin/getty -8 38400 tty1
+root      1049  0.0  0.2   1636  1212 ttyS0    Ss+  03:31   0:00 /sbin/getty 115200 ttyO0
+root      1057  0.0  0.3   2480  1624 ?        S    03:31   0:00 upstart-socket-bridge --daemon
+root      1105  0.0  0.7   8496  3860 ?        Ss   03:31   0:00 sshd: ubuntu [priv] 
+root      1107  0.0  0.0      0     0 ?        S    03:32   0:00 [kauditd]
+ubuntu    1108  0.5  0.4   8496  2336 ?        S    03:32   0:01 sshd: ubuntu@pts/0  
+ubuntu    1109  0.5  0.7   5220  3756 pts/0    Ss   03:32   0:01 -bash
+ubuntu    1145  0.0  0.3   3956  1708 pts/0    R+   03:36   0:00 ps -aux
