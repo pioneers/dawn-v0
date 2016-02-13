@@ -277,7 +277,7 @@ def set_drive_mode(mode):
 
     :param mode: A String ("coast" or "break") corresponding to the selected drive mode.
     """
-  return null
+    return null
 
 def change_control_mode_all(mode):
     """Changes PID mode for all motors connected to the robot
@@ -285,19 +285,20 @@ def change_control_mode_all(mode):
     This changes the control mode for inputing values into all of the motors. 
     Default mode - No_PID which means one inputs a range of integers from -100 to 100 and the motor runs at a proportion corresponding to that range.
     Speed PID - Motors run at encoder ticks per second instead of an integer range. Encoder ticks are a proportion of a rotation, similar to degrees
-               to check for encoder ticks for each motor, see this website: https://www.pololu.com/category/116/37d-mm-gearmotors
+    to check for encoder ticks for each motor, see this website: https://www.pololu.com/category/116/37d-mm-gearmotors
     Position PID - Motors run until at a certain position, using encoder ticks as units. See above website for number of ticks per degree of rotation.
 
     :param mode: A String ("default", "speed", "position") corresponding to the wanted control mode for all motors.
     """
-    return null;
+    return null
+
 def change_control_mode(mode, motor):
     """Changes PID mode for specified motors connected to the robot
 
     This changes the control mode for inputing values into the specified motors. 
     Default mode - No_PID which means one inputs a range of integers from -100 to 100 and the motor runs at a proportion corresponding to that range.
     Speed PID - Motors run at encoder ticks per second instead of an integer range. Encoder ticks are a proportion of a rotation, similar to degrees
-               to check for encoder ticks for each motor, see this website: https://www.pololu.com/category/116/37d-mm-gearmotors
+    to check for encoder ticks for each motor, see this website: https://www.pololu.com/category/116/37d-mm-gearmotors
     Position PID - Motors run until at a certain position, using encoder ticks as units. See above website for number of ticks per degree of rotation.
 
     :param mode: A String ("default", "speed", "position") corresponding to the wanted control mode for the specified motor.
@@ -313,7 +314,7 @@ def change_PID_constants(value, constant):
     :param value: A decimal corresponding to the new coefficient of a PID constant.
     :param constant: A String ("P", "I", "D") corresponding to the constant to be changed.
     """
-    return null;
+    return null
 
 def get_all_potentiometers(name):
     return null
