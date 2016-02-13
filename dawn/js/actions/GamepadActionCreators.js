@@ -32,7 +32,10 @@ var _formatGamepadsForJSON = function(newGamepads) {
 // Also sends data to griff by emitting to socket-bridge
 var _updateGamepadState = function() {
   let newGamepads = navigator.getGamepads();
-  if (_needToUpdate(newGamepads)) {
+  let update = _needToUpdate(newGamepads);
+  console.log(update);
+  if (update) {
+    console.log('Needtoupdate returned true');
     Ansible.sendMessage('gamepad', _formatGamepadsForJSON(newGamepads));
     GamepadActionCreators.updateGamepads(newGamepads);
   }
@@ -40,6 +43,7 @@ var _updateGamepadState = function() {
 
 var GamepadActionCreators = {
   updateGamepads(gamepads) {
+    console.log('Dispatching gamepads');
     AppDispatcher.dispatch({
       type: ActionTypes.UPDATE_GAMEPADS,
       gamepads: gamepads
@@ -51,6 +55,7 @@ var GamepadActionCreators = {
       clearInterval(this._interval);
       this._interval = undefined;
     }
+    console.log('Setting interval for gamepads');
     this._interval = setInterval(_updateGamepadState, delay);
   }
 };

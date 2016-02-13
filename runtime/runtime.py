@@ -8,6 +8,7 @@ import os
 name_to_grizzly, name_to_values, name_to_ids = {}, {}, {}
 student_proc, console_proc = None, None
 robot_status = 0 # a boolean for whether or not the robot is executing code
+name_file= open('Tester.txt','w')
 
 if 'HIBIKE_SIMULATOR' in os.environ and os.environ['HIBIKE_SIMULATOR'] in ['1', 'True', 'true']:
     import hibike_simulator
@@ -17,7 +18,7 @@ else:
 connectedDevices = h.getEnumeratedDevices()
 print connectedDevices
 # TODO: delay should not always be 20
-connectedDevices = [(device, 20) for (device, device_type) in connectedDevices]
+connectedDevices = [(device, 50) for (device, device_type) in connectedDevices]
 h.subToDevices(connectedDevices)
 
 # connect to memcache
@@ -28,7 +29,11 @@ def get_all_data(connectedDevices):
     all_data = {}
     for t in connectedDevices:
         count = 1
-        for i in h.getData(t[0], "dataUpdate"):
+        tup_nest = h.getData(t[0], "dataUpdate")
+        if len(tup_nest) == 0:
+            continue
+        tup_vals = tup_nest[0]
+        for i in tup_vals:
             all_data[str(count) + str(t[0])] = i
             count += 1
     return all_data
@@ -53,6 +58,7 @@ def initialize_motors():
         name_to_ids['motor' + str(index)] = addrs[index]
 
     mc.set('motor_values', name_to_values)
+    print(name_to_values)
 
 # Called on end of student code, sets all motor values to zero
 def stop_motors():
@@ -79,8 +85,10 @@ def msg_handling(msg):
     if msg_type == 'execute' and not robot_status:
         with open('student_code.py', 'w+') as f:
             f.write(msg['content']['code'])
-        student_proc = subprocess.Popen(['python', '-u', 'student_code/student_code.py'],
+        #print("Before running student code")
+        student_proc = subprocess.Popen(['python', '-u', 'student_code.py'],
                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        #print("After running student code")
         # turns student process stdout into a stream for sending to frontend
         lines_iter = iter(student_proc.stdout.readline, b'')
         # start process for watching for student code output
@@ -88,17 +96,35 @@ def msg_handling(msg):
         console_proc.start()
         initialize_motors()
         robot_status= 1
+        print("Running student code")
     elif msg_type == 'stop' and robot_status:
         student_proc.terminate()
         console_proc.terminate()
         stop_motors()
         robot_status = 0
+        print("Stopping student code")
+    elif msg_type == 'custom_names':
+        sensor_id = msg['content']['id']
+        id_to_name[sensor_id] = msg['content']['name']
+        name_file.seek(0)
+        end_of_file = True
+        for line in name_file:
+            custom_name = line.split()[0]
+            uid = line.split()[1]
+            if custom_name != id_to_name[id_name]:
+                line.replace(custom_name + " " + uid +"\n", id_to_name[uid]+ " " + uid + "\n")
+                end_of_file = False
+                break
+        if end_of_file: #if reached bottom of file
+            name_file.write(id_to_name[sensor_id]+ " " + sensor_id + "\n")
+
+
 
 peripheral_data_last_sent = 0
 def send_peripheral_data(data):
     global peripheral_data_last_sent
     # TODO: This is a hack. Should put this into a separate process
-    if time.time() < peripheral_data_last_sent + 1:
+    if time.time() < peripheral_data_last_sent + 0.2:
         return
     peripheral_data_last_sent = time.time()
 
@@ -113,12 +139,6 @@ def send_peripheral_data(data):
                 }
             })
 
-while True:
-    msg = ansible.recv()
-    # Handle any incoming commands from the UI
-    if msg:
-        msg_handling(msg)
-
     # Send whether or not robot is executing code
     ansible.send_message('UPDATE_STATUS', {
         'status': {'value': robot_status}
@@ -131,6 +151,14 @@ while True:
         }
     })
 
+
+while True:
+    msg = ansible.recv()
+    # Handle any incoming commands from the UI
+    if msg:
+        msg_handling(msg)
+        print("Gotten here")
+    
     # Update sensor values, and send to UI
     all_sensor_data = get_all_data(connectedDevices)
     send_peripheral_data(all_sensor_data)
@@ -145,6 +173,7 @@ while True:
                 grizzly.set_target(name_to_value[name])
             except:
                 stop_motors()
+            
             ansible.send_message('UPDATE_PERIPHERAL', {
                 'peripheral': {
                     'name': name,
@@ -153,7 +182,6 @@ while True:
                     'id': name_to_ids[name]
                 }
             })
+            
 
-
-
-    time.sleep(0.02)
+    time.sleep(0.05)

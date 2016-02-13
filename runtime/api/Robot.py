@@ -15,7 +15,7 @@ import memcache
 
 memcache_port = 12357
 mc = memcache.Client(['127.0.0.1:%d' % memcache_port]) # connect to memcache
-
+name_file = open('Tester.txt','r')
 motor = {}
 
 def get_motor(name):
@@ -49,9 +49,15 @@ def get_sensor(name):
     :param name: A string that identifies the sensor.
     :returns: The reading of the sensor at the current point in time.
     """
+    id_name = ""
+    name_file.seek(0)
+    for line in name_file:
+        if line.split()[0] == name:
+            id_name = line.split()[1]
+            break
     all_data = mc.get('sensor_values')
-    if name in all_data:
-        return all_data[name]
+    if id_name in all_data:
+        return all_data[id_name]
     return 'Error, sensor with that name not found'
 
 def get_all_motors():
