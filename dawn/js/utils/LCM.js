@@ -3,46 +3,21 @@ import LCM from './lcm_ws_bridge'
 import FieldActions from '../actions/FieldActions.js'
 
 let bridgeAddress = localStorage.getItem('bridgeAddress') || '127.0.0.1';
-let lcm = new LCM('ws://' + bridgeAddress + ':8000/');
+let lcm = null;
+function makeLCM(){
+    lcm = new LCM('ws://' + bridgeAddress + ':8000/');
+    function subscribeAll() {
+        console.log('Connected to LCM Bridge')
+        lcm.subscribe("Timer/Time", "Time", function(msg) {
+           FieldActions.updateTimer(msg)
+        })
+        lcm.subscribe("Heartbeat/Beat", "Heartbeat", function(msg) {
+           FieldActions.updateHeart(msg)
+        })  
+    }
+    lcm.on_ready(subscribeAll)
+    lcm.on_close(makeLCM)
+}
+makeLCM()
 
-lcm.on_ready(function(){
-    console.log('Connected to LCM Bridge')
-    lcm.subscribe("Timer/Time", "Time", function(msg) {
-         FieldActions.updateTimer(msg)
-    })
-})
-
-// socket.on('connect', ()=>console.log('Connected to runtime.'));
-// socket.on('connect_error', (err)=>console.log(err));
-
-// /*
-//  * Hack for Ansible messages to enter Flux flow.
-//  * Received messages are dispatched as actions,
-//  * with action's type deteremined by msg_type
-//  */
-// socket.on('message', (message)=>{
-//   let unpackedMsg = message.content;
-//   unpackedMsg.type = message.header.msg_type;
-//   AppDispatcher.dispatch(unpackedMsg);
-// });
-
-// /*
-//  * Module for communicating with the runtime.
-//  */
-// let Ansible = {
-//   /* Private, use sendMessage */
-//   _send(obj) {
-//     return socket.emit('message', JSON.stringify(obj));
-//   },
-//   /* Send data over ZMQ to the runtime */
-//   sendMessage(msgType, content) {
-//     let msg = {
-//       header: {
-//         msg_type: msgType
-//       },
-//       content: content
-//     };
-//     this._send(msg);
-//   }
-// };
 

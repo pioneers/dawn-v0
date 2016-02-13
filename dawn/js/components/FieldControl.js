@@ -5,6 +5,7 @@ import EditorActionCreators from '../actions/EditorActionCreators';
 import EditorStore from '../stores/EditorStore';
 import EditorToolbar from './EditorToolbar';
 import Mousetrap from 'mousetrap';
+import smalltalk from 'smalltalk';
 import ConsoleOutput from './ConsoleOutput';
 import RobotActions from '../actions/RobotActions';
 import Ansible from '../utils/Ansible';
@@ -22,59 +23,176 @@ import 'brace/theme/textmate';
 import 'brace/theme/solarized_dark';
 import 'brace/theme/solarized_light';
 import 'brace/theme/terminal';
+import Timer from './Timer'
+import FieldStore from '../stores/FieldStore'
 
-export default React.createClass({displayName: 'Timer',
-	getInitialState: function() {
-    	return {
-    		secondsElapsed: 0,
-    		timer_length: 10,
-    		start: Date.now()
-    	};
-	},
-	tick: function() {
-        if (this.state.secondsElapsed <= this.state.timer_length)
-    	   this.setState({secondsElapsed: new Date() - this.state.start});
-	},
-	componentDidMount: function() {
-	  this.interval = setInterval(this.tick, 50);
-	},
-    componentWillUnmount: function() {
-      clearInterval(this.interval);
-    },
-    loadInfoFromServer: function() { 
-    	$.ajax({
-    		url:this.props.url,
-    		dataType:'json',
-    		cache: false,
-    		success: function(data) {
-    			this.setState({data:data})
-    		}.bind(this),
-    		error: function(xhr, status, err) {
-    			console.error(this.props.url, status, err.toString());
-    		}.bind(this)
-    	}); //initializing timer before it renders, avoid fast first second
-    },
-    handleClick: function(event) { 
-        //alert("clicked");
-        console.log("Clicked");
-    	this.state.secondsElapsed = 0;
-        this.state.start = Date.now();
-    },
-    render: function() {
-    	var text = "Reset the timer! Click to reset."
-    	var elapsed = Math.round(this.state.secondsElapsed / 100);
-        var seconds = (elapsed / 10).toFixed(0);  
-        return (
-        <div>
+export default React.createClass({
+  getInitialState() {
+    return {
+      showConsole: true,
+      filepath: null,
+      latestSaveCode: '',
+      editorCode: '',
+      editorTheme: localStorage.getItem('editorTheme') || 'monokai',
+      heart: false
+    };
+  },
+  componentDidMount() {
+    Mousetrap.prototype.stopCallback = function(e, element, combo) {
+      return false; // Always respond to keyboard combos
+    };
 
-            <p onClick = {this.handleClick}> 
-        	{text};
-            </p>
+    Mousetrap.bind(['mod+s'], (e)=>{
+      if (e.preventDefault) {
+        e.preventDefault();
+      }
+      this.saveFile();
+    });
 
-            <p>The following is a timer: <b>{this.state.timer_length - seconds}</b>
-            </p>
-
-        </div>
-       );
+    // If possible, reopen the last opened file.
+    let lastFile = localStorage.getItem('lastFile');
+    if (lastFile !== null) {
+      EditorActionCreators.readFilepath(lastFile);
     }
+
+    EditorStore.on('change', this.updateEditorData);
+    FieldStore.on('change', this.updateFieldData);
+  },
+  componentWillUnmount() {
+    Mousetrap.unbind(['mod+s']);
+    EditorStore.removeListener('change', this.updateEditorData);
+  },
+  updateFieldData() {
+    this.setState({
+      heart: FieldStore.getHeart()
+    });
+  }, 
+  updateEditorData() {
+    this.setState({
+      filepath: EditorStore.getFilepath(),
+      latestSaveCode: EditorStore.getLatestSaveCode(),
+      editorCode: EditorStore.getEditorCode()
+    });
+  },
+  openFile() {
+    if (this.hasUnsavedChanges()) {
+      smalltalk.alert(
+        'You have unsaved changes.',
+        'Please save or discard them before opening another file.'
+      ).then(()=>console.log('Ok.'), ()=>console.log('Cancel.'));
+    } else {
+      EditorActionCreators.openFile();
+    }
+  },
+  saveFile() {
+    EditorActionCreators.saveFile(this.state.filepath, this.state.editorCode);
+  },
+  createNewFile() {
+    if (this.hasUnsavedChanges()) {
+      smalltalk.alert(
+        'You have unsaved changes.',
+        'Please save or discard them before creating a new file.'
+      ).then(()=>console.log('Ok.'), ()=>console.log('Cancel.'));
+    } else {
+      EditorActionCreators.createNewFile();
+    }
+  },
+  deleteFile() {
+    smalltalk.confirm(
+      'Warning:',
+      'This will delete your file permanently!').then(()=>{
+        EditorActionCreators.deleteFile(this.state.filepath);
+      }, ()=>console.log('Cancel.'))
+  },
+  editorUpdate(newVal) {
+    EditorActionCreators.editorUpdate(newVal);
+  },
+  toggleConsole() {
+    this.setState({showConsole: !this.state.showConsole});
+    // must call resize method after changing height of ace editor
+    setTimeout(()=>this.refs.CodeEditor.editor.resize(), 0.1);
+  },
+  clearConsole() {
+    RobotActions.clearConsole();
+  },
+  startRobot() {
+    Ansible.sendMessage('execute', {
+      code: this.state.editorCode
+    });
+  },
+  stopRobot() {
+    Ansible.sendMessage('stop', {});
+  },
+  generateButtons() {
+    // The buttons which will be in the button toolbar
+    return [
+      {
+        groupId: 'file-operations-buttons',
+        buttons: [
+          new EditorButton('save', 'Save', this.saveFile, 'floppy-disk', true),
+          new EditorButton('open', 'Open', this.openFile, 'folder-open', true),
+          new EditorButton('create', 'New', this.createNewFile, 'file', true),
+          new EditorButton('delete', 'Delete', this.deleteFile, 'trash', true)
+        ],
+      }, {
+        groupId: 'code-execution-buttons',
+        buttons: [
+          new EditorButton('run', 'Run', this.startRobot, 'play', (this.props.isRunningCode || !this.props.connectionStatus || true)),
+          new EditorButton('stop', 'Stop', this.stopRobot, 'stop', !(this.props.isRunningCode && this.props.connectionStatus) && false),
+          new EditorButton('toggle-console', 'Toggle Console', this.toggleConsole, 'console'),
+          new EditorButton('clear-console', 'Clear Console', this.clearConsole, 'remove')
+        ]
+      }
+    ];
+  },
+  pathToName(filepath) {
+    if (filepath !== null) {
+      return filepath.split('/').pop();
+    } else {
+      return '[ New File ]';
+    }
+  },
+  hasUnsavedChanges() {
+    return (this.state.latestSaveCode !== this.state.editorCode);
+  },
+  changeTheme(theme) {
+    localStorage.setItem('editorTheme', theme);
+    this.setState({editorTheme: theme});
+  },
+  themes: [
+    'monokai',
+    'github',
+    'tomorrow',
+    'kuroir',
+    'twilight',
+    'xcode',
+    'textmate',
+    'solarized_dark',
+    'solarized_light',
+    'terminal'
+  ],
+  render() {
+    let consoleHeight = 250;
+    let editorHeight = 530;
+    return (
+      <Panel
+        header={'Editing: ' + this.pathToName(this.state.filepath) +
+          (this.hasUnsavedChanges() ? '*' : '')}
+        bsStyle="primary">
+        <EditorToolbar
+          buttons={ this.generateButtons() }
+          unsavedChanges={ this.hasUnsavedChanges() }
+          changeTheme={ this.changeTheme }
+          editorTheme={ this.state.editorTheme }
+          themes={ this.themes }
+        />
+        <div style={this.state.heart ? {'height': '20px', 'fontSize': 'large'} : {'height': '20px', 'fontSize': 'small'}}>&hearts;</div>
+        <Timer {...this.props} />
+        <ConsoleOutput
+          show={this.state.showConsole}
+          height={String(consoleHeight) + 'px'}
+          output={this.props.consoleData}/>
+      </Panel>
+    );
+  }
 });

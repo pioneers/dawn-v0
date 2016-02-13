@@ -38,7 +38,8 @@ export default React.createClass({
           <DropdownButton
             title={this.props.editorTheme}
             bsSize="small"
-            id="choose-theme">
+            id="choose-theme"
+            disabled={true}>
             { _.map(this.props.themes, (theme, index) => {
               if (theme !== this.props.editorTheme) {
                 return (

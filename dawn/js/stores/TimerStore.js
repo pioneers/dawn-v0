@@ -6,13 +6,17 @@ import _ from 'lodash';
 
 
 let _timerData = {
+  timestamp: 0,
   timeLeft: 0,
-  stage: 'disconnected from field',
+  stage: 'disconnected from field'
 };
 
 let TimerStore = assign({}, EventEmitter.prototype, {
   emitChange() {
     this.emit('change');
+  },
+  getTimestamp() {
+    return _timerData.timestamp
   },
   getTimeLeft() {
     return _timerData.timeLeft;
@@ -29,8 +33,13 @@ TimerStore.dispatchToken = AppDispatcher.register((action) => {
       break;
   }
 });
+function refreshTimer() {
+  TimerStore.emitChange
+}
+//setInterval(refreshTimer, 10)
 
 function updateTimer(action) {
+  _timerData.timestamp = Date.now()
 	_timerData.timeLeft = action.timeLeft;
 	_timerData.stage = action.stage;
 	//change timeLeft and set stage correctly

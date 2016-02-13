@@ -12,13 +12,21 @@ var Timer = React.createClass({
   },
   onChange() {
     this.setState({
-      timeLeft: TimerStore.getTimeLeft(),
+      timeLeft: (TimerStore.getTimeLeft() / 1000).toFixed(1),
       stage: TimerStore.getStage()
     });
+  },
+  refresh() {
+    var timeLeft = (TimerStore.getTimeLeft() - (Date.now() - TimerStore.getTimestamp())) / 1000
+    if (timeLeft < 0){timeLeft = 0}
+    this.setState({
+      timeLeft: timeLeft.toFixed(1)
+    })
   },
   componentDidMount() {
     TimerStore.on('change', this.onChange);
     this.onChange();
+    setInterval(this.refresh, 20)
   },
   componentWillUnmount() {
     TimerStore.removeListener('change', this.onChange);

@@ -16,6 +16,7 @@ module.exports = {
     CLEAR_EDITOR: null,
     UPDATE_CONSOLE: null,
     UPDATE_TIMER: null,
+    UPDATE_ROBOT: null
   }),
   PeripheralTypes: keyMirror({
     MOTOR_SCALAR: null,

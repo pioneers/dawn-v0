@@ -62,6 +62,11 @@ LCM.prototype.on_ready = function(cb) {
   var self = this;
   this.ws.onopen = function () { cb(self); };
 };
+LCM.prototype.on_close = function(cb) {
+  // Call the callback once this LCM instance is ready to receive commands
+  var self = this;
+  this.ws.onclose = function () { cb(self); };
+};
 
 LCM.prototype.ws_send = function(type, data) {
   // Internal convenience method for sending data over the websocket

@@ -6,6 +6,7 @@ import Peripheral from './Peripheral';
 import Gamepads from './Gamepads';
 import RobotActions from '../actions/RobotActions';
 import Editor from './Editor';
+import FieldControl from './FieldControl'
 import Timer from './Timer';
 
 export default React.createClass({
@@ -19,7 +20,7 @@ export default React.createClass({
             <Gamepads {...this.props} />
           </Col>
           <Col smPull={4} sm={8}>
-            <Timer {...this.props} />
+            <FieldControl {...this.props} />
           </Col>
         </Row>
       </Grid>

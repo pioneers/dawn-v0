@@ -2,7 +2,10 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 
 let runtimeAddress = localStorage.getItem('runtimeAddress') || '127.0.0.1';
 let socket = io('http://' + runtimeAddress + ':5000/');
-socket.on('connect', ()=>console.log('Connected to runtime.'));
+socket.on('connect', ()=>{
+  console.log('Connected to runtime.')
+  console.log(socket.io.engine.transport.name)
+  });
 socket.on('connect_error', (err)=>console.log(err));
 
 /*
@@ -11,6 +14,7 @@ socket.on('connect_error', (err)=>console.log(err));
  * with action's type deteremined by msg_type
  */
 socket.on('message', (message)=>{
+  console.log(socket.io.engine.transport.name)
   let unpackedMsg = message.content;
   unpackedMsg.type = message.header.msg_type;
   AppDispatcher.dispatch(unpackedMsg);

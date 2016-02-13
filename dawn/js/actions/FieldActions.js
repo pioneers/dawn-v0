@@ -9,6 +9,19 @@ var FieldActions = {
       timeLeft: timeLeft,
       stage: msg.stage_name
     });
+  },
+  updateHeart(msg) {
+    AppDispatcher.dispatch({
+      type: ActionTypes.UPDATE_HEART,
+      state: msg.state
+    });
+  },
+  updateRobot(msg) {
+    AppDispatcher.dispatch({
+      type: ActionTypes.UPDATE_ROBOT,
+      timeLeft: timeLeft,
+      stage: msg.stage_name
+    });
   }
 };
 
