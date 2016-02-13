@@ -24,22 +24,23 @@ init_battery()
 #TODO Device Delay Value
 h.subToDevices([(device, 20) for (device, device_type) in connectedDevices]) 
 
-# connect to memcache
+connect to memcache
 memcache_port = 12357
 mc = memcache.Client(['127.0.0.1:%d' % memcache_port])
 
 def init_battery():
-    for dev in connectedDevices: #TODO What if Battery buzzer not found
-        if dev[1] == 4: #TODO Battery Buzzer device number
+    for _, dev in connectedDevices: #TODO What if Battery buzzer not found
+        if dev == 4: #TODO Battery Buzzer device number
             battery_UID = dev[0]
     if not battery_UID:
+        stop_motors()
         raise Exception("No Battery Buzzer Found") #TODO Raise Errors correctly
     battery_safe = bool(h.getData(battery_UID,dataUpdate)[0]) #TODO What value does battery buzzer return
 
 def get_all_data(connectedDevices):
     all_data = {}
     for t in connectedDevices:
-        all_data[str(t[0])] = h.getData(t[0], "dataUpdate")  # i is the data for each sensor
+        all_data[str(t[0])] = h.getData(t[0], "dataUpdate")
     return all_data
 
 
@@ -61,7 +62,25 @@ def set_servos(values):
     mc.set("servo_value",[])
 
 def test_battery():
+    if battery_UID not in mc.get('sensor_values'):
+        stop_motors()
+        ansible.send_message('UPDATE_BATTERY', {
+        'battery': {
+            'value': h.getData(battery_UID,dataUpdate)[5], # TODO: Make this not a lie
+            'connected': False, #TODO Implement On UI Side 
+            'safe': battery_safe
+            }
+        })
+        raise Exception('Battery buzzer not connected') #TODO Send to UI
     if not battery_safe:
+        stop_motors()
+        ansible.send_message('UPDATE_BATTERY', {
+        'battery': {
+            'value': h.getData(battery_UID,dataUpdate)[5], # TODO: Make this not a lie
+            'connected': battery_UID in mc.get('sensor_values'), #TODO Implement On UI Side 
+            'safe': False
+            }
+        })
         raise Exception('Battery unsafe')
 # Called on starte of student code, finds and configures all the connected motors
 def initialize_motors():
@@ -73,7 +92,7 @@ def initialize_motors():
 
     # Brute force to find all
     for index in range(len(addrs)):
-        # default name for motors is motor0, motor1, motor2, etc
+        # default name for motors is motor0, motor1, motor2, getEnumeratedDevices
         grizzly_motor = Grizzly(addrs[index])
         grizzly_motor.set_mode(ControlMode.NO_PID, DriveMode.DRIVE_COAST)
         grizzly_motor.set_target(0)
@@ -145,6 +164,7 @@ def send_peripheral_data(data):
 
 while True:
     test_battery()
+    battery_safe = bool(h.getData(battery_UID,dataUpdate)[0])
     msg = ansible.recv()
     # Handle any incoming commands from the UI
     if msg:
@@ -155,18 +175,20 @@ while True:
         'status': {'value': robot_status}
     })
 
-    # Send battery level
-    ansible.send_message('UPDATE_BATTERY', {
-        'battery': {
-            'value': h.getData(battery_UID,dataUpdate)[5] # TODO: Make this not a lie
-        }
-    })
-    battery_safe = bool(h.getData(battery_UID,dataUpdate)[0])
     # Update sensor values, and send to UI
     all_sensor_data = get_all_data(connectedDevices)
     send_peripheral_data(all_sensor_data)
     mc.set('sensor_values', all_sensor_data)
 
+    # Send battery level
+    ansible.send_message('UPDATE_BATTERY', {
+        'battery': {
+            'value': h.getData(battery_UID,dataUpdate)[5], # TODO: Make this not a lie
+            'connected': battery_UID in mc.get('sensor_values'), #TODO Implement On UI Side 
+            'safe': battery_safe
+        }
+    })
+    
     #Set Team Flag
     flag_values = mc.get('flag_values')
     if not flag_values:

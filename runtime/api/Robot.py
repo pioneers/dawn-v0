@@ -11,10 +11,9 @@ To use this module, you must first import it:
 
 >>> from api import Robot
 '''
-import memcache
-
+#import memcache
 memcache_port = 12357
-mc = memcache.Client(['127.0.0.1:%d' % memcache_port]) # connect to memcache
+#mc = memcache.Client(['127.0.0.1:%d' % memcache_port]) # connect to memcache
 
 motor = {}
 
@@ -26,6 +25,11 @@ def get_motor(name):
 
     :param name: A string that identifies the motor
     :returns: A value between -100 and 100, which is the power level of that motor.
+
+    :Examples:
+
+    >>> motor = get_motor(motor1)
+
     """
     name_to_value = mc.get('motor_values')
     assert type(name) is str, "Type Mismatch: Must pass in a string"
@@ -35,11 +39,15 @@ def get_motor(name):
         raise KeyError("Motor name not found.")
 
 def set_motor(name, value):
-
     """Sets a motor to the specified power value.
 
     :param name: A string that identifies the motor.
     :param value: A decimal value between -100 and 100, the power level you want to set.
+
+    :Examples:
+
+    >>> set_motor("motor1", 50)
+
     """
     assert type(name) is str, "Type Mismatch: Must pass in a string to name."
     assert type(value) is int or type(name) is float, "Type Mismatch: Must pass in an integer or float to value."
@@ -53,7 +61,6 @@ def set_motor(name, value):
 
 
 def get_sensor(name):
-
     """Returns the value, or reading corresponding to the specified sensor.
 
     :param name: A string that identifies the sensor.
@@ -63,7 +70,6 @@ def get_sensor(name):
     all_data = mc.get('sensor_values')
     try:
         return all_data[name]
-<<<<<<< HEAD
     except KeyError:
         raise KeyError("No Sensor with that name")
 
@@ -72,23 +78,28 @@ def get_all_motors():
     """
     return mc.get('motor_values')
 
-def set_flag(name,light1,light2,light3,light4):  #TODO UID convert to int
+def set_flag(name,light0,light1,light2,light3):  #TODO UID convert to int
     """Sets the brightness of every LED on the team flag.
 
     Each LED has four levels, represented by integers. Each light is set to 0 (off), 
     1 (low), 2 (medium), or 3 (high)
 
     :param name: A string that identifies the team flag. 
+    :param light0: An integer (0,1,2,3) which sets brightness for LED 0
     :param light1: An integer (0,1,2,3) which sets brightness for LED 1
     :param light2: An integer (0,1,2,3) which sets brightness for LED 2
     :param light3: An integer (0,1,2,3) which sets brightness for LED 3
-    :param light4: An integer (0,1,2,3) which sets brightness for LED 4
+
+    :Examples:
+
+    >>> set_flag("flag1",3,2,3,0)
+
     """
     correct_range = range(4)
-    assert light1 in correct_range, "Error: input for light1 must be an integer between 0 and 3 inclusive"
-    assert light2 in correct_range, "Error: input for light2 must be an integer between 0 and 3 inclusive"
-    assert light3 in correct_range, "Error: input for light3 must be an integer between 0 and 3 inclusive"
-    assert light4 in correct_range, "Error: input for light4 must be an integer between 0 and 3 inclusive"
+    assert light1 in correct_range, "Error: input for light0 must be an integer between 0 and 3 inclusive"
+    assert light2 in correct_range, "Error: input for light1 must be an integer between 0 and 3 inclusive"
+    assert light3 in correct_range, "Error: input for light2 must be an integer between 0 and 3 inclusive"
+    assert light4 in correct_range, "Error: input for light3 must be an integer between 0 and 3 inclusive"
     name = _lookup(name)
     flag_data = list(name) + list(light1) + list(light2) + list(light3) + list(light4)
     mc.set('flag_values',flag_data)
@@ -98,11 +109,16 @@ def set_LED(name,light,value): #TODO UID convert to int
 
     Each LED has four levels, represented by integers. Each light is set to 0 (off),
     1 (low), 2 (medium), or 3 (high). Each light has a specific index associated with it, 
-    an integer 1, 2, 3, 4.
+    an integer 0, 1, 2, 3.
 
     :param name: A string that identifies the team flag.
-    :param light: An integer (1,2,3,4) which identifies which LED top set.
+    :param light: An integer (0,1,2,3) which identifies which LED top set.
     :param value: An integer (0,1,2,3) which sets brightness for the specified LED
+
+    :Examples: 
+
+    >>> set_LED("flag1",2,2)
+    >>> set_LED("flag1",3,2)
     """
     name = _lookup(name)
     assert light in range(1,5), "Error: light number must be an Integer between 1 and 4 inclusive"
@@ -114,13 +130,18 @@ def set_LED(name,light,value): #TODO UID convert to int
 def set_all_servos(name,servo0,servo1,servo2,servo3): #TODO How does the servos specifically work
     """Sets a degree for each servo to turn.
 
-    Each servo (0,1,2,3) is set to turn an interger amount of degrees (0-180)
+    Each servo (0,1,2,3) is set to turn to an interger amount of degrees (0-180)
 
     :param name: A string that identifies the servos.
-    :param servo0: An integer between 0 and 180 which sets the amount to (turn in degrees) for servo 0
-    :param servo1: An integer between 0 and 180 which sets the amount to (turn in degrees) for servo 1
-    :param servo2: An integer between 0 and 180 which sets the amount to (turn in degrees) for servo 2
-    :param servo3: An integer between 0 and 180 which sets the amount to (turn in degrees) for servo 3
+    :param servo0: An integer between 0 and 180 which sets the amount to turn to in degrees for servo 0
+    :param servo1: An integer between 0 and 180 which sets the amount to turn to in degrees for servo 1
+    :param servo2: An integer between 0 and 180 which sets the amount to turn to in degrees for servo 2
+    :param servo3: An integer between 0 and 180 which sets the amount to turn to in degrees for servo 3
+    
+    :Examples:
+
+    >>> set_all_servos("servo1",90,40,30,20)
+
     """
     name = _lookup(name)
     correct_range = range(181)
@@ -134,11 +155,17 @@ def set_all_servos(name,servo0,servo1,servo2,servo3): #TODO How does the servos 
 def set_servo(name,servo,value):
     """Sets a degree for a specific servo to turn.
 
-    One servo as specified by its number (0,1,2,3) is set to turn an integer amount of degrees (0-180)
+    One servo as specified by its number (0,1,2,3) is set to turn to an integer amount of degrees (0-180)
 
     :param name: A string that identifies the servo
     :param servo: A integer (0,1,2,3) which identifies which servo to turn
-    :param value: An integer between 0 and 180 which sets the amount to turn (in degrees)
+    :param value: An integer between 0 and 180 which sets the amount to turn to in degrees
+
+    :Examples:
+
+    >>> set_servo("servo1",3,90)
+    >>> set_servo("servo1",2,150)
+
     """
     name = _lookup(name)
     servo_data = list(name) + [-1,-1,-1,-1]
@@ -158,6 +185,13 @@ def get_color_sensor(name,color):
                   where 0 specifies the red sensor, 1 specifies the green sensor, 
                   and 2 specifies the blue sensor
     :returns: A double between 0 and 1, where 1 indicates a higher intensity
+
+    :Examples:
+
+    >>> color = get_color_sensor("color1",1)
+    >>> color
+    0.873748
+
     """
     all_data = mc.get('sensor_values')
     name = _lookup(name)
@@ -174,6 +208,12 @@ def get_luminosity(name):
 
     :param name: A string that identifies the color sensor
     :returns: A double between 0 and 1, where 1 indicates a higher intensity
+
+    :Examples:
+
+    >>> get_luminosity("color1")
+    0.89783
+
     """
     all_data = mc.get('sensor_values')
     name = _lookup(name)
@@ -191,6 +231,13 @@ def get_hue(name):
 
     :param name: A string that identifies the color sensor
     :returns: A double between 0 and 360 representing the detected hue
+
+    :Examples:
+
+    >>> hue = get_hue("color1")
+    >>> hue
+    254.01
+
     """
     all_data = mc.get('sensor_values')
     name = _lookup(name)
@@ -213,6 +260,11 @@ def get_distance_sensor(name):
 
     :param name: A String that identifies the distance sensor
     :returns: A double representing how many centimeters away the object is from the sensor
+
+    :Examples: 
+
+    >>> distance = get_distance_sensor("distance1")
+
     """
     all_data = mc.get('sensor_values')
     name = _lookup(name)
@@ -222,27 +274,143 @@ def get_distance_sensor(name):
         raise KeyError("No Sensor with that name")
 
 def get_all_switches(name):
-    """Returns"""
+    """Returns whether each limit switch on the identified device is pressed or not
 
+    Each of the four limit switches on the device return either True (pressed)
+    or False (not pressed). Each limit switch is specified with an intger, 
+    either 0, 1, 2, 3.
+
+    :param name: A String that identifies the limit switch smart device (contains four limit switches)
+    :returns: A list of boolean values, where True is pressed and False is not pressed. 
+              The value at index 0 corresponds to limit switch 0, index 1 to switch 1, and so forth.
+
+    :Examples:
+
+    >>> switches = get_all_switches("switch1")
+    >>> switches
+    [True,True,False,True]
+
+    """
+    all_data = mc.get('sensor_values')
+    name = _lookup(name)
+    try:
+        return all_data[name]
+    except KeyError:
+        raise KeyError("No Sensor with that name")
+
+def get_limit_switch(name,switch):
+    """Returns whether a specified limit switch on the identified device is pressed or not
+
+    The specified limit switch returns a boolean, either True (pressed) 
+    or False (not pressed). Each limit switch is specified with an integer, either
+    0, 1, 2, 3.
+
+    :param name: A String that identifies the limit switch smart device (contains four limit switches)
+    :param switch: A integer (0,1,2,3) which specifies the limit switch (out of four)
+    :returns: A boolean value, where True is pressed and False is not pressed.
+
+    :Examples:
+
+    >>> switch = get_limit_switch("switch1",3)
+    >>> switch
+    True
+
+    """
+    all_data = mc.get('sensor_values')
+    name = _lookup(name)
+    try:
+        return all_data[name][switch]
+    except KeyError:
+        raise KeyError("No Sensor with that name")
+
+def get_all_potentiometers(name):
+    """Returns the sensor reading of all potentiometers on the specified smart device
+
+    Each potentiometer has an index of either 0,1,2,3. The potentiometer returns 
+    a decimal between 0 and 1, indicating the angle detected, where 0 and 1
+    are the two extremes. 
+
+    :param name: A string that identifies the potentiometer smart device (contains four potentiometers)
+    :returns: A list of decimals, each number between 0 and 1 representing the angle. Each potentiometer 
+              corresponds to a certain index (0,1,2,3)
+
+    """
+    all_data = mc.get('sensor_values')
+    name = _lookup(name)
+    try:
+        return all_data[name]
+    except KeyError:
+        raise KeyError("No Sensor with that name")
+
+def get_potentiometer(name, index):
+    """Returns the sensor reading of all potentiometers on the specified smart device
+
+    Each potentiometer has an index of either 0,1,2,3. The potentiometer returns 
+    a decimal between 0 and 1, indicating the angle detected, where 0 and 1
+    are the two extreme angles. 
+
+    :param name: A string that identifies the potentiometer smart device (contains four potentiometers)
+    :param index: An integer 0,1,2,3 which identifies a specific potentiometer.
+    :returns: A decimal between 0 and 1 representing the angle.
+
+    """
+    all_data = mc.get('sensor_values')
+    name = _lookup(name)
+    try:
+        return all_data[name][index]
+    except KeyError:
+        raise KeyError("No Sensor with that name")
+
+def get_metal_detector(name): #TODO metal detector documentation
+    """Returns the sensor reading of the specified metal detector
+
+    Each metal detector returns an integer, which changes based on the prescence of metal.
+
+    :param name: A String that identifies the metal detector smart device.
+    :returns: An integer (large) which represents whether metal is detected or not. 
+
+    """ 
+    all_data = mc.get('sensor_values')
+    name = _lookup(name)
+    try:
+        return all_data[name]
+    except KeyError:
+        raise KeyError("No Sensor with that name")
+
+def get_all_reflecting(name): #TODO hibike implement
+    """Returns how much light is reflected onto the sensor_values
+
+    A light/reflective material will return higher values, while a dark material
+    will return a lower value. Each reflecting sensor returns a list, with each index
+    corresponding to a specifie reflecting sensor.
+
+    :param name: A String that identifies the reflecting smart device.
+    :returns: A list of decimals which represents how much light is reflected.
+    """
+    return null
 
 
 def drive_distance_all(degrees, motors, gear_ratios):
     """Drives all motors in the list a set number of degrees set by the corresponding index in the distances list.
   
-    The specified motor will run until it reaches the specified degree of rotation and will hold the motor there until a grizzly motor method is called again.
+    The specified motor will run until it reaches the specified degree of rotation and will hold the motor 
+    there until a grizzly motor method is called again.
     The gear ratio should be indicated on the physical motor itself. Implementation of this method for users in PID mode: 
     this method translates degrees into encoder ticks and then sets the target in said encoder ticks. When this method is called again
     on the same motor, current encoder tick position is reset to 0 and the method reruns. 
     
-    :param degrees: A list of integers corresponding to the number of ticks to be moved. The integer at the index of this list should match the motor's index.
-    :param motor: A list of strings corresponding to the motor names to be rotated. The index of the motor names should match the index of the distance.
-    :param gear_ratios: A list of integers corresponding to the gear ratios of the motors. The integer at the index of this list should match the motor's index.
+    :param degrees: A list of integers corresponding to the number of ticks to be moved. The integer at the index of 
+        this list should match the motor's index.
+    :param motor: A list of strings corresponding to the motor names to be rotated. The index of the motor names
+        should match the index of the distance.
+    :param gear_ratios: A list of integers corresponding to the gear ratios of the motors. The integer at the 
+        index of this list should match the motor's index.
     """
     return null
   
   #TODO, need to reset positions each time these two methods are called.
 def drive_distance_degrees(degrees, motor, gear_ratio):
-  """Drives the specified motor a set number of degrees and holds the motor there. 
+    """Drives the specified motor a set number of degrees and holds the motor there. 
   
     The specified motor will run until it reaches the specified degree of rotation and will hold the motor there until a grizzly motor method is called again.
     The gear ratio should be indicated on the physical motor itself. Implementation of this method for users in PID mode: 
@@ -253,7 +421,8 @@ def drive_distance_degrees(degrees, motor, gear_ratio):
     :param motor: A String corresponding to the motor name to be rotated
     :param gear_ratio: An integer corresponding to the gear ratio of the motor (19 or 67)
     """
-  return null
+    return null
+
 def drive_distance_rotations(rotations, motor, gear_ratio):
     """Drives the specified motor a set number of rotations and holds the motor there. 
   
@@ -266,7 +435,7 @@ def drive_distance_rotations(rotations, motor, gear_ratio):
     :param motor: A String corresponding to the motor name to be rotated
     :param gear_ratio: An integer corresponding to the gear ratio of the motor (19 or 67)
     """
-  return null
+    return null
 
 
 def set_drive_mode(mode):
@@ -284,25 +453,37 @@ def change_control_mode_all(mode):
 
     This changes the control mode for inputing values into all of the motors. 
     Default mode - No_PID which means one inputs a range of integers from -100 to 100 and the motor runs at a proportion corresponding to that range.
+    
     Speed PID - Motors run at encoder ticks per second instead of an integer range. Encoder ticks are a proportion of a rotation, similar to degrees
     to check for encoder ticks for each motor, see this website: https://www.pololu.com/category/116/37d-mm-gearmotors
+<<<<<<< HEAD
+=======
+    
+>>>>>>> 89ddfd2fc277e6e898e8f34868b62f1736fde635
     Position PID - Motors run until at a certain position, using encoder ticks as units. See above website for number of ticks per degree of rotation.
 
     :param mode: A String ("default", "speed", "position") corresponding to the wanted control mode for all motors.
+
     """
     return null
 
 def change_control_mode(mode, motor):
-    """Changes PID mode for specified motors connected to the robot
+    """Changes PID mode for specified motors connected to the robot 
 
     This changes the control mode for inputing values into the specified motors. 
+
     Default mode - No_PID which means one inputs a range of integers from -100 to 100 and the motor runs at a proportion corresponding to that range.
+    
     Speed PID - Motors run at encoder ticks per second instead of an integer range. Encoder ticks are a proportion of a rotation, similar to degrees
     to check for encoder ticks for each motor, see this website: https://www.pololu.com/category/116/37d-mm-gearmotors
+
     Position PID - Motors run until at a certain position, using encoder ticks as units. See above website for number of ticks per degree of rotation.
 
-    :param mode: A String ("default", "speed", "position") corresponding to the wanted control mode for the specified motor.
+    :param mode: A String ('default', 'speed', 'position') corresponding to the wanted control mode for the specified motor.
+
     """
+    return null
+
 def change_PID_constants(value, constant):
     """Changes a PID constant which error corrects for motor positions.
 
@@ -315,17 +496,6 @@ def change_PID_constants(value, constant):
     :param constant: A String ("P", "I", "D") corresponding to the constant to be changed.
     """
     return null
-
-def get_all_potentiometers(name):
-    return null
-
-def get_potentiometer(name, potentiometer):
-    return null
-
-#TODO: ask wth this is and if it is even included since we can't find it in hibike
-def get_metal_detector(name):
-    return null
-
 
 class SensorValueOutOfBounds(Exception):
     pass
