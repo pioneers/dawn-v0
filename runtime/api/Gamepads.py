@@ -49,7 +49,9 @@ def get_joysticks(index):
 
     >>> axes = Gamepads.get_joysticks(0)
     """
-    return mc.get('gamepad')[index]['axes']
+    gamepad_index = mc.get("gamepad")[index]
+    assert gamepad_index != None, "gamepad index not found"
+    return gamepad_index['axes']
 
 def get_axis(index,axis):
     """Returns the position of a specified joystick.
@@ -155,7 +157,9 @@ def get_all_buttons(index):
     [False, True, False, False, False, True, False, False, True, False, False, False]
 
     """
-    return [x == 1 for x in mc.get('gamepad')[index]['buttons']]
+    gamepad_index = mc.get("gamepad")[index]
+    assert gamepad_index != None, "gamepad index not found"
+    return [x == 1 for x in gamepad_index['buttons']]
 
 def get_button(index,button):
     """Returns whether a button is pressed or not.
@@ -166,7 +170,7 @@ def get_button(index,button):
     https://w3c.github.io/gamepad/#remapping.
 
     :param index: The index of the gamepad, usually 0, 1, 2, or 3
-    :param button: The number of the button. See above for mappings.
+    :param button: Enum of button, see api documentation for more details
     :returns: A boolean either True (pressed) or False (not pressed) 
 
     :Examples:
@@ -176,6 +180,7 @@ def get_button(index,button):
     False
 
     """
+
     return get_all_buttons(index)[button] == 1;
 
 def get_is_connected(index):
@@ -184,7 +189,9 @@ def get_is_connected(index):
     :param index: The index of the gamepad, usually 0, 1, 2, or 3
     :returns: A boolean value for whether or not that gamepad is connected
     """
-    return mc.get('gamepad')[index]['connected']
+    gamepad_index = mc.get("gamepad")[index]
+    assert gamepad_index != None, "gamepad index not found"
+    return gamepad_index['connected']
 
 
 # If the user knows the layout of the device and it corresponds to the Standard Gamepad
@@ -192,5 +199,26 @@ def get_is_connected(index):
 def get_mapping(index):
     """Returns the mapping of the specified gamepad. Usually this value will be 'standard.'
     """
-    return mc.get('gamepad')[index]['mapping']
+    gamepad_index = mc.get("gamepad")[index]
+    assert gamepad_index != None, "gamepad index not found"
+    return gamepad_index['mapping']
 
+#class for enums for buttons.
+class button:
+    x = 2
+    y = 3
+    a = 0
+    b = 1
+    start = 9
+    back = 8
+    R_trigger = 7
+    L_trigger = 6
+    L_bumper = 4
+    R_bumper = 5
+    R_stick = 11
+    L_stick = 10
+    xbox = 16
+    dpad_down = 13
+    dpad_up = 12
+    dpad_right = 15
+    dpad_left = 14

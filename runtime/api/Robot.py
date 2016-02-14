@@ -406,7 +406,17 @@ def drive_distance_all(degrees, motors, gear_ratios):
     :param gear_ratios: A list of integers corresponding to the gear ratios of the motors. The integer at the 
         index of this list should match the motor's index.
     """
-    return null
+    assert isinstance(motors, list), "motors must be a list"
+    assert isinstance(gear_ratios, list), "gear_ratios must be a list"
+    assert isinstance(degrees, list), "degrees must be a list"
+    assert degrees.length = motors.length and degrees.length = gear_ratios.length, "List lengths for all 3 parameters must be equal"
+    motor_list = mc.get("motor_values")
+    i = 1
+    for motor in motors:
+        assert motor in motor_list, motor + " not found in connected motors"
+        i += 1
+    zipped = zip(motors, degrees, gear_ratios)
+    mc.set("drive_distance", zipped)
   
   #TODO, need to reset positions each time these two methods are called.
 def drive_distance_degrees(degrees, motor, gear_ratio):
@@ -421,7 +431,15 @@ def drive_distance_degrees(degrees, motor, gear_ratio):
     :param motor: A String corresponding to the motor name to be rotated
     :param gear_ratio: An integer corresponding to the gear ratio of the motor (19 or 67)
     """
-    return null
+    assert isinstance(motors, str), "motor must be an String"
+    assert isinstance(gear_ratios, int), "gear_ratio must be an integer"
+    assert isinstance(degrees, int), "degrees must be an integer"
+    motor_list = mc.get("motor_values")
+    assert motor in motor_list, motor + " not found in connected motors"
+    assert gear_ratio in [19,67], "Gear ratio must be 19:1 or 67:1"
+    sent_list = [(motor, degrees, gear_ratio)]
+    mc.set("drive_distance", sent_list)
+    
 
 def drive_distance_rotations(rotations, motor, gear_ratio):
     """Drives the specified motor a set number of rotations and holds the motor there. 
@@ -435,18 +453,28 @@ def drive_distance_rotations(rotations, motor, gear_ratio):
     :param motor: A String corresponding to the motor name to be rotated
     :param gear_ratio: An integer corresponding to the gear ratio of the motor (19 or 67)
     """
-    return null
+    assert isinstance(motors, str), "motor must be a String"
+    assert isinstance(gear_ratios, int), "gear_ratio must be an integer"
+    assert isinstance(rotations, int), "degrees must be an integer"
+    motor_list = mc.get("motor_values")
+    assert motor in motor_list, motor + " not found in connected motors"
+    assert gear_ratio in [19,67], "Gear ratio must be 19:1 or 67:1"
+    sent_list = [(motor, rotations*360, gear_ratio)]
+    mc.set("drive_distance", sent_list)
 
 
 def set_drive_mode(mode):
     """Sets the drive mode of all the motors between coasting and full breaking.
 
-    Enter a string ("coast" or "break") to specify if the motors should fully break after movement or coast to a stop. Default mode is breaking after
+    Enter a string ("coast" or "brake") to specify if the motors should fully break after movement or coast to a stop. Default mode is breaking after
     movement
 
-    :param mode: A String ("coast" or "break") corresponding to the selected drive mode.
+    :param mode: A String ("coast" or "brake") corresponding to the selected drive mode.
     """
-    return null
+    mode = mode.lower()
+    assert mode in ["coast", "brake"], mode + " is not a valid drive mode"
+    assert gear_ratio in [19,67], "Gear ratio must be 19:1 or 67:1"
+    mc.set("drive_mode", [mode, "all"])
 
 def change_control_mode_all(mode):
     """Changes PID mode for all motors connected to the robot
@@ -456,16 +484,15 @@ def change_control_mode_all(mode):
     
     Speed PID - Motors run at encoder ticks per second instead of an integer range. Encoder ticks are a proportion of a rotation, similar to degrees
     to check for encoder ticks for each motor, see this website: https://www.pololu.com/category/116/37d-mm-gearmotors
-<<<<<<< HEAD
-=======
-    
->>>>>>> 89ddfd2fc277e6e898e8f34868b62f1736fde635
+
     Position PID - Motors run until at a certain position, using encoder ticks as units. See above website for number of ticks per degree of rotation.
 
     :param mode: A String ("default", "speed", "position") corresponding to the wanted control mode for all motors.
 
     """
-    return null
+    mode = mode.lower()
+    assert mode in ["default", "speed", "position"], mode + " is not a valid control mode"
+    mc.set("control_mode", [mode, "all"])
 
 def change_control_mode(mode, motor):
     """Changes PID mode for specified motors connected to the robot 
@@ -482,7 +509,11 @@ def change_control_mode(mode, motor):
     :param mode: A String ('default', 'speed', 'position') corresponding to the wanted control mode for the specified motor.
 
     """
-    return null
+    mode = mode.lower()
+    assert mode in ["default", "speed", "position"], mode + " is not a valid control mode"
+    motor_list = mc.get("motor_values")
+    assert motor in motor_list, motor + " not found in connected motors"
+    mc.set("control_mode", [mode, motor])
 
 def change_PID_constants(value, constant):
     """Changes a PID constant which error corrects for motor positions.
@@ -495,8 +526,16 @@ def change_PID_constants(value, constant):
     :param value: A decimal corresponding to the new coefficient of a PID constant.
     :param constant: A String ("P", "I", "D") corresponding to the constant to be changed.
     """
-    return null
+    constant = constant.upper()
+    assert constant in ["P", "I", "D"], "invalid constant" + constant
+    mc.set("PID_constant", (constant, value))
+def get_PID_constants():
+    """Returns a dictionary with the key being the constants and the corresponding item as the value of the constant
 
+    Returns a list of 3 tuples with the key containing a String ("P", "I", or "D") corresponding to each of the constants. The item
+    of the dictionary is that constant's current value.
+    """
+    return mc.get("get_PID")
 class SensorValueOutOfBounds(Exception):
     pass
 # pololu.com. 19:1 and 67:1 motors 37D motors geared. Be able to change PID constants. Move and stay - set point. once it is called again, reset and redo function. 
