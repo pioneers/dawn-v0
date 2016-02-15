@@ -23,7 +23,7 @@ export default React.createClass({
   },
   chooseUpdate() {
     dialog.showOpenDialog({
-      filters: [{ name: 'Update Package', extensions: ['tar.gz'] }]
+      filters: [{ name: 'Update Package', extensions: ['gz'] }]
     }, (filepaths)=>{
       if (filepaths === undefined) return;
       this.setState({ updateFilepath: filepaths[0] });
@@ -31,21 +31,22 @@ export default React.createClass({
   },
   chooseSignature() {
     dialog.showOpenDialog({
-      filters: [{ name: 'Update signature', extensions: ['tar.gz.asc'] }]
+      filters: [{ name: 'Update signature', extensions: ['asc'] }]
     }, (filepaths)=>{
       if (filepaths === undefined) return;
       this.setState({ signatureFilepath: filepaths[0] });
     });
   },
   upgradeSoftware() {
+    console.log(this.state.updateFilepath);
     async.map(
       [this.state.updateFilepath, this.state.signatureFilepath],
       fs.readFile, (err, results)=>{
         this.setState({isUploading: true});
         Ansible.sendMessage('update', {
           filename: this.state.updateFilepath.split('/').pop(),
-          update: results[0],
-          signature: results[1]
+          update: results[0].toString('base64'),
+          signature: results[1].toString('base64')
         }, (response)=>{
           this.setState({isUploading: false});
           this.props.hide();
@@ -66,6 +67,8 @@ export default React.createClass({
           <h4>Update Signature (tar.gz.asc file)</h4>
           <h5>{this.state.signatureFilepath ? this.state.signatureFilepath : ''}</h5>
           <Button onClick={ this.chooseSignature }>Choose File</Button>
+          <br/>
+          <strong>Warning: This process will take a few minutes and will disconnect you from the robot.</strong>
         </Modal.Body>
         <Modal.Footer>
           <Button

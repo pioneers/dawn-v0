@@ -7,6 +7,7 @@ import AlertActions from '../actions/AlertActions';
 import EditorToolbar from './EditorToolbar';
 import Mousetrap from 'mousetrap';
 import smalltalk from 'smalltalk';
+import _ from 'lodash';
 import ConsoleOutput from './ConsoleOutput';
 import RobotActions from '../actions/RobotActions';
 import Ansible from '../utils/Ansible';
@@ -92,9 +93,14 @@ export default React.createClass({
   },
   openFile() {
     if (this.hasUnsavedChanges()) {
-      AlertActions.addAlert(
-        'You have unsaved changes.',
-        'Please save or discard them before opening another file.');
+      smalltalk.confirm(
+        'Are you sure?',
+        'You have unsaved changes, opening a new file will discard them!'
+      ).then(()=>{
+        EditorActionCreators.openFile();
+      }, ()=>{
+        console.log('Canceled');
+      });
     } else {
       EditorActionCreators.openFile();
     }
@@ -104,19 +110,17 @@ export default React.createClass({
   },
   createNewFile() {
     if (this.hasUnsavedChanges()) {
-      AlertActions.addAlert(
-        'You have unsaved changes!',
-        'Please save or discard them before creating a new file.');
+      smalltalk.confirm(
+        'Are you sure?',
+        'You have unsaved changes, creating a new file will discard them!'
+      ).then(()=>{
+        EditorActionCreators.createNewFile();
+      }, ()=>{
+        console.log('Canceled');
+      });
     } else {
       EditorActionCreators.createNewFile();
     }
-  },
-  deleteFile() {
-    smalltalk.confirm(
-      'Warning:',
-      'This will delete your file permanently!').then(()=>{
-        EditorActionCreators.deleteFile(this.state.filepath);
-      }, ()=>console.log('Cancel.'))
   },
   editorUpdate(newVal) {
     EditorActionCreators.editorUpdate(newVal);
@@ -146,7 +150,6 @@ export default React.createClass({
           new EditorButton('save', 'Save', this.saveFile, 'floppy-disk'),
           new EditorButton('open', 'Open', this.openFile, 'folder-open'),
           new EditorButton('create', 'New', this.createNewFile, 'file'),
-          new EditorButton('delete', 'Delete', this.deleteFile, 'trash')
         ],
       }, {
         groupId: 'code-execution-buttons',
@@ -187,6 +190,9 @@ export default React.createClass({
     'solarized_light',
     'terminal'
   ],
+  shouldComponentUpdate(nextProps, nextState) {
+    return !(_.isEqual(nextState, this.state) && _.isEqual(nextProps, this.props));
+  },
   render() {
     let consoleHeight = 250;
     let editorHeight = window.innerHeight * 0.66;

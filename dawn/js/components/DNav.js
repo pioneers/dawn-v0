@@ -47,7 +47,7 @@ export default React.createClass({
     });
   },
   getDawnVersion() {
-    return process.env.npm_package_version;
+    return VERSION;
   },
   toggleUpdateModal() {
     this.setState({ showUpdateModal: !this.state.showUpdateModal });
