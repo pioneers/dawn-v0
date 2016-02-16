@@ -11,9 +11,9 @@ To use this module, you must first import it:
 
 >>> from api import Robot
 '''
-import memcache
+#import memcache
 memcache_port = 12357
-mc = memcache.Client(['127.0.0.1:%d' % memcache_port]) # connect to memcache
+#mc = memcache.Client(['127.0.0.1:%d' % memcache_port]) # connect to memcache
 
 motor = {}
 
@@ -81,18 +81,18 @@ def get_all_motors():
 def set_flag(name,light0,light1,light2,light3):  #TODO UID convert to int
     """Sets the brightness of every LED on the team flag.
 
-    Each LED has four levels, represented by integers. Each light is set to 0 (off), 
-    1 (low), 2 (medium), or 3 (high)
+    Each LED has four levels, represented by integers. Each light is set to Flag.OFF, 
+    Flag.LOW, Flag.MED, Flag.HIGH
 
     :param name: A string that identifies the team flag. 
-    :param light0: An integer (0,1,2,3) which sets brightness for LED 0
-    :param light1: An integer (0,1,2,3) which sets brightness for LED 1
-    :param light2: An integer (0,1,2,3) which sets brightness for LED 2
-    :param light3: An integer (0,1,2,3) which sets brightness for LED 3
+    :param light0: An enum (OFF,LOW,MED,HIGH) which sets brightness for LED 0
+    :param light1: An enum (OFF,LOW,MED,HIGH) which sets brightness for LED 1
+    :param light2: An enum (OFF,LOW,MED,HIGH) which sets brightness for LED 2
+    :param light3: An enum (OFF,LOW,MED,HIGH) which sets brightness for LED 3
 
     :Examples:
 
-    >>> set_flag("flag1",3,2,3,0)
+    >>> set_flag("flag1",Flag.LOW,Flag.LOW,Flag.OFF,Flag.HIGH)
 
     """
     correct_range = range(4)
@@ -107,18 +107,18 @@ def set_flag(name,light0,light1,light2,light3):  #TODO UID convert to int
 def set_LED(name,light,value): #TODO UID convert to int
     """Sets the brightness of a specific LED on the team flag.
 
-    Each LED has four levels, represented by integers. Each light is set to 0 (off),
-    1 (low), 2 (medium), or 3 (high). Each light has a specific index associated with it, 
+    Each LED has four levels, represented by integers. Each light is set to Flag.OFF, 
+    Flag.LOW, Flag.MED, Flag.HIGH. Each light has a specific index associated with it, 
     an integer 0, 1, 2, 3.
 
     :param name: A string that identifies the team flag.
     :param light: An integer (0,1,2,3) which identifies which LED top set.
-    :param value: An integer (0,1,2,3) which sets brightness for the specified LED
+    :param value: An enum (OFF,LOW,MED,HIGH) which sets brightness for the specified LED
 
     :Examples: 
 
     >>> set_LED("flag1",2,2)
-    >>> set_LED("flag1",3,2)
+    >>> set_LED("flag1",3,Flag.LOW)
     """
     name = _lookup(name)
     assert light in range(1,5), "Error: light number must be an Integer between 1 and 4 inclusive"
@@ -409,7 +409,7 @@ def drive_distance_all(degrees, motors, gear_ratios):
     assert isinstance(motors, list), "motors must be a list"
     assert isinstance(gear_ratios, list), "gear_ratios must be a list"
     assert isinstance(degrees, list), "degrees must be a list"
-    assert degrees.length = motors.length and degrees.length = gear_ratios.length, "List lengths for all 3 parameters must be equal"
+    assert degrees.length == motors.length and degrees.length == gear_ratios.length, "List lengths for all 3 parameters must be equal"
     motor_list = mc.get("motor_values")
     i = 1
     for motor in motors:
@@ -529,6 +529,7 @@ def change_PID_constants(value, constant):
     constant = constant.upper()
     assert constant in ["P", "I", "D"], "invalid constant" + constant
     mc.set("PID_constant", (constant, value))
+
 def get_PID_constants():
     """Returns a dictionary with the key being the constants and the corresponding item as the value of the constant
 
@@ -536,6 +537,12 @@ def get_PID_constants():
     of the dictionary is that constant's current value.
     """
     return mc.get("get_PID")
+
 class SensorValueOutOfBounds(Exception):
     pass
+class Flag:
+    OFF = 0
+    LOW = 1
+    MED = 2
+    HIGH = 3
 # pololu.com. 19:1 and 67:1 motors 37D motors geared. Be able to change PID constants. Move and stay - set point. once it is called again, reset and redo function. 

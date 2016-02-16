@@ -9,11 +9,11 @@ To use this module, you must first import it:
 
 >>> from api import Gamepads
 '''
-import memcache
+#import memcache
 
 # Connect to memcache
 memcache_port = 12357
-mc = memcache.Client(['127.0.0.1:%d' % memcache_port])
+#   mc = memcache.Client(['127.0.0.1:%d' % memcache_port])
 
 def get_all():
     """Returns a list a list of values for every gamepad connected.
@@ -62,10 +62,10 @@ def get_axis(index,axis):
     or refer to https://w3c.github.io/gamepad/#remapping.
 
     On a standard gamepad:
-    - joystick.LEFT_X represents the horizontal axis of the left joystick
-    - joystick.LEFT_Y represents the vertical axis of the left joystick
-    - joystick.RIGHT_X represents the horizontal axis of the right joystick
-    - joystick.RIGHT_Y represent the vertical axis of the right joystick
+    - Joystick.LEFT_X represents the horizontal axis of the left joystick
+    - Joystick.LEFT_Y represents the vertical axis of the left joystick
+    - Joystick.RIGHT_X represents the horizontal axis of the right joystick
+    - Joystick.RIGHT_Y represent the vertical axis of the right joystick
 
     :param index: The index of the gamepad, usually 0, 1, 2, or 3
     :param axis: An enum (LEFT_X,LEFT_Y,RIGHT_X,RIGHT_Y) which specifies the axis.
@@ -91,8 +91,6 @@ def get_all_buttons(index):
     >>> all_buttons = Gamepads.get_all_buttons(0)
     >>> all_buttons[1]
     True
-    >>> all_buttons
-    [False, True, False, False, False, True, False, False, True, False, False, False]
 
     """
     gamepad_index = mc.get("gamepad")[index]
@@ -141,7 +139,7 @@ def get_mapping(index):
     return gamepad_index['mapping']
 
 #class for enums for buttons.
-class button:
+class Button:
     X = 2
     Y = 3
     A = 0
@@ -161,7 +159,7 @@ class button:
     DPAD_LEFT = 14
 
 #class for enums for joysticks
-class joystick:
+class Joystick:
     LEFT_X = 0
     LEFT_Y = 1
     RIGHT_X = 2
