@@ -89,7 +89,9 @@
 
 <span class="sd">    &gt;&gt;&gt; axes = Gamepads.get_joysticks(0)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gamepad&#39;</span><span class="p">)[</span><span class="n">index</span><span class="p">][</span><span class="s1">&#39;axes&#39;</span><span class="p">]</span></div>
+    <span class="n">gamepad_index</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;gamepad&quot;</span><span class="p">)[</span><span class="n">index</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">gamepad_index</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">,</span> <span class="s2">&quot;gamepad index not found&quot;</span>
+    <span class="k">return</span> <span class="n">gamepad_index</span><span class="p">[</span><span class="s1">&#39;axes&#39;</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="get_axis"><a class="viewcode-back" href="../../api.html#api.Gamepads.get_axis">[docs]</a><span class="k">def</span> <span class="nf">get_axis</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="n">axis</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns the position of a specified joystick.</span>
@@ -100,80 +102,18 @@
 <span class="sd">    or refer to https://w3c.github.io/gamepad/#remapping.</span>
 
 <span class="sd">    On a standard gamepad:</span>
-<span class="sd">    - axes[0] represents the horizontal axis of the left joystick</span>
-<span class="sd">    - axes[1] represents the vertical axis of the left joystick</span>
-<span class="sd">    - axes[2] represents the horizontal axis of the right joystick</span>
-<span class="sd">    - axes[3] represent the vertical axis of the right joystick</span>
+<span class="sd">    - Joystick.LEFT_X represents the horizontal axis of the left joystick</span>
+<span class="sd">    - Joystick.LEFT_Y represents the vertical axis of the left joystick</span>
+<span class="sd">    - Joystick.RIGHT_X represents the horizontal axis of the right joystick</span>
+<span class="sd">    - Joystick.RIGHT_Y represent the vertical axis of the right joystick</span>
 
 <span class="sd">    :param index: The index of the gamepad, usually 0, 1, 2, or 3</span>
-<span class="sd">    :param axis: An integer (0,1,2,3) which specifies the axis.</span>
+<span class="sd">    :param axis: An enum (LEFT_X,LEFT_Y,RIGHT_X,RIGHT_Y) which specifies the axis.</span>
 <span class="sd">    :returns: A list of 4 decimal values, each corresponding to a joystick axis.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">get_joysticks</span><span class="p">(</span><span class="n">index</span><span class="p">)[</span><span class="n">axis</span><span class="p">]</span></div>
-
-<div class="viewcode-block" id="get_left_x"><a class="viewcode-back" href="../../api.html#api.Gamepads.get_left_x">[docs]</a><span class="k">def</span> <span class="nf">get_left_x</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns the position of the left joystick on the x axis.</span>
-
-<span class="sd">    The value is between -1 and 1, which represents where the left joystick is along</span>
-<span class="sd">    the x axis. -1 means the left joystick is pushed all the way to the left.</span>
-
-<span class="sd">    :param index: The index of the gamepad, usually 0, 1, 2, or 3</span>
-<span class="sd">    :returns: A double between -1 and 1, negative is pushed to the left.</span>
-
-<span class="sd">    :Examples:</span>
-
-<span class="sd">    &gt;&gt;&gt; left_x = Gamepads.get_left_x(0)</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">get_joysticks</span><span class="p">(</span><span class="n">index</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
-
-<div class="viewcode-block" id="get_left_y"><a class="viewcode-back" href="../../api.html#api.Gamepads.get_left_y">[docs]</a><span class="k">def</span> <span class="nf">get_left_y</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns the position of the left joystick on the y axis.</span>
-
-<span class="sd">    The value is between -1 and 1, which represents where the left joystick is along</span>
-<span class="sd">    the y axis. -1 means the left joystick is pushed all the way forward.</span>
-
-<span class="sd">    :param index: The index of the gamepad, usually 0, 1, 2, or 3</span>
-<span class="sd">    :returns: A double between -1 and 1, negative is pushed forward.</span>
-
-<span class="sd">    :Examples:</span>
-
-<span class="sd">    &gt;&gt;&gt; left_y = Gamepads.get_left_y(0)</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">get_joysticks</span><span class="p">(</span><span class="n">index</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span></div>
-
-<div class="viewcode-block" id="get_right_x"><a class="viewcode-back" href="../../api.html#api.Gamepads.get_right_x">[docs]</a><span class="k">def</span> <span class="nf">get_right_x</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns the position of the right joystick on the x axis.</span>
-
-<span class="sd">    The value is between -1 and 1, which represents where the right joystick is along</span>
-<span class="sd">    the x axis. -1 means the right joystick is pushed all the way to the left.</span>
-
-<span class="sd">    :param index: The index of the gamepad, usually 0, 1, 2, or 3</span>
-<span class="sd">    :returns: A double between -1 and 1, negative is pushed to the left.</span>
-
-<span class="sd">    :Examples:</span>
-
-<span class="sd">    &gt;&gt;&gt; right_x = Gamepads.get_right_x(0)</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">get_joysticks</span><span class="p">(</span><span class="n">index</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span></div>
-
-<div class="viewcode-block" id="get_right_y"><a class="viewcode-back" href="../../api.html#api.Gamepads.get_right_y">[docs]</a><span class="k">def</span> <span class="nf">get_right_y</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns the position of the right joystick on the y axis.</span>
-
-<span class="sd">    The value is between -1 and 1, which represents where the right joystick is along</span>
-<span class="sd">    the x axis. -1 means the right joystick is pushed all the way forward.</span>
-
-<span class="sd">    :param index: The index of the gamepad, usually 0, 1, 2, or 3</span>
-<span class="sd">    :returns: A decimal between -1 and 1, negative is pushed to the forward</span>
-
-<span class="sd">    :Examples:</span>
-
-<span class="sd">    &gt;&gt;&gt; right_y = Gamepads.get_right_y(0)</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">get_joysticks</span><span class="p">(</span><span class="n">index</span><span class="p">)[</span><span class="mi">3</span><span class="p">]</span></div>
+    <span class="n">gamepad_index</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;gamepad&quot;</span><span class="p">)[</span><span class="n">index</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">gamepad_index</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">,</span> <span class="s2">&quot;gamepad index not found&quot;</span>
+    <span class="k">return</span> <span class="n">gamepad_index</span><span class="p">[</span><span class="s1">&#39;axes&#39;</span><span class="p">][</span><span class="n">axis</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="get_all_buttons"><a class="viewcode-back" href="../../api.html#api.Gamepads.get_all_buttons">[docs]</a><span class="k">def</span> <span class="nf">get_all_buttons</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns a list of button values corresponding to the specified gamepad.</span>
@@ -191,11 +131,11 @@
 <span class="sd">    &gt;&gt;&gt; all_buttons = Gamepads.get_all_buttons(0)</span>
 <span class="sd">    &gt;&gt;&gt; all_buttons[1]</span>
 <span class="sd">    True</span>
-<span class="sd">    &gt;&gt;&gt; all_buttons</span>
-<span class="sd">    [False, True, False, False, False, True, False, False, True, False, False, False]</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gamepad&#39;</span><span class="p">)[</span><span class="n">index</span><span class="p">][</span><span class="s1">&#39;buttons&#39;</span><span class="p">]]</span></div>
+    <span class="n">gamepad_index</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;gamepad&quot;</span><span class="p">)[</span><span class="n">index</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">gamepad_index</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">,</span> <span class="s2">&quot;gamepad index not found&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">gamepad_index</span><span class="p">[</span><span class="s1">&#39;buttons&#39;</span><span class="p">]]</span></div>
 
 <div class="viewcode-block" id="get_button"><a class="viewcode-back" href="../../api.html#api.Gamepads.get_button">[docs]</a><span class="k">def</span> <span class="nf">get_button</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="n">button</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns whether a button is pressed or not.</span>
@@ -206,7 +146,7 @@
 <span class="sd">    https://w3c.github.io/gamepad/#remapping.</span>
 
 <span class="sd">    :param index: The index of the gamepad, usually 0, 1, 2, or 3</span>
-<span class="sd">    :param button: The number of the button. See above for mappings.</span>
+<span class="sd">    :param button: Enum of button, see api documentation for more details</span>
 <span class="sd">    :returns: A boolean either True (pressed) or False (not pressed) </span>
 
 <span class="sd">    :Examples:</span>
@@ -224,7 +164,9 @@
 <span class="sd">    :param index: The index of the gamepad, usually 0, 1, 2, or 3</span>
 <span class="sd">    :returns: A boolean value for whether or not that gamepad is connected</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gamepad&#39;</span><span class="p">)[</span><span class="n">index</span><span class="p">][</span><span class="s1">&#39;connected&#39;</span><span class="p">]</span></div>
+    <span class="n">gamepad_index</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;gamepad&quot;</span><span class="p">)[</span><span class="n">index</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">gamepad_index</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">,</span> <span class="s2">&quot;gamepad index not found&quot;</span>
+    <span class="k">return</span> <span class="n">gamepad_index</span><span class="p">[</span><span class="s1">&#39;connected&#39;</span><span class="p">]</span></div>
 
 
 <span class="c1"># If the user knows the layout of the device and it corresponds to the Standard Gamepad</span>
@@ -232,8 +174,36 @@
 <div class="viewcode-block" id="get_mapping"><a class="viewcode-back" href="../../api.html#api.Gamepads.get_mapping">[docs]</a><span class="k">def</span> <span class="nf">get_mapping</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns the mapping of the specified gamepad. Usually this value will be &#39;standard.&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gamepad&#39;</span><span class="p">)[</span><span class="n">index</span><span class="p">][</span><span class="s1">&#39;mapping&#39;</span><span class="p">]</span></div>
+    <span class="n">gamepad_index</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;gamepad&quot;</span><span class="p">)[</span><span class="n">index</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">gamepad_index</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">,</span> <span class="s2">&quot;gamepad index not found&quot;</span>
+    <span class="k">return</span> <span class="n">gamepad_index</span><span class="p">[</span><span class="s1">&#39;mapping&#39;</span><span class="p">]</span></div>
 
+<span class="c1">#class for enums for buttons.</span>
+<div class="viewcode-block" id="Button"><a class="viewcode-back" href="../../api.html#api.Gamepads.Button">[docs]</a><span class="k">class</span> <span class="nc">Button</span><span class="p">:</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">START</span> <span class="o">=</span> <span class="mi">9</span>
+    <span class="n">BACK</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">R_TRIGGER</span> <span class="o">=</span> <span class="mi">7</span>
+    <span class="n">L_TRIGGER</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">L_BUMPER</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">R_BUMPER</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">R_STICK</span> <span class="o">=</span> <span class="mi">11</span>
+    <span class="n">L_STICK</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">XBOX</span> <span class="o">=</span> <span class="mi">16</span>
+    <span class="n">DPAD_DOWN</span> <span class="o">=</span> <span class="mi">13</span>
+    <span class="n">DPAD_UP</span> <span class="o">=</span> <span class="mi">12</span>
+    <span class="n">DPAD_RIGHT</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">DPAD_LEFT</span> <span class="o">=</span> <span class="mi">14</span></div>
+
+<span class="c1">#class for enums for joysticks</span>
+<div class="viewcode-block" id="Joystick"><a class="viewcode-back" href="../../api.html#api.Gamepads.Joystick">[docs]</a><span class="k">class</span> <span class="nc">Joystick</span><span class="p">:</span>
+    <span class="n">LEFT_X</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">LEFT_Y</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">RIGHT_X</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">RIGHT_Y</span> <span class="o">=</span> <span class="mi">3</span></div>
 </pre></div>
 
           </div>
