@@ -241,32 +241,32 @@ while True:
     
     #Set Team Flag
     flag_values = mc.get('flag_values')
-    if not flag_values:
+    if flag_values:
         set_flags(flag_values)
 
     #Set Servos
     servo_values = mc.get('servo_values')
-    if not servo_values:
+    if servo_values:
         set_servos(servo_values)
 
     #Drive distance for grizzlies
     drive_distance = mc.get('drive_distance')
-    if not drive_distance:
+    if drive_distance:
         drive_set_distance(drive_distance)
 
     #set control mode 
     control_mode = mc.get("control_mode")
-    if not control_mode:
+    if control_mode:
         set_control_mode(control_mode)
 
     #set drive mode
     drive_mode = mc.get("drive_mode")
-    if not control_mode:
+    if control_mode:
         set_control_mode(control_mode)
 
     #rebind PID constants
     PID_rebind= mc.get("PID_constants")
-    if not PID_c:
+    if PID_c:
         set_PID(PID_rebind)
 
     #refresh PID constants

@@ -11,9 +11,9 @@ To use this module, you must first import it:
 
 >>> from api import Robot
 '''
-#import memcache
+import memcache
 memcache_port = 12357
-#mc = memcache.Client(['127.0.0.1:%d' % memcache_port]) # connect to memcache
+mc = memcache.Client(['127.0.0.1:%d' % memcache_port]) # connect to memcache
 
 motor = {}
 

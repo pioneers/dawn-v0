@@ -9,11 +9,11 @@ To use this module, you must first import it:
 
 >>> from api import Gamepads
 '''
-#import memcache
+import memcache
 
 # Connect to memcache
 memcache_port = 12357
-#mc = memcache.Client(['127.0.0.1:%d' % memcache_port])
+mc = memcache.Client(['127.0.0.1:%d' % memcache_port])
 
 def get_all():
     """Returns a list a list of values for every gamepad connected.
@@ -62,80 +62,18 @@ def get_axis(index,axis):
     or refer to https://w3c.github.io/gamepad/#remapping.
 
     On a standard gamepad:
-    - axes[0] represents the horizontal axis of the left joystick
-    - axes[1] represents the vertical axis of the left joystick
-    - axes[2] represents the horizontal axis of the right joystick
-    - axes[3] represent the vertical axis of the right joystick
+    - joystick.LEFT_X represents the horizontal axis of the left joystick
+    - joystick.LEFT_Y represents the vertical axis of the left joystick
+    - joystick.RIGHT_X represents the horizontal axis of the right joystick
+    - joystick.RIGHT_Y represent the vertical axis of the right joystick
 
     :param index: The index of the gamepad, usually 0, 1, 2, or 3
-    :param axis: An integer (0,1,2,3) which specifies the axis.
+    :param axis: An enum (LEFT_X,LEFT_Y,RIGHT_X,RIGHT_Y) which specifies the axis.
     :returns: A list of 4 decimal values, each corresponding to a joystick axis.
     """
-    return get_joysticks(index)[axis]
-
-def get_left_x(index):
-    """Returns the position of the left joystick on the x axis.
-
-    The value is between -1 and 1, which represents where the left joystick is along
-    the x axis. -1 means the left joystick is pushed all the way to the left.
-
-    :param index: The index of the gamepad, usually 0, 1, 2, or 3
-    :returns: A double between -1 and 1, negative is pushed to the left.
-
-    :Examples:
-
-    >>> left_x = Gamepads.get_left_x(0)
-
-    """
-    return get_joysticks(index)[0]
-
-def get_left_y(index):
-    """Returns the position of the left joystick on the y axis.
-
-    The value is between -1 and 1, which represents where the left joystick is along
-    the y axis. -1 means the left joystick is pushed all the way forward.
-
-    :param index: The index of the gamepad, usually 0, 1, 2, or 3
-    :returns: A double between -1 and 1, negative is pushed forward.
-
-    :Examples:
-
-    >>> left_y = Gamepads.get_left_y(0)
-
-    """
-    return get_joysticks(index)[1]
-
-def get_right_x(index):
-    """Returns the position of the right joystick on the x axis.
-
-    The value is between -1 and 1, which represents where the right joystick is along
-    the x axis. -1 means the right joystick is pushed all the way to the left.
-
-    :param index: The index of the gamepad, usually 0, 1, 2, or 3
-    :returns: A double between -1 and 1, negative is pushed to the left.
-
-    :Examples:
-
-    >>> right_x = Gamepads.get_right_x(0)
-
-    """
-    return get_joysticks(index)[2]
-
-def get_right_y(index):
-    """Returns the position of the right joystick on the y axis.
-
-    The value is between -1 and 1, which represents where the right joystick is along
-    the x axis. -1 means the right joystick is pushed all the way forward.
-
-    :param index: The index of the gamepad, usually 0, 1, 2, or 3
-    :returns: A decimal between -1 and 1, negative is pushed to the forward
-
-    :Examples:
-
-    >>> right_y = Gamepads.get_right_y(0)
-
-    """
-    return get_joysticks(index)[3]
+    gamepad_index = mc.get("gamepad")[index]
+    assert gamepad_index != None, "gamepad index not found"
+    return gamepad_index['axes'][axis]
 
 def get_all_buttons(index):
     """Returns a list of button values corresponding to the specified gamepad.
@@ -180,7 +118,6 @@ def get_button(index,button):
     False
 
     """
-
     return get_all_buttons(index)[button] == 1;
 
 def get_is_connected(index):
@@ -205,20 +142,27 @@ def get_mapping(index):
 
 #class for enums for buttons.
 class button:
-    x = 2
-    y = 3
-    a = 0
-    b = 1
-    start = 9
-    back = 8
-    R_trigger = 7
-    L_trigger = 6
-    L_bumper = 4
-    R_bumper = 5
-    R_stick = 11
-    L_stick = 10
-    xbox = 16
-    dpad_down = 13
-    dpad_up = 12
-    dpad_right = 15
-    dpad_left = 14
+    X = 2
+    Y = 3
+    A = 0
+    B = 1
+    START = 9
+    BACK = 8
+    R_TRIGGER = 7
+    L_TRIGGER = 6
+    L_BUMPER = 4
+    R_BUMPER = 5
+    R_STICK = 11
+    L_STICK = 10
+    XBOX = 16
+    DPAD_DOWN = 13
+    DPAD_UP = 12
+    DPAD_RIGHT = 15
+    DPAD_LEFT = 14
+
+#class for enums for joysticks
+class joystick:
+    LEFT_X = 0
+    LEFT_Y = 1
+    RIGHT_X = 2
+    RIGHT_Y = 3
