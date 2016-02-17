@@ -64,7 +64,7 @@
     <span class="sd">&quot;&quot;&quot;Returns the current power value for a motor.</span>
 
 <span class="sd">    :param name: A string that identifies the motor</span>
-<span class="sd">    :returns: A value between -100 and 100, which is the power level of that motor.</span>
+<span class="sd">    :returns: A value between -1 and 1, which is the power level of that motor.</span>
 
 <span class="sd">    :Examples:</span>
 
@@ -74,7 +74,7 @@
     <span class="n">name_to_value</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;motor_values&#39;</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Type Mismatch: Must pass in a string&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">name_to_value</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">name_to_value</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">/</span><span class="mi">100</span>
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Motor name not found.&quot;</span><span class="p">)</span></div>
 
@@ -82,19 +82,19 @@
     <span class="sd">&quot;&quot;&quot;Sets a motor to the specified power value.</span>
 
 <span class="sd">    :param name: A string that identifies the motor.</span>
-<span class="sd">    :param value: A decimal value between -100 and 100, the power level you want to set.</span>
+<span class="sd">    :param value: A decimal value between -1 and 1, the power level you want to set.</span>
 
 <span class="sd">    :Examples:</span>
 
-<span class="sd">    &gt;&gt;&gt; set_motor(&quot;motor1&quot;, 50)</span>
+<span class="sd">    &gt;&gt;&gt; set_motor(&quot;motor1&quot;, .50)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Type Mismatch: Must pass in a string to name.&quot;</span>
     <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">int</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">float</span><span class="p">,</span> <span class="s2">&quot;Type Mismatch: Must pass in an integer or float to value.&quot;</span>
-    <span class="k">assert</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">100</span> <span class="ow">and</span> <span class="n">value</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;Motor value must be a decimal between -100 and 100 inclusive.&quot;</span>
+    <span class="k">assert</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">value</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Motor value must be a decimal between -1 and 1 inclusive.&quot;</span>
     <span class="n">name_to_value</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;motor_values&#39;</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">name_to_value</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">name_to_value</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">*</span><span class="mi">100</span>
         <span class="n">mc</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;motor_values&#39;</span><span class="p">,</span> <span class="n">name_to_value</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;No motor with that name&quot;</span><span class="p">)</span></div>
@@ -520,7 +520,7 @@
     <span class="sd">&quot;&quot;&quot;Changes PID mode for all motors connected to the robot</span>
 
 <span class="sd">    This changes the control mode for inputing values into all of the motors. </span>
-<span class="sd">    Default mode - No_PID which means one inputs a range of integers from -100 to 100 and the motor runs at a proportion corresponding to that range.</span>
+<span class="sd">    Default mode - No_PID which means one inputs a range of floats from -1 to 1 and the motor runs at a proportion corresponding to that range.</span>
 <span class="sd">    </span>
 <span class="sd">    Speed PID - Motors run at encoder ticks per second instead of an integer range. Encoder ticks are a proportion of a rotation, similar to degrees</span>
 <span class="sd">    to check for encoder ticks for each motor, see this website: https://www.pololu.com/category/116/37d-mm-gearmotors</span>
@@ -539,7 +539,7 @@
 
 <span class="sd">    This changes the control mode for inputing values into the specified motors. </span>
 
-<span class="sd">    Default mode - No_PID which means one inputs a range of integers from -100 to 100 and the motor runs at a proportion corresponding to that range.</span>
+<span class="sd">    Default mode - No_PID which means one inputs a range of integers from -1 to 1 and the motor runs at a proportion corresponding to that range.</span>
 <span class="sd">    </span>
 <span class="sd">    Speed PID - Motors run at encoder ticks per second instead of an integer range. Encoder ticks are a proportion of a rotation, similar to degrees</span>
 <span class="sd">    to check for encoder ticks for each motor, see this website: https://www.pololu.com/category/116/37d-mm-gearmotors</span>

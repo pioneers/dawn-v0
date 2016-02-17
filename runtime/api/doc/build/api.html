@@ -391,7 +391,7 @@ For more information, refer to a mentor or the wiki page: <a class="reference ex
 <code class="descclassname">api.Robot.</code><code class="descname">change_control_mode</code><span class="sig-paren">(</span><em>mode</em>, <em>motor</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/Robot.html#change_control_mode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.Robot.change_control_mode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Changes PID mode for specified motors connected to the robot</p>
 <p>This changes the control mode for inputing values into the specified motors.</p>
-<p>Default mode - No_PID which means one inputs a range of integers from -100 to 100 and the motor runs at a proportion corresponding to that range.</p>
+<p>Default mode - No_PID which means one inputs a range of integers from -1 to 1 and the motor runs at a proportion corresponding to that range.</p>
 <p>Speed PID - Motors run at encoder ticks per second instead of an integer range. Encoder ticks are a proportion of a rotation, similar to degrees
 to check for encoder ticks for each motor, see this website: <a class="reference external" href="https://www.pololu.com/category/116/37d-mm-gearmotors">https://www.pololu.com/category/116/37d-mm-gearmotors</a></p>
 <p>Position PID - Motors run until at a certain position, using encoder ticks as units. See above website for number of ticks per degree of rotation.</p>
@@ -410,7 +410,7 @@ to check for encoder ticks for each motor, see this website: <a class="reference
 <code class="descclassname">api.Robot.</code><code class="descname">change_control_mode_all</code><span class="sig-paren">(</span><em>mode</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/Robot.html#change_control_mode_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.Robot.change_control_mode_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Changes PID mode for all motors connected to the robot</p>
 <p>This changes the control mode for inputing values into all of the motors. 
-Default mode - No_PID which means one inputs a range of integers from -100 to 100 and the motor runs at a proportion corresponding to that range.</p>
+Default mode - No_PID which means one inputs a range of floats from -1 to 1 and the motor runs at a proportion corresponding to that range.</p>
 <p>Speed PID - Motors run at encoder ticks per second instead of an integer range. Encoder ticks are a proportion of a rotation, similar to degrees
 to check for encoder ticks for each motor, see this website: <a class="reference external" href="https://www.pololu.com/category/116/37d-mm-gearmotors">https://www.pololu.com/category/116/37d-mm-gearmotors</a></p>
 <p>Position PID - Motors run until at a certain position, using encoder ticks as units. See above website for number of ticks per degree of rotation.</p>
@@ -739,7 +739,7 @@ a decimal between 0 and 1, where 1 indicates higher intensity.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> &#8211; A string that identifies the motor</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A value between -100 and 100, which is the power level of that motor.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A value between -1 and 1, which is the power level of that motor.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
 </tr>
@@ -899,7 +899,7 @@ Flag.LOW, Flag.MED, Flag.HIGH</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>name</strong> &#8211; A string that identifies the motor.</li>
-<li><strong>value</strong> &#8211; A decimal value between -100 and 100, the power level you want to set.</li>
+<li><strong>value</strong> &#8211; A decimal value between -1 and 1, the power level you want to set.</li>
 </ul>
 </td>
 </tr>
@@ -907,7 +907,7 @@ Flag.LOW, Flag.MED, Flag.HIGH</p>
 </tr>
 </tbody>
 </table>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">set_motor</span><span class="p">(</span><span class="s2">&quot;motor1&quot;</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">set_motor</span><span class="p">(</span><span class="s2">&quot;motor1&quot;</span><span class="p">,</span> <span class="o">.</span><span class="mi">50</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
