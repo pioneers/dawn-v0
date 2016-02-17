@@ -24,7 +24,7 @@ def get_motor(name):
     """Returns the current power value for a motor.
 
     :param name: A string that identifies the motor
-    :returns: A value between -100 and 100, which is the power level of that motor.
+    :returns: A value between -1 and 1, which is the power level of that motor.
 
     :Examples:
 
@@ -34,7 +34,7 @@ def get_motor(name):
     name_to_value = mc.get('motor_values')
     assert type(name) is str, "Type Mismatch: Must pass in a string"
     try:
-        return name_to_value[name]
+        return name_to_value[name]/100
     except KeyError:
         raise KeyError("Motor name not found.")
 
@@ -42,19 +42,19 @@ def set_motor(name, value):
     """Sets a motor to the specified power value.
 
     :param name: A string that identifies the motor.
-    :param value: A decimal value between -100 and 100, the power level you want to set.
+    :param value: A decimal value between -1 and 1, the power level you want to set.
 
     :Examples:
 
-    >>> set_motor("motor1", 50)
+    >>> set_motor("motor1", .50)
 
     """
     assert type(name) is str, "Type Mismatch: Must pass in a string to name."
     assert type(value) is int or type(name) is float, "Type Mismatch: Must pass in an integer or float to value."
-    assert value <= 100 and value >= -100, "Motor value must be a decimal between -100 and 100 inclusive."
+    assert value <= 1 and value >= -1, "Motor value must be a decimal between -1 and 1 inclusive."
     name_to_value = mc.get('motor_values')
     try:
-        name_to_value[name] = value
+        name_to_value[name] = value*100
         mc.set('motor_values', name_to_value)
     except KeyError:
         raise KeyError("No motor with that name")
@@ -480,7 +480,7 @@ def change_control_mode_all(mode):
     """Changes PID mode for all motors connected to the robot
 
     This changes the control mode for inputing values into all of the motors. 
-    Default mode - No_PID which means one inputs a range of integers from -100 to 100 and the motor runs at a proportion corresponding to that range.
+    Default mode - No_PID which means one inputs a range of floats from -1 to 1 and the motor runs at a proportion corresponding to that range.
     
     Speed PID - Motors run at encoder ticks per second instead of an integer range. Encoder ticks are a proportion of a rotation, similar to degrees
     to check for encoder ticks for each motor, see this website: https://www.pololu.com/category/116/37d-mm-gearmotors
@@ -499,7 +499,7 @@ def change_control_mode(mode, motor):
 
     This changes the control mode for inputing values into the specified motors. 
 
-    Default mode - No_PID which means one inputs a range of integers from -100 to 100 and the motor runs at a proportion corresponding to that range.
+    Default mode - No_PID which means one inputs a range of integers from -1 to 1 and the motor runs at a proportion corresponding to that range.
     
     Speed PID - Motors run at encoder ticks per second instead of an integer range. Encoder ticks are a proportion of a rotation, similar to degrees
     to check for encoder ticks for each motor, see this website: https://www.pololu.com/category/116/37d-mm-gearmotors
