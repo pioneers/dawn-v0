@@ -13,12 +13,14 @@ app.on('window-all-closed', function() {
 });
 
 app.on('ready', function() {
-  mainWindow = new BrowserWindow({width: 1360, height: 800});
+
+  mainWindow = new BrowserWindow();
+  mainWindow.maximize();
 
   mainWindow.loadURL('file://' + __dirname + '/static/index.html');
-
-  mainWindow.webContents.openDevTools(); // Open dev tools
-
+  if (process.env.NODE_ENV === 'development') {
+    mainWindow.webContents.openDevTools(); // Open dev tools
+  }
   mainWindow.on('closed', function() {
     mainWindow = null;
   });

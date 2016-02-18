@@ -3,14 +3,19 @@ import AceEditor from 'react-ace';
 import brace from 'brace';
 import EditorActionCreators from '../actions/EditorActionCreators';
 import EditorStore from '../stores/EditorStore';
+import AlertActions from '../actions/AlertActions';
 import EditorToolbar from './EditorToolbar';
 import Mousetrap from 'mousetrap';
 import smalltalk from 'smalltalk';
+import _ from 'lodash';
 import ConsoleOutput from './ConsoleOutput';
 import RobotActions from '../actions/RobotActions';
 import Ansible from '../utils/Ansible';
 import {Panel} from 'react-bootstrap';
 import { EditorButton } from './EditorClasses';
+import ace from 'brace';
+import 'brace/ext/language_tools';
+import 'brace/ext/searchbox';
 import 'brace/mode/python';
 // React-ace themes
 import 'brace/theme/monokai';
@@ -23,6 +28,9 @@ import 'brace/theme/textmate';
 import 'brace/theme/solarized_dark';
 import 'brace/theme/solarized_light';
 import 'brace/theme/terminal';
+import {remote} from 'electron';
+let langtools = ace.acequire('ace/ext/language_tools');
+let storage = remote.require('electron-json-storage');
 
 export default React.createClass({
   getInitialState() {
@@ -31,10 +39,12 @@ export default React.createClass({
       filepath: null,
       latestSaveCode: '',
       editorCode: '',
-      editorTheme: localStorage.getItem('editorTheme') || 'monokai'
+      editorTheme: 'github'
     };
   },
   componentDidMount() {
+    this.refs.CodeEditor.editor.setOption('enableBasicAutocompletion', true);
+
     Mousetrap.prototype.stopCallback = function(e, element, combo) {
       return false; // Always respond to keyboard combos
     };
@@ -52,6 +62,22 @@ export default React.createClass({
       EditorActionCreators.readFilepath(lastFile);
     }
 
+    storage.has('editorTheme').then((hasKey)=>{
+      if (hasKey) {
+        storage.get('editorTheme').then((data)=>{
+          this.setState({
+            editorTheme: data.theme
+          });
+        });
+      } else {
+        storage.set('editorTheme', {
+          theme: 'github'
+        }, (err)=>{
+          if (err) throw err;
+        });
+      }
+    });
+
     EditorStore.on('change', this.updateEditorData);
   },
   componentWillUnmount() {
@@ -67,10 +93,14 @@ export default React.createClass({
   },
   openFile() {
     if (this.hasUnsavedChanges()) {
-      smalltalk.alert(
-        'You have unsaved changes.',
-        'Please save or discard them before opening another file.'
-      ).then(()=>console.log('Ok.'), ()=>console.log('Cancel.'));
+      smalltalk.confirm(
+        'Are you sure?',
+        'You have unsaved changes, opening a new file will discard them!'
+      ).then(()=>{
+        EditorActionCreators.openFile();
+      }, ()=>{
+        console.log('Canceled');
+      });
     } else {
       EditorActionCreators.openFile();
     }
@@ -80,20 +110,17 @@ export default React.createClass({
   },
   createNewFile() {
     if (this.hasUnsavedChanges()) {
-      smalltalk.alert(
-        'You have unsaved changes.',
-        'Please save or discard them before creating a new file.'
-      ).then(()=>console.log('Ok.'), ()=>console.log('Cancel.'));
+      smalltalk.confirm(
+        'Are you sure?',
+        'You have unsaved changes, creating a new file will discard them!'
+      ).then(()=>{
+        EditorActionCreators.createNewFile();
+      }, ()=>{
+        console.log('Canceled');
+      });
     } else {
       EditorActionCreators.createNewFile();
     }
-  },
-  deleteFile() {
-    smalltalk.confirm(
-      'Warning:',
-      'This will delete your file permanently!').then(()=>{
-        EditorActionCreators.deleteFile(this.state.filepath);
-      }, ()=>console.log('Cancel.'))
   },
   editorUpdate(newVal) {
     EditorActionCreators.editorUpdate(newVal);
@@ -123,7 +150,6 @@ export default React.createClass({
           new EditorButton('save', 'Save', this.saveFile, 'floppy-disk'),
           new EditorButton('open', 'Open', this.openFile, 'folder-open'),
           new EditorButton('create', 'New', this.createNewFile, 'file'),
-          new EditorButton('delete', 'Delete', this.deleteFile, 'trash')
         ],
       }, {
         groupId: 'code-execution-buttons',
@@ -147,7 +173,9 @@ export default React.createClass({
     return (this.state.latestSaveCode !== this.state.editorCode);
   },
   changeTheme(theme) {
-    localStorage.setItem('editorTheme', theme);
+    storage.set('editorTheme', {theme: theme}, (err)=>{
+      if (err) throw err;
+    });
     this.setState({editorTheme: theme});
   },
   themes: [
@@ -162,9 +190,12 @@ export default React.createClass({
     'solarized_light',
     'terminal'
   ],
+  shouldComponentUpdate(nextProps, nextState) {
+    return !(_.isEqual(nextState, this.state) && _.isEqual(nextProps, this.props));
+  },
   render() {
     let consoleHeight = 250;
-    let editorHeight = 530;
+    let editorHeight = window.innerHeight * 0.66;
     return (
       <Panel
         header={'Editing: ' + this.pathToName(this.state.filepath) +
