@@ -30,6 +30,7 @@ import time
 from flask import Flask, copy_current_request_context, request
 from flask.ext.socketio import SocketIO
 import memcache
+from base64 import b64decode
 
 # connect to memcache
 memcache_port = 12357
@@ -68,7 +69,6 @@ def ansible_server(send_queue, recv_queue):
                 time.sleep(.02)
 
     send_p = Thread(target=send_process, args=(send_queue,))
-    send_p.daemon = True
     send_p.start()
 
     socketio.run(app, host='0.0.0.0')

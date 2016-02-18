@@ -1,4 +1,5 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
+import fs from 'fs';
 import { remote } from 'electron';
 const storage = remote.require('electron-json-storage');
 
@@ -46,6 +47,8 @@ function initAnsible() {
   });
 }
 
+
+
 /*
  * Module for communicating with the runtime.
  */
@@ -54,22 +57,26 @@ let Ansible = {
     initAnsible();
   },
   /* Private, use sendMessage */
-  _send(obj) {
+  _send(obj, callback) {
     if (socket !== null) {
-      return socket.emit('message', JSON.stringify(obj));
+      return socket.emit('message', JSON.stringify(obj), (response)=>{
+        if(callback) {
+          callback(response);
+        }
+      });
     } else {
       console.log('Socket is not initialized!');
     }
   },
-  /* Send data over ZMQ to the runtime */
-  sendMessage(msgType, content) {
+  /* Send data over SocketIO to the runtime */
+  sendMessage(msgType, content, callback) {
     let msg = {
       header: {
         msg_type: msgType
       },
       content: content
     };
-    this._send(msg);
+    this._send(msg, callback);
   }
 };
 
