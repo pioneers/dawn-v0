@@ -16,7 +16,7 @@ module.exports = {
     CLEAR_EDITOR: null,
     UPDATE_CONSOLE: null,
     UPDATE_TIMER: null,
-    UPDATE_ROBOT: null
+    UPDATE_ROBOT: null,
     ADD_ALERT: null,
     REMOVE_ALERT: null
   }),
