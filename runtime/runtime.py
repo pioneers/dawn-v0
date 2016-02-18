@@ -44,8 +44,14 @@ def init_battery():
             battery_UID = dev[0]
     if not battery_UID:
         stop_motors()
-        ansible
-        raise Exception("No Battery Buzzer Found") #TODO Raise Errors correctly
+        ansible.send_message('Add_ALERT', {
+        'payload': {
+            'heading': "Battery Error", # TODO: Make this not a lie
+            'message': "Battery buzzer not connected. Please connect and restart the robot" #TODO Implement On UI Side 
+            }
+        time.sleep(1)
+        })
+        raise Exception('Battery buzzer not connected') #TODO Send to UI
     battery_safe = bool(h.getData(battery_UID,dataUpdate)[0]) #TODO What value does battery buzzer return
 
 def get_all_data(connectedDevices):

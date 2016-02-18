@@ -9,9 +9,10 @@ To use this module, you must first import it:
 
 >>> from api import Gamepads
 '''
-import memcache
+
 
 # Connect to memcache
+import memcache
 memcache_port = 12357
 mc = memcache.Client(['127.0.0.1:%d' % memcache_port])
 
@@ -140,23 +141,23 @@ def get_mapping(index):
 
 #class for enums for buttons.
 class Button:
-    X = 2
-    Y = 3
     A = 0
     B = 1
-    START = 9
-    BACK = 8
-    R_TRIGGER = 7
-    L_TRIGGER = 6
+    X = 2
+    Y = 3
     L_BUMPER = 4
     R_BUMPER = 5
-    R_STICK = 11
+    L_TRIGGER = 6
+    R_TRIGGER = 7
+    BACK = 8
+    START = 9
     L_STICK = 10
-    XBOX = 16
-    DPAD_DOWN = 13
+    R_STICK = 11
     DPAD_UP = 12
-    DPAD_RIGHT = 15
+    DPAD_DOWN = 13
     DPAD_LEFT = 14
+    DPAD_RIGHT = 15
+    XBOX = 16
 
 #class for enums for joysticks
 class Joystick:
