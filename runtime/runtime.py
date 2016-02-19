@@ -30,6 +30,11 @@ else:
     h = hibike.Hibike()
 connectedDevices = h.getEnumeratedDevices()    #list of tuples, first val of tuple is UID, second is int Devicetype
 
+# TODO: delay should not always be 20
+connectedDevices = [(device, 50) for (device, device_type) in connectedDevices]
+h.subToDevices(connectedDevices)
+>>>>>>> 3fc8e2ff9ef015e6b7540b311ec0dce623b37a52
+
 init_battery()
 #TODO Device Delay Value
 h.subToDevices([(device, 20) for (device, device_type) in connectedDevices]) 
@@ -37,6 +42,7 @@ h.subToDevices([(device, 20) for (device, device_type) in connectedDevices])
 connect to memcache
 memcache_port = 12357
 mc = memcache.Client(['127.0.0.1:%d' % memcache_port])
+mc.set('gamepad', {'0': {'axes': [0,0,0,0], 'buttons': None, 'connected': None, 'mapping': None}})
 
 def init_battery():
     for _, dev in connectedDevices: #TODO What if Battery buzzer not found
@@ -51,7 +57,14 @@ def init_battery():
 def get_all_data(connectedDevices):
     all_data = {}
     for t in connectedDevices:
-        all_data[str(t[0])] = h.getData(t[0], "dataUpdate")
+        count = 1
+        tup_nest = h.getData(t[0], "dataUpdate")
+        if not tup_nest:
+            continue
+        tup_vals = tup_nest[0]
+        for i in tup_vals:
+            all_data[str(count) + str(t[0])] = i
+            count += 1
     return all_data
 
 
@@ -180,7 +193,14 @@ def msg_handling(msg):
     global robot_status, student_proc, console_proc
     msg_type, content = msg['header']['msg_type'], msg['content']
     if msg_type == 'execute' and not robot_status:
-        with open('student_code.py', 'w+') as f:
+        filename = "student_code/student_code.py"
+        if not os.path.exists(os.path.dirname(filename)):
+            try:
+                os.makedirs(os.path.dirname(filename))
+            except OSError as exc: # Guard against race condition
+                if exc.errno != errno.EEXIST:
+                    raise
+        with open('student_code/student_code.py', 'w+') as f:
             f.write(msg['content']['code'])
         student_proc = subprocess.Popen(['python', '-u', 'student_code/student_code.py'],
                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -210,7 +230,7 @@ def send_peripheral_data(data):
         ansible.send_message('UPDATE_PERIPHERAL', {
             'peripheral': {
                 'name': 'sensor_{}'.format(device_id),
-                'peripheralType':'SENSOR_SCALAR',
+                'peripheralType':'SENSOR_BOOLEAN',
                 'value': value,
                 'id': device_id
                 }
@@ -286,6 +306,7 @@ while True:
                 grizzly.set_target(name_to_value[name])
             except:
                 stop_motors()
+
             ansible.send_message('UPDATE_PERIPHERAL', {
                 'peripheral': {
                     'name': name,
@@ -296,6 +317,5 @@ while True:
             })
 
 
+    time.sleep(0.05)
 
-
-    time.sleep(0.02)
