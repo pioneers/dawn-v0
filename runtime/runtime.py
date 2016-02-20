@@ -35,7 +35,7 @@ h.subToDevices([(device, 50) for (device, device_type) in connectedDevices])
 connect to memcache
 memcache_port = 12357
 mc = memcache.Client(['127.0.0.1:%d' % memcache_port])
-mc.set('gamepad', {0: {'axes': [0,0,0,0], 'buttons': None, 'connected': None, 'mapping': None}})
+mc.set('gamepad', {'0': {'axes': [0,0,0,0], 'buttons': None, 'connected': None, 'mapping': None}})
 
 def init_battery():
     for UID, dev in connectedDevices: 
@@ -300,20 +300,22 @@ while True:
 
 
     # Send motor values to UI, if the robot is running
-    name_to_value = mc.get('motor_values') or {}
-    for name in name_to_value:
-        grizzly = name_to_grizzly[name]
-        try:
-            grizzly.set_target(name_to_value[name])
-        except:
-            stop_motors()
+    if robot_status:
+        name_to_value = mc.get('motor_values') or {}
+        for name in name_to_value:
+            grizzly = name_to_grizzly[name]
+            try:
+                grizzly.set_target(name_to_value[name])
+            except:
+                stop_motors()
 
-        ansible.send_message('UPDATE_PERIPHERAL', {
-            'peripheral': {
-                'name': name,
-                'peripheralType':'MOTOR_SCALAR',
-                'value': name_to_value[name],
-                'id': name_to_ids[name]
-            }
-        })
+            ansible.send_message('UPDATE_PERIPHERAL', {
+                'peripheral': {
+                    'name': name,
+                    'peripheralType':'MOTOR_SCALAR',
+                    'value': name_to_value[name],
+                    'id': name_to_ids[name]
+                }
+            })
+
     time.sleep(0.05)
