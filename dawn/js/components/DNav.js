@@ -59,7 +59,7 @@ export default React.createClass({
           shouldShow={this.state.showUpdateModal}
           hide={this.toggleUpdateModal} />
         <Navbar.Header>
-          <Navbar.Brand>
+          <Navbar.Brand id="header-title">
             {"Dawn v" +
               this.getDawnVersion() +
               (this.props.connection ? "" : " (disconnected)")}
@@ -115,7 +115,8 @@ export default React.createClass({
                   }>
                   <Button
                     bsStyle="info"
-                    onClick={ this.toggleUpdateModal }>
+                    onClick={ this.toggleUpdateModal }
+                    id="update-software-button">
                     <Glyphicon glyph="cloud-upload" />
                   </Button>
                 </OverlayTrigger>
