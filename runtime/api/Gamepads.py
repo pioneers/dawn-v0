@@ -71,6 +71,10 @@ def get_axis(index,axis):
     :param index: The index of the gamepad, usually 0, 1, 2, or 3
     :param axis: An enum (LEFT_X,LEFT_Y,RIGHT_X,RIGHT_Y) which specifies the axis.
     :returns: A list of 4 decimal values, each corresponding to a joystick axis.
+
+    :Examples:
+
+    >>> axis = Gamepads.get_axis(0,Joystick.LEFT_X)
     """
     gamepad_index = mc.get("gamepad")[index]
     assert gamepad_index != None, "gamepad index not found"
@@ -112,7 +116,7 @@ def get_button(index,button):
 
     :Examples:
 
-    >>> button = Gamepads.get_button(0,6)
+    >>> button = Gamepads.get_button(0,Button.Y)
     >>> button
     False
 

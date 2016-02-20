@@ -30,7 +30,6 @@ else:
     h = hibike.Hibike()
 connectedDevices = h.getEnumeratedDevices()    #list of tuples, first val of tuple is UID, second is int Devicetype
 init_battery()
-#TODO Device Delay Value
 h.subToDevices([(device, 50) for (device, device_type) in connectedDevices]) 
 
 connect to memcache
@@ -39,28 +38,28 @@ mc = memcache.Client(['127.0.0.1:%d' % memcache_port])
 mc.set('gamepad', {0: {'axes': [0,0,0,0], 'buttons': None, 'connected': None, 'mapping': None}})
 
 def init_battery():
-    for _, dev in connectedDevices: #TODO What if Battery buzzer not found
-        if dev == 4: #TODO Battery Buzzer device number
-            battery_UID = dev[0]
+    for UID, dev in connectedDevices: 
+        if dev == 4: 
+            battery_UID = UID
     if not battery_UID:
         stop_motors()
         ansible.send_message('Add_ALERT', {
         'payload': {
-            'heading': "Battery Error", # TODO: Make this not a lie
+            'heading': "Battery Error", 
             'message': "Battery buzzer not connected. Please connect and restart the robot" #TODO Implement On UI Side 
             }
         time.sleep(1)
         })
-        raise Exception('Battery buzzer not connected') #TODO Send to UI
-    battery_safe = bool(h.getData(battery_UID,dataUpdate)[0]) #TODO What value does battery buzzer return
+        raise Exception('Battery buzzer not connected')
+    battery_safe = bool(h.getData(battery_UID,dataUpdate)[0])
 
 def get_all_data(connectedDevices):
     all_data = {}
     for t in connectedDevices:
-        all_data[str(t[0])] = h.getData(t[0], "dataUpdate")
-
-
-    """
+        if t[0] == battery_UID:  #does not enumerate battery UID into sensor_data
+            continue
+        if t[1] == 9:             #just for color sensor, put all data into one list
+            all_data[str(t[0])] = h.getData(t[0], "dataUpdate")
         count = 1
         tup_nest = h.getData(t[0], "dataUpdate")
         if not tup_nest:
@@ -69,8 +68,6 @@ def get_all_data(connectedDevices):
         for i in tup_vals:
             all_data[str(count) + str(t[0])] = i
             count += 1
-    >>>>>>> 451eb5891b8d35d86ff1fa52fabcf2a23b9bd3d1
-    """
     return all_data
 
 
@@ -84,11 +81,12 @@ def set_flags(values):
                 light = -64
             elif light == 3:
                 light = -128
-            h.writeValue(values[0], "s" + string(i), light)
+            h.writeValue(int(values[0]), "s" + string(i), light)
 
 def set_servos(values):
     for i in range(0,values.length-1):
-        h.writeValue(values[0],"servo" + string(i), values[i+1])
+        if values[i+1] != -1:
+            h.writeValue(int(values[0]),"servo" + string(i), values[i+1])
     mc.set("servo_value",[])
 
 def drive_set_distance(list_tuples):
@@ -134,7 +132,7 @@ def set_PID(constants):
         grizzly.init_pid(p, i, d)
 
 def test_battery():
-    if battery_UID not in mc.get('sensor_values'):
+    if battery_UID not in list(zip(*connectedDevices))[0] 
         stop_motors()
         ansible.send_message('Add_ALERT', {
         'payload': {
@@ -263,9 +261,7 @@ while True:
     # Send battery level
     ansible.send_message('UPDATE_BATTERY', {
         'battery': {
-            'value': h.getData(battery_UID,dataUpdate)[5], # TODO: Make this not a lie
-            'connected': battery_UID in mc.get('sensor_values'), #TODO Implement On UI Side 
-            'safe': battery_safe
+            'value': h.getData(battery_UID,dataUpdate)[5]
         }
     })
     
