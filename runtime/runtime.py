@@ -18,7 +18,7 @@ connectedDevices = h.getEnumeratedDevices()
 uid_to_type = {uid: device_type for (uid, device_type) in connectedDevices}
 print connectedDevices
 # TODO: delay should not always be 20
-connectedDevices = [(device, 50) for (device, device_type) in connectedDevices]
+connectedDevices = [(uid, 50) for (uid, device_type) in connectedDevices]
 h.subToDevices(connectedDevices)
 
 # connect to memcache
@@ -120,10 +120,10 @@ def send_peripheral_data(data):
             })
 
 def uid_to_device_id(uid, num_devices):
-    return [str(device_index) + str(uid) for device_index in range(num_devices)]
+    return [ str(uid)+str(device_index) for device_index in range(1,1+num_devices)]
 
 def device_id_to_uid(device_id):
-    return device_id[1:]
+    return device_id[:-1]
 
 while True:
     msg = ansible.recv()
