@@ -35,24 +35,10 @@ if 'HIBIKE_SIMULATOR' in os.environ and os.environ['HIBIKE_SIMULATOR'] in ['1', 
 else:
     h = hibike.Hibike()
 connectedDevices = h.getEnumeratedDevices()    #list of tuples, first val of tuple is UID, second is int Devicetype
-<<<<<<< HEAD
 
 # TODO: delay should not always be 20
 connectedDevices = [(device, 50) for (device, device_type) in connectedDevices]
-h.subToDevices(connectedDevices)
->>>>>>> 3fc8e2ff9ef015e6b7540b311ec0dce623b37a52
-
-init_battery()
-#TODO Device Delay Value
-h.subToDevices([(device, 20) for (device, device_type) in connectedDevices]) 
-
-connect to memcache
-memcache_port = 12357
-mc = memcache.Client(['127.0.0.1:%d' % memcache_port])
-mc.set('gamepad', {'0': {'axes': [0,0,0,0], 'buttons': None, 'connected': None, 'mapping': None}})
-=======
 h.subToDevices([(device, 50) for (device, device_type) in connectedDevices]) 
->>>>>>> 56f321cf8f7ce9632807ab1675da28f29bc63faa
 
 def init_battery():
     global battery_UID
@@ -78,13 +64,10 @@ def init_battery():
 def get_all_data(connectedDevices):
     all_data = {}
     for t in connectedDevices:
-<<<<<<< HEAD
-=======
         if t[0] == battery_UID:  #does not enumerate battery UID into sensor_data
             continue
         if t[1] == 9:             #just for color sensor, put all data into one list
             all_data["5" + str(t[0])] = h.getData(t[0], "dataUpdate")
->>>>>>> 56f321cf8f7ce9632807ab1675da28f29bc63faa
         count = 1
         tup_nest = h.getData(t[0], "dataUpdate")
         if not tup_nest:
@@ -352,10 +335,4 @@ while True:
                 }
             })
 
-<<<<<<< HEAD
-
     time.sleep(0.05)
-
-=======
-    time.sleep(0.05)
->>>>>>> 56f321cf8f7ce9632807ab1675da28f29bc63faa
