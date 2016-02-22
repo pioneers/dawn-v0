@@ -57,7 +57,8 @@ def init_battery():
             }
 	})
         time.sleep(1)
-        raise Exception('Battery buzzer not connected')
+        #raise Exception('Battery buzzer not connected')
+        print("battery buzzer not connected")
     print(h.getData(battery_UID,"dataUpdate"))
     battery_safe = bool(h.getData(battery_UID,"dataUpdate")[0][0])
 
@@ -151,7 +152,8 @@ def test_battery():
             }
         })
         time.sleep(1)
-        raise Exception('Battery buzzer not connected') #TODO Send to UI
+        print("battery buzzer not connected")
+        #raise Exception('Battery buzzer not connected') #TODO Send to UI
     if not battery_safe:
         stop_motors()
         ansible.send_message('Add_ALERT', {
@@ -161,7 +163,8 @@ def test_battery():
             }
         })
         time.sleep(1)
-        raise Exception('Battery unsafe')
+        #raise Exception('Battery unsafe')
+        print("battery unsafe")
 # Called on starte of student code, finds and configures all the connected motors
 def initialize_motors():
     try:
