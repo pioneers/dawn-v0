@@ -9,9 +9,10 @@ To use this module, you must first import it:
 
 >>> from api import Gamepads
 '''
-import memcache
+
 
 # Connect to memcache
+import memcache
 memcache_port = 12357
 mc = memcache.Client(['127.0.0.1:%d' % memcache_port])
 
@@ -70,8 +71,12 @@ def get_axis(index,axis):
     :param index: The index of the gamepad, usually 0, 1, 2, or 3
     :param axis: An enum (LEFT_X,LEFT_Y,RIGHT_X,RIGHT_Y) which specifies the axis.
     :returns: A list of 4 decimal values, each corresponding to a joystick axis.
+
+    :Examples:
+
+    >>> axis = Gamepads.get_axis(0,Joystick.LEFT_X)
     """
-    gamepad_index = mc.get("gamepad")[index]
+    gamepad_index = mc.get("gamepad")[str(index)]
     assert gamepad_index != None, "gamepad index not found"
     return gamepad_index['axes'][axis]
 
@@ -93,7 +98,8 @@ def get_all_buttons(index):
     True
 
     """
-    gamepad_index = mc.get("gamepad")[index]
+    gamepad_index = mc.get("gamepad")[str(index)]
+    print(gamepad_index)
     assert gamepad_index != None, "gamepad index not found"
     return [x == 1 for x in gamepad_index['buttons']]
 
@@ -111,7 +117,7 @@ def get_button(index,button):
 
     :Examples:
 
-    >>> button = Gamepads.get_button(0,6)
+    >>> button = Gamepads.get_button(0,Button.Y)
     >>> button
     False
 
@@ -140,23 +146,23 @@ def get_mapping(index):
 
 #class for enums for buttons.
 class Button:
-    X = 2
-    Y = 3
     A = 0
     B = 1
-    START = 9
-    BACK = 8
-    R_TRIGGER = 7
-    L_TRIGGER = 6
+    X = 2
+    Y = 3
     L_BUMPER = 4
     R_BUMPER = 5
-    R_STICK = 11
+    L_TRIGGER = 6
+    R_TRIGGER = 7
+    BACK = 8
+    START = 9
     L_STICK = 10
-    XBOX = 16
-    DPAD_DOWN = 13
+    R_STICK = 11
     DPAD_UP = 12
-    DPAD_RIGHT = 15
+    DPAD_DOWN = 13
     DPAD_LEFT = 14
+    DPAD_RIGHT = 15
+    XBOX = 16
 
 #class for enums for joysticks
 class Joystick:

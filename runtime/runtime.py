@@ -5,14 +5,20 @@ from grizzly import *
 import usb
 import os
 
+#connect to memcache
+memcache_port = 12357
+mc = memcache.Client(['127.0.0.1:%d' % memcache_port])
+mc.set('gamepad', {'0': {'axes': [0,0,0,0], 'buttons': None, 'connected': None, 'mapping': None}})
+
 # Useful motor mappings
 name_to_grizzly, name_to_values, name_to_ids, name_to_modes = {}, {}, {}, {}
 student_proc, console_proc = None, None
 robot_status = 0 # a boolean for whether or not the robot is executing 
 battery_UID = 0 #TODO, what if no battery buzzer, what if not safe battery buzzer
+battery_safe = False
 mc.set('flag_values',[]) #set flag color initial status
 mc.set('servo_values',[])
-mc.set('PID_constants'[("P", 1), ("I", 0), ("D", 0)])
+mc.set('PID_constants',[("P", 1), ("I", 0), ("D", 0)])
 mc.set('control_mode', ["default", "all"])
 mc.set('drive_mode', ["brake", "all"])
 mc.set('drive_distance', [])
@@ -29,6 +35,7 @@ if 'HIBIKE_SIMULATOR' in os.environ and os.environ['HIBIKE_SIMULATOR'] in ['1', 
 else:
     h = hibike.Hibike()
 connectedDevices = h.getEnumeratedDevices()    #list of tuples, first val of tuple is UID, second is int Devicetype
+<<<<<<< HEAD
 
 # TODO: delay should not always be 20
 connectedDevices = [(device, 50) for (device, device_type) in connectedDevices]
@@ -43,20 +50,41 @@ connect to memcache
 memcache_port = 12357
 mc = memcache.Client(['127.0.0.1:%d' % memcache_port])
 mc.set('gamepad', {'0': {'axes': [0,0,0,0], 'buttons': None, 'connected': None, 'mapping': None}})
+=======
+h.subToDevices([(device, 50) for (device, device_type) in connectedDevices]) 
+>>>>>>> 56f321cf8f7ce9632807ab1675da28f29bc63faa
 
 def init_battery():
-    for _, dev in connectedDevices: #TODO What if Battery buzzer not found
-        if dev == 4: #TODO Battery Buzzer device number
-            battery_UID = dev[0]
-    if not battery_UID:
+    global battery_UID
+    global battery_safe
+    print(connectedDevices)
+    for UID, dev in connectedDevices: 
+        if h.getDeviceName(int(dev)) == "BatteryBuzzer": 
+            battery_UID = UID
+    print(battery_UID)
+    if not bool(battery_UID):
         stop_motors()
-        ansible
-        raise Exception("No Battery Buzzer Found") #TODO Raise Errors correctly
-    battery_safe = bool(h.getData(battery_UID,dataUpdate)[0]) #TODO What value does battery buzzer return
+        ansible.send_message('Add_ALERT', {
+        'payload': {
+            'heading': "Battery Error", 
+            'message': "Battery buzzer not connected. Please connect and restart the robot" #TODO Implement On UI Side 
+            }
+	})
+        time.sleep(1)
+        raise Exception('Battery buzzer not connected')
+    print(h.getData(battery_UID,"dataUpdate"))
+    battery_safe = bool(h.getData(battery_UID,"dataUpdate")[0][0])
 
 def get_all_data(connectedDevices):
     all_data = {}
     for t in connectedDevices:
+<<<<<<< HEAD
+=======
+        if t[0] == battery_UID:  #does not enumerate battery UID into sensor_data
+            continue
+        if t[1] == 9:             #just for color sensor, put all data into one list
+            all_data["5" + str(t[0])] = h.getData(t[0], "dataUpdate")
+>>>>>>> 56f321cf8f7ce9632807ab1675da28f29bc63faa
         count = 1
         tup_nest = h.getData(t[0], "dataUpdate")
         if not tup_nest:
@@ -78,11 +106,12 @@ def set_flags(values):
                 light = -64
             elif light == 3:
                 light = -128
-            h.writeValue(values[0], "s" + string(i), light)
+            h.writeValue(int(values[0]), "s" + string(i), light)
 
 def set_servos(values):
     for i in range(0,values.length-1):
-        h.writeValue(values[0],"servo" + string(i), values[i+1])
+        if values[i+1] != -1:
+            h.writeValue(int(values[0]),"servo" + string(i), values[i+1])
     mc.set("servo_value",[])
 
 def drive_set_distance(list_tuples):
@@ -128,15 +157,17 @@ def set_PID(constants):
         grizzly.init_pid(p, i, d)
 
 def test_battery():
-    if battery_UID not in mc.get('sensor_values'):
+    if battery_UID not in list(zip(*connectedDevices))[0]: 
+        print(battery_UID)
+        print(list(zip(*connectedDevices))[0])
         stop_motors()
         ansible.send_message('Add_ALERT', {
         'payload': {
             'heading': "Battery Error", # TODO: Make this not a lie
             'message': "Battery buzzer not connected. Please connect and restart the robot" #TODO Implement On UI Side 
             }
-        time.sleep(1)
         })
+        time.sleep(1)
         raise Exception('Battery buzzer not connected') #TODO Send to UI
     if not battery_safe:
         stop_motors()
@@ -145,8 +176,8 @@ def test_battery():
             'heading': "Battery Error", # TODO: Make this not a lie
             'message': "Battery level crucial. Reconnect a safe battery and restart the robot" #TODO Implement On UI Side 
             }
-        time.sleep(1)
         })
+        time.sleep(1)
         raise Exception('Battery unsafe')
 # Called on starte of student code, finds and configures all the connected motors
 def initialize_motors():
@@ -236,9 +267,13 @@ def send_peripheral_data(data):
                 }
             })
 
+init_battery()
 while True:
     test_battery()
-    battery_safe = bool(h.getData(battery_UID,dataUpdate)[0])
+    try: 
+        battery_safe = bool(h.getData(battery_UID,"dataUpdate")[0][0])
+    except: 
+        print("Battery Buzzer not Found")
     msg = ansible.recv()
     # Handle any incoming commands from the UI
     if msg:
@@ -255,13 +290,14 @@ while True:
     mc.set('sensor_values', all_sensor_data)
 
     # Send battery level
-    ansible.send_message('UPDATE_BATTERY', {
-        'battery': {
-            'value': h.getData(battery_UID,dataUpdate)[5], # TODO: Make this not a lie
-            'connected': battery_UID in mc.get('sensor_values'), #TODO Implement On UI Side 
-            'safe': battery_safe
+    try:
+        ansible.send_message('UPDATE_BATTERY', {
+            'battery': {
+                'value': h.getData(battery_UID,"dataUpdate")[0][5]
         }
     })
+    except:
+        print("Can't send data")
     
     #Set Team Flag
     flag_values = mc.get('flag_values')
@@ -290,7 +326,7 @@ while True:
 
     #rebind PID constants
     PID_rebind= mc.get("PID_constants")
-    if PID_c:
+    if PID_rebind:
         set_PID(PID_rebind)
 
     #refresh PID constants
@@ -316,6 +352,10 @@ while True:
                 }
             })
 
+<<<<<<< HEAD
 
     time.sleep(0.05)
 
+=======
+    time.sleep(0.05)
+>>>>>>> 56f321cf8f7ce9632807ab1675da28f29bc63faa
