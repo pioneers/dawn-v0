@@ -31,15 +31,18 @@ import 'brace/theme/terminal';
 import {remote} from 'electron';
 let langtools = ace.acequire('ace/ext/language_tools');
 let storage = remote.require('electron-json-storage');
+import Timer from './Timer'
+import FieldStore from '../stores/FieldStore'
 
 export default React.createClass({
   getInitialState() {
     return {
-      showConsole: false,
+      showConsole: true,
       filepath: null,
       latestSaveCode: '',
       editorCode: '',
-      editorTheme: 'github'
+      editorTheme: 'github',
+      heart: false
     };
   },
   componentDidMount() {
@@ -79,11 +82,18 @@ export default React.createClass({
     });
 
     EditorStore.on('change', this.updateEditorData);
+    FieldStore.on('change', this.updateFieldData);
+
   },
   componentWillUnmount() {
     Mousetrap.unbind(['mod+s']);
     EditorStore.removeListener('change', this.updateEditorData);
   },
+  updateFieldData() {
+    this.setState({
+      heart: FieldStore.getHeart()
+    });
+  }, 
   updateEditorData() {
     this.setState({
       filepath: EditorStore.getFilepath(),
@@ -208,14 +218,15 @@ export default React.createClass({
           editorTheme={ this.state.editorTheme }
           themes={ this.themes }
         />
+        <div style={this.state.heart ? {'color': 'red', 'height': '20px', 'fontSize': 'large'} : {'color': 'red', 'height': '20px', 'fontSize': 'small'}}>&hearts;</div>
+        <Timer {...this.props} />
         <AceEditor
           mode="python"
           theme={ this.state.editorTheme }
           width="100%"
           ref="CodeEditor"
           name="CodeEditor"
-          height={String(
-            editorHeight - this.state.showConsole * (consoleHeight + 30)) + 'px'}
+          height={'0px'}
           value = { this.state.editorCode }
           onChange={ this.editorUpdate }
           editorProps={{$blockScrolling: Infinity}}

@@ -186,7 +186,7 @@ export default React.createClass({
           editorTheme={ this.state.editorTheme }
           themes={ this.themes }
         />
-        <div style={this.state.heart ? {'height': '20px', 'fontSize': 'large'} : {'height': '20px', 'fontSize': 'small'}}>&hearts;</div>
+        <div style={this.state.heart ? {'color': 'red', 'height': '20px', 'fontSize': 'large'} : {'color': 'red', 'height': '20px', 'fontSize': 'small'}}>&hearts;</div>
         <Timer {...this.props} />
         <ConsoleOutput
           show={this.state.showConsole}

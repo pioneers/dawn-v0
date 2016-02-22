@@ -1,5 +1,6 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import {ActionTypes} from '../constants/Constants';
+import Ansible from '../utils/Ansible'
 
 var FieldActions = {
   updateTimer(msg) {
@@ -19,9 +20,16 @@ var FieldActions = {
   updateRobot(msg) {
     AppDispatcher.dispatch({
       type: ActionTypes.UPDATE_ROBOT,
-      timeLeft: timeLeft,
-      stage: msg.stage_name
+      autonomous: msg.autonomous,
+      enabled: msg.enabled
     });
+    if (msg.enabled) {
+      Ansible.sendMessage('execute', {
+        code: "print 'running'"
+      });
+    } else {
+      Ansible.sendMessage('stop', {});
+    }
   }
 };
 

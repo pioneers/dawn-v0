@@ -1,7 +1,7 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import LCM from './lcm_ws_bridge'
 import FieldActions from '../actions/FieldActions.js'
-import AlertActions from '../actions/FieldActions.js'
+import AlertActions from '../actions/AlertActions.js'
 
 let bridgeAddress = localStorage.getItem('bridgeAddress') || '127.0.0.1';
 let lcm = null;
@@ -15,8 +15,8 @@ function makeLCM(){
         lcm.subscribe("Heartbeat/Beat", "Heartbeat", function(msg) {
            FieldActions.updateHeart(msg)
         })
-        lcm.subscribe("Robot[0-3]/RobotControl", "RobotControl", function(msg) {
-            AlertActions.addAlert('robot', JSON.stringify(msg))
+        lcm.subscribe("Robot0/RobotControl", "RobotControl", function(msg) {
+            FieldActions.updateRobot(msg)
         })
     }
     lcm.on_ready(subscribeAll)

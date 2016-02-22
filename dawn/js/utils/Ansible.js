@@ -5,6 +5,7 @@ const storage = remote.require('electron-json-storage');
 
 let defaultAddress = '127.0.0.1';
 let socket = null;
+let mode = null;
 
 function connectToAnsible(runtimeAddress) {
   if (socket !== null) {
@@ -21,8 +22,9 @@ function connectToAnsible(runtimeAddress) {
    */
   socket.on('message', (message)=>{
     let transportName = socket.io.engine.transport.name;
-    if (transportName !== 'websocket') {
-      console.log('Websockets not working! Using:', transportName);
+    if (transportName !== mode) {
+      mode = transportName
+      console.log('SocketIO is using ', mode);
     }
     let unpackedMsg = message.content;
     unpackedMsg.type = message.header.msg_type;
