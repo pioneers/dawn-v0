@@ -60,7 +60,7 @@ def init_battery():
         #raise Exception('Battery buzzer not connected')
         print("battery buzzer not connected")
     print(h.getData(battery_UID,"dataUpdate"))
-    battery_safe = bool(h.getData(battery_UID,"dataUpdate")[0][0])
+    #battery_safe = bool(h.getData(battery_UID,"dataUpdate")[0][0])
 
 def get_all_data(connectedDevices):
     all_data = {}
