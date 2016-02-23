@@ -15,10 +15,14 @@ import memcache
 memcache_port = 12357
 mc = memcache.Client(['127.0.0.1:%d' % memcache_port]) # connect to memcache
 
+from uid_did_conversions import *
+
 motor = {}
 
-def _lookup(name): #Returns actual UID given name
-    return name
+def _lookup(name): #Returns actual device ID given name
+    # TODO: HARDCODED VALUE FOR TESTING ONLY
+    # uid = 33069839498132392805621
+    return "330698394981323928056211"
 
 def get_motor(name):
     """Returns the current power value for a motor.
@@ -113,9 +117,11 @@ def set_servo(name,value):  #TODO Check with hibike on exact functionality
 
     """
     assert value in range(181), "Servo degrees must be between 0 and 180"
-    name = _lookup(name)
-    servo_data = list(name[1:]) + [-1,-1,-1,-1]
-    servo_data[name[0]] = value
+    device_id = _lookup(name)
+    servo_data = list(device_id_to_uid(device_id)) + [-1,-1,-1,-1]
+    # TODO: Sets all servos because we're too lazy to figure out which one it is
+    for i in range(1, 5):
+        servo_data[i] = value
     mc.set('servo_values', servo_data)
 
 
@@ -139,7 +145,7 @@ def get_color_sensor(name):
     0.873748
 
     """
-    name = _lookup(name)
+    #name = _lookup(name)
     return _testConnected(name)
 
 def get_luminosity(name):

@@ -6,6 +6,8 @@ import usb
 import os
 from base64 import b64decode
 
+from uid_did_conversions import *
+
 #connect to memcache
 memcache_port = 12357
 mc = memcache.Client(['127.0.0.1:%d' % memcache_port])
@@ -325,11 +327,7 @@ def send_peripheral_data(data):
             })
 
 
-def uid_to_device_id(uid, num_devices):
-    return [str(device_index) + str(uid) for device_index in range(num_devices)]
 
-def device_id_to_uid(device_id):
-    return device_id[1:]
 
 init_battery()
 while True:
