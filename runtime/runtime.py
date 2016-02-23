@@ -22,6 +22,8 @@ student_proc, console_proc = None, None
 robot_status = 0 # a boolean for whether or not the robot is executing 
 battery_UID = 0 #TODO, what if no battery buzzer, what if not safe battery buzzer
 battery_safe = False
+battery_buffer = 0 #Prevents immediately crashing runtmie from bad UID lookup
+BUFFER_CONSTANT = 50
 mc.set('flag_values',[]) #set flag color initial status
 mc.set('servo_values',[])
 mc.set('PID_constants',[("P", 1), ("I", 0), ("D", 0)])
@@ -50,11 +52,9 @@ h.subToDevices([(device, 50) for (device, device_type) in connectedDevices])
 def init_battery():
     global battery_UID
     global battery_safe
-    print(connectedDevices)
     for UID, dev in connectedDevices: 
         if h.getDeviceName(int(dev)) == "BatteryBuzzer": 
             battery_UID = UID
-    print(battery_UID)
     if not bool(battery_UID):
         stop_motors()
         ansible.send_message('Add_ALERT', {
@@ -64,10 +64,10 @@ def init_battery():
             }
 	})
         time.sleep(1)
-        #raise Exception('Battery buzzer not connected')
-        print("battery buzzer not connected")
-    print(h.getData(battery_UID,"dataUpdate"))
-    #battery_safe = bool(h.getData(battery_UID,"dataUpdate")[0][0])
+        print(h.getData(battery_UID,"dataUpdate"))
+        raise Exception('Battery buzzer not connected')
+    battery_safe = bool(h.getData(battery_UID,"dataUpdate")[0][0])
+
 
 def get_all_data(connectedDevices):
     all_data = {}
@@ -147,9 +147,10 @@ def set_PID(constants):
         grizzly.init_pid(p, i, d)
 
 def test_battery():
-    # Send battery level
-    if battery_UID is None or battery_UID not in [x[0] for x in connectedDevices]:
-        ansible.send_message('ADD_ALERT', {
+    global battery_safe
+    global battery_buffer
+    if battery_UID is None or battery_UID not in [x[0] for x in connectedDevices]:        stop_motors()
+        ansible.send_message('Add_ALERT', {
         'payload': {
             'heading': "Battery Error",
             'message': "Battery buzzer not connected. Please connect and restart the robot"
@@ -178,20 +179,28 @@ def test_battery():
             'message': "Battery level crucial. Reconnect a safe battery and restart the robot"
             }
         })
-        ansible.send_message('UPDATE_BATTERY', {
-            'battery': {
-                'value': 0
-                }
-        })
-        return False
+        time.sleep(1)
+        stop_motors()
+        raise Exception('Battery unsafe')
+
     else:
         ansible.send_message('UPDATE_BATTERY', {
             'battery': {
                 'value': voltage
                 }
         })
-    return True
 # Called on starte of student code, finds and configures all the connected motors
+        time.sleep(1)
+    """ try:
+        battery_safe = bool(h.getData(battery_UID,"dataUpdate")[0][0])
+        battery_buffer = 0
+    except:
+        battery_buffer += 1
+        if battery_buzzer > BUFFER_CONSTANT:
+            battery_safe = False
+    """
+
+# Called on start of student code, finds and configures all the connected motors
 def initialize_motors():
     try:
         addrs = Grizzly.get_all_ids()
@@ -319,14 +328,20 @@ def device_id_to_uid(device_id):
 
 init_battery()
 while True:
-    battery_safe = test_battery()
-    if not battery_safe:
-        for _ in range(10):
-            ansible.send_message('UPDATE_STATUS', {
-                'status': {'value': False}
-            })
-            time.sleep(0.1)
-        continue
+    test_battery()
+    """
+    try:
+        ansible.send_message('UPDATE_BATTERY', {
+            'battery': {
+                'value': h.getData(battery_UID,"dataUpdate")[0][5]
+            }
+        })
+        battery_buffer = 0
+    except:
+        battery_buffer += 1
+        if battery_buzzer > BUFFER_CONSTANT:
+            battery_safe = False
+    """
     msg = ansible.recv()
     # Handle any incoming commands from the UI
     if msg:
@@ -341,7 +356,6 @@ while True:
     all_sensor_data = get_all_data(connectedDevices)
     send_peripheral_data(all_sensor_data)
     mc.set('sensor_values', all_sensor_data)
-
     # Send battery level
     try:
         ansible.send_message('UPDATE_BATTERY', {
@@ -351,6 +365,7 @@ while True:
     })
     except:
         print("Can't send data")
+
     #Set Team Flag
     flag_values = mc.get('flag_values')
     if flag_values:
