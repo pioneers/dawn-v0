@@ -77,6 +77,7 @@ def get_all_data(connectedDevices):
         if t[1] == 9:             #just for color sensor, put all data into one list
             all_data["5" + str(t[0])] = h.getData(t[0], "dataUpdate")
         count = 1
+        tup_nest = h.getData(t[0], "dataUpdate")
         if not tup_nest:
             continue
         values, timestamps = tup_nest
@@ -165,7 +166,7 @@ def test_battery():
     try:
         test = h.getData(battery_UID,"dataUpdate")
         print(test)
-        (safe, connected, c0, c1, c2, c3, voltage), timestamp = test
+        (safe, connected, c0, c1, c2, voltage), timestamp = test
     except:
         raise
         safe = False
