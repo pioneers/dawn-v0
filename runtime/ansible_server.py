@@ -45,10 +45,8 @@ def ansible_server(send_queue, recv_queue):
     def receive_message(msg):
         data = json.loads(msg)
         # Special channel for gamepad data
-        print(data)
         if data['header']['msg_type'] == 'gamepad':
             mc.set('gamepad', data['content'])
-            print(data['content'])
         else:
             recv_queue.put_nowait(data)
 

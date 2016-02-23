@@ -24,8 +24,8 @@ student_proc, console_proc = None, None
 robot_status = 0 # a boolean for whether or not the robot is executing 
 battery_UID = None #TODO, what if no battery buzzer, what if not safe battery buzzer
 battery_safe = False
-battery_buffer = 0 #Prevents immediately crashing runtmie from bad UID lookup
-BUFFER_CONSTANT = 50
+#battery_buffer = 0 #Prevents immediately crashing runtmie from bad UID lookup
+#BUFFER_CONSTANT = 50
 mc.set('flag_values',[]) #set flag color initial status
 mc.set('servo_values',[])
 mc.set('PID_constants',[("P", 1), ("I", 0), ("D", 0)])
@@ -38,8 +38,6 @@ all_modes = {"default": ControlMode.NO_PID, "speed": ControlMode.SPEED_PID, "pos
         "brake": DriveMode.DRIVE_BRAKE, "coast": DriveMode.DRIVE_COAST}
 PID_constants = {"P": 1, "I": 0, "D": 0}
 
-
-
 if 'HIBIKE_SIMULATOR' in os.environ and os.environ['HIBIKE_SIMULATOR'] in ['1', 'True', 'true']:
     import hibike_simulator
     h = hibike_simulator.Hibike()
@@ -50,6 +48,7 @@ connectedDevices = h.getEnumeratedDevices()    #list of tuples, first val of tup
 # TODO: delay should not always be 20
 # connectedDevices = [(device, 50) for (device, device_type) in connectedDevices]
 h.subToDevices([(device, 50) for (device, device_type) in connectedDevices]) 
+print(connectedDevices)
 
 def init_battery():
     global battery_UID
@@ -61,6 +60,7 @@ def init_battery():
 	print
         if h.getDeviceName(int(dev)) == "BatteryBuzzer": 
             battery_UID = UID
+    print(battery_UID)
     if not bool(battery_UID):
         stop_motors()
         ansible.send_message('Add_ALERT', {
