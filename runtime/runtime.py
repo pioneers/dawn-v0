@@ -44,7 +44,7 @@ else:
 connectedDevices = h.getEnumeratedDevices()    #list of tuples, first val of tuple is UID, second is int Devicetype
 
 # TODO: delay should not always be 20
-connectedDevices = [(device, 50) for (device, device_type) in connectedDevices]
+# connectedDevices = [(device, 50) for (device, device_type) in connectedDevices]
 h.subToDevices([(device, 50) for (device, device_type) in connectedDevices]) 
 
 def init_battery():
@@ -159,7 +159,8 @@ def test_battery():
                 'value': 0
                 }
         })
-        return False
+        time.sleep(1)
+        raise Exception("Battery buzzer not connected")
 
     try:
         (safe, connected, c0, c1, c2, c3, voltage), timestamp = h.getData(battery_UID,"dataUpdate")
