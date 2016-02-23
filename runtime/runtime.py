@@ -16,6 +16,8 @@ student_proc, console_proc = None, None
 robot_status = 0 # a boolean for whether or not the robot is executing 
 battery_UID = 0 #TODO, what if no battery buzzer, what if not safe battery buzzer
 battery_safe = False
+battery_buffer = 0 #Prevents immediately crashing runtmie from bad UID lookup
+BUFFER_CONSTANT = 50
 mc.set('flag_values',[]) #set flag color initial status
 mc.set('servo_values',[])
 mc.set('PID_constants',[("P", 1), ("I", 0), ("D", 0)])
@@ -40,11 +42,9 @@ h.subToDevices([(device, 50) for (device, device_type) in connectedDevices])
 def init_battery():
     global battery_UID
     global battery_safe
-    print(connectedDevices)
     for UID, dev in connectedDevices: 
         if h.getDeviceName(int(dev)) == "BatteryBuzzer": 
             battery_UID = UID
-    print(battery_UID)
     if not bool(battery_UID):
         stop_motors()
         ansible.send_message('Add_ALERT', {
@@ -55,7 +55,6 @@ def init_battery():
 	})
         time.sleep(1)
         raise Exception('Battery buzzer not connected')
-    print(h.getData(battery_UID,"dataUpdate"))
     battery_safe = bool(h.getData(battery_UID,"dataUpdate")[0][0])
 
 def get_all_data(connectedDevices):
@@ -137,9 +136,9 @@ def set_PID(constants):
         grizzly.init_pid(p, i, d)
 
 def test_battery():
+    global battery_safe
+    global battery_buffer
     if battery_UID not in list(zip(*connectedDevices))[0]: 
-        print(battery_UID)
-        print(list(zip(*connectedDevices))[0])
         stop_motors()
         ansible.send_message('Add_ALERT', {
         'payload': {
@@ -159,7 +158,15 @@ def test_battery():
         })
         time.sleep(1)
         raise Exception('Battery unsafe')
-# Called on starte of student code, finds and configures all the connected motors
+    try:
+        battery_safe = bool(h.getData(battery_UID,"dataUpdate")[0][0])
+        battery_buffer = 0
+    except:
+        battery_buffer += 1
+        if battery_buzzer > BUFFER_CONSTANT:
+            battery_safe = False
+
+# Called on start of student code, finds and configures all the connected motors
 def initialize_motors():
     try:
         addrs = Grizzly.get_all_ids()
@@ -250,10 +257,18 @@ def send_peripheral_data(data):
 init_battery()
 while True:
     test_battery()
-    try: 
-        battery_safe = bool(h.getData(battery_UID,"dataUpdate")[0][0])
-    except: 
-        print("Battery Buzzer not Found")
+    try:
+        ansible.send_message('UPDATE_BATTERY', {
+            'battery': {
+                'value': h.getData(battery_UID,"dataUpdate")[0][5]
+            }
+        })
+        battery_buffer = 0
+    except:
+        battery_buffer += 1
+        if battery_buzzer > BUFFER_CONSTANT:
+            battery_safe = False
+            
     msg = ansible.recv()
     # Handle any incoming commands from the UI
     if msg:
@@ -269,16 +284,6 @@ while True:
     send_peripheral_data(all_sensor_data)
     mc.set('sensor_values', all_sensor_data)
 
-    # Send battery level
-    try:
-        ansible.send_message('UPDATE_BATTERY', {
-            'battery': {
-                'value': h.getData(battery_UID,"dataUpdate")[0][5]
-        }
-    })
-    except:
-        print("Can't send data")
-    
     #Set Team Flag
     flag_values = mc.get('flag_values')
     if flag_values:
