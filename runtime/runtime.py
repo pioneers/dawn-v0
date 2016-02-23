@@ -20,7 +20,7 @@ mc.set('gamepad', {'0': {'axes': [0,0,0,0], 'buttons': None, 'connected': None, 
 name_to_grizzly, name_to_values, name_to_ids, name_to_modes = {}, {}, {}, {}
 student_proc, console_proc = None, None
 robot_status = 0 # a boolean for whether or not the robot is executing 
-battery_UID = 0 #TODO, what if no battery buzzer, what if not safe battery buzzer
+battery_UID = None #TODO, what if no battery buzzer, what if not safe battery buzzer
 battery_safe = False
 battery_buffer = 0 #Prevents immediately crashing runtmie from bad UID lookup
 BUFFER_CONSTANT = 50
@@ -53,6 +53,7 @@ def init_battery():
     global battery_UID
     global battery_safe
     for UID, dev in connectedDevices: 
+        print(h.getDeviceName(int(dev)))
         if h.getDeviceName(int(dev)) == "BatteryBuzzer": 
             battery_UID = UID
     if not bool(battery_UID):
@@ -149,7 +150,8 @@ def set_PID(constants):
 def test_battery():
     global battery_safe
     global battery_buffer
-    if battery_UID is None or battery_UID not in [x[0] for x in connectedDevices]:        stop_motors()
+    if battery_UID is None or battery_UID not in [x[0] for x in connectedDevices]:        
+        stop_motors()
         ansible.send_message('Add_ALERT', {
         'payload': {
             'heading': "Battery Error",
