@@ -163,7 +163,9 @@ def test_battery():
         raise Exception("Battery buzzer not connected")
 
     try:
-        (safe, connected, c0, c1, c2, c3, voltage), timestamp = h.getData(battery_UID,"dataUpdate")
+        test = h.getData(battery_UID,"dataUpdate")
+        print(test)
+        (safe, connected, c0, c1, c2, c3, voltage), timestamp = test
     except:
         raise
         safe = False
