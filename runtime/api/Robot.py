@@ -70,10 +70,10 @@ def get_sensor(name):
     :param name: A string that identifies the sensor.
     :returns: The reading of the sensor at the current point in time.
     """
-    name = _lookup(name)
+    device_id = _lookup(name)
     all_data = mc.get('sensor_values')
     try:
-        return all_data[name]
+        return all_data[device_id]
     except KeyError:
         raise KeyError("No Sensor with that name")
 
@@ -148,8 +148,8 @@ def get_color_sensor(name):
     0.873748
 
     """
-    #name = _lookup(name)
-    return _testConnected(name)
+    device_id = _lookup(name)
+    return _testConnected(device_id)
 
 def get_luminosity(name):
     """Returns the luminosity for the specified color sensor.
@@ -166,8 +166,8 @@ def get_luminosity(name):
     0.89783
 
     """
-    name = _lookup(name)
-    return _testConnected(name)
+    device_id = _lookup(name)
+    return _testConnected(device_id)
 
 def get_hue(name):
     """Returns the hue detected at the specified color sensor.
@@ -187,7 +187,7 @@ def get_hue(name):
 
     """
     all_data = mc.get('sensor_values')
-    name = _lookup(name)
+    device_id = _lookup(name)
     try:
         r = all_data[name][0]
         g = all_data[name][1]
@@ -213,8 +213,8 @@ def get_distance_sensor(name):
     >>> distance = Robot.get_distance_sensor("distance1")
 
     """
-    name = _lookup(name)
-    return _testConnected(name)
+    device_id = _lookup(name)
+    return _testConnected(device_id)
 
 
 def get_limit_switch(name):
@@ -232,8 +232,8 @@ def get_limit_switch(name):
     True
 
     """
-    name = _lookup(name)
-    return _testConnected(name)
+    device_id = _lookup(name)
+    return _testConnected(device_id)
 
 def get_potentiometer(name):
     """Returns the sensor reading of a potentiometer 
@@ -245,8 +245,8 @@ def get_potentiometer(name):
     :returns: A decimal between 0 and 1 representing the angle.
 
     """
-    name = _lookup(name)
-    return _testConnected(name)
+    device_id = _lookup(name)
+    return _testConnected(device_id)
 
 """def get_metal_detector(name): #TODO metal detector Implementation
     \"""Returns the sensor reading of the specified metal detector
@@ -302,12 +302,10 @@ def drive_distance_all(degrees, motors, gear_ratios):
     assert isinstance(motors, list), "motors must be a list"
     assert isinstance(gear_ratios, list), "gear_ratios must be a list"
     assert isinstance(degrees, list), "degrees must be a list"
-    assert degrees.length == motors.length and degrees.length == gear_ratios.length, "List lengths for all 3 parameters must be equal"
+    assert len(degrees) == len(motors) and len(degrees) == len(gear_ratios), "List lengths for all 3 parameters must be equal"
     motor_list = mc.get("motor_values")
-    i = 1
     for motor in motors:
         assert motor in motor_list, motor + " not found in connected motors"
-        i += 1
     zipped = zip(motors, degrees, gear_ratios)
     mc.set("drive_distance", zipped)
   
@@ -431,10 +429,10 @@ def get_PID_constants():
     """
     return mc.get("get_PID")
 
-def _testConnected(name): #checks if data exists in sensor values, throws error if doesn't
+def _testConnected(device_id): #checks if data exists in sensor values, throws error if doesn't
     all_data = mc.get('sensor_values')
     try:
-        return all_data[name]
+        return all_data[device_id]
     except KeyError:
         raise KeyError("No sensor with that name")
 
