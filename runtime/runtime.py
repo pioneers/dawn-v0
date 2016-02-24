@@ -105,6 +105,14 @@ def msg_handling(msg):
         console_proc.terminate()
         stop_motors()
         robot_status = 0
+    elif msg_type == 'update':
+        #initiate necessary shutdown procedures
+        if robot_status:
+            student_proc.terminate()
+            console_proc.terminate()
+            stop_motor()
+            
+        os.system('sh ~/updates/update.sh')
 
 peripheral_data_last_sent = 0
 def send_peripheral_data(data):
