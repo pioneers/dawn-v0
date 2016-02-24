@@ -22,7 +22,7 @@ motor = {}
 def _lookup(name): #Returns actual device ID given name
     # TODO: HARDCODED VALUE FOR TESTING ONLY
     # uid = 33069839498132392805621
-    return "330698394981323928056211"
+    return "425081180711840871785071"
 
 def get_motor(name):
     """Returns the current power value for a motor.
@@ -431,6 +431,8 @@ def get_PID_constants():
 
 def _testConnected(device_id): #checks if data exists in sensor values, throws error if doesn't
     all_data = mc.get('sensor_values')
+    print(device_id)
+    print(all_data)
     try:
         return all_data[device_id]
     except KeyError:
