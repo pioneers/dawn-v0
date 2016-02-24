@@ -3,7 +3,6 @@ import memcache, ansible, hibike
 from grizzly import *
 import usb
 import os
-from base64 import b64decode
 
 # Useful motor mappings
 name_to_grizzly, name_to_values, name_to_ids = {}, {}, {}
