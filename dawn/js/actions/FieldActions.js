@@ -30,7 +30,15 @@ var FieldActions = {
     } else {
       Ansible.sendMessage('stop', {});
     }
+  },
+  updateGameObjectTimer(msg) {
+    AppDispatcher.dispatch({
+      type: ActionTypes.UPDATE_GAMEOBJTIMER,
+      timeLeft: msg.time_left,
+      lighthouseAvailable: msg.is_lighthouse_on
+    });
   }
 };
+
 
 export default FieldActions;
