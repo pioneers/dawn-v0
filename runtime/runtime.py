@@ -130,6 +130,7 @@ def set_PID(constants):
         grizzly.init_pid(p, i, d)
 
 def test_battery():
+    return True
     if battery_UID is None or battery_UID not in [x[0] for x in connectedDevices]:
         ansible.send_message('ADD_ALERT', {
         'payload': {
@@ -205,7 +206,7 @@ def stop_motors():
 def log_output(stream):
     #TODO: figure out a way to limit speed of sending messages, so
     # ansible is not overflowed by printing too fast
-    return # HACK to work around console issue: don't have a console!
+    # HACK to work around console issue: don't have a console!
     for line in stream:
         print "sending console:", line
         ansible.send_message('UPDATE_CONSOLE', {
@@ -219,6 +220,7 @@ def msg_handling(msg):
     global robot_status, student_proc, console_proc
     msg_type, content = msg['header']['msg_type'], msg['content']
     if msg_type == 'execute' and not robot_status:
+        print "RUNNING KOBOT"
         filename = "student_code/student_code.py"
         if not os.path.exists(os.path.dirname(filename)):
             try:
@@ -228,7 +230,7 @@ def msg_handling(msg):
                     raise
         with open('student_code/student_code.py', 'w+') as f:
             f.write(msg['content']['code'])
-        student_proc = subprocess.Popen(['python', '-u', 'student_code.py'],
+        student_proc = subprocess.Popen(['python', '-u', 'student_code/student_code.py'],
                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         # turns student process stdout into a stream for sending to frontend
         lines_iter = iter(student_proc.stdout.readline, b'')
