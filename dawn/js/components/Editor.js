@@ -149,6 +149,7 @@ export default React.createClass({
     });
   },
   stopRobot() {
+    console.log("MOBOT")
     Ansible.sendMessage('stop', {});
   },
   generateButtons() {

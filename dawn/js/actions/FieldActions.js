@@ -27,6 +27,7 @@ var FieldActions = {
       Ansible.sendMessage('execute', {
         code: "print 'running'"
       });
+      console.log("RUNNING SOBOT")
     } else {
       Ansible.sendMessage('stop', {});
     }
