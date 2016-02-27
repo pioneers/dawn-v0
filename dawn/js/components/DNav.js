@@ -17,6 +17,11 @@ const storage = remote.require('electron-json-storage');
 
 export default React.createClass({
   displayName: 'DNav',
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextProps.connection !== this.props.connection ||
+      nextProps.battery !== this.props.battery ||
+      nextState.showUpdateModal !== this.state.showUpdateModal;
+  },
   getInitialState() {
     return { showUpdateModal: false };
   },

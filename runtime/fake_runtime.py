@@ -51,18 +51,8 @@ while True:
             sensor_id = msg['content']['id']
             id_to_name[sensor_id] = msg['content']['name']
         elif msg_type == 'update':
-            update = b64decode(msg['content']['update'])
-            signature = b64decode(msg['content']['signature'])
-            filename = msg['content']['filename']
-            signature_filename = filename + '.asc'
-            update_f = open(filename, 'wb')
-            update_f.write(bytearray(update))
-            update_f.flush()
-            update_f.close()
-            signature_f = open(signature_filename, 'wb')
-            signature_f.write(bytearray(signature))
-            signature_f.flush()
-            signature_f.close()
+            print msg['content']['update_path']
+            print msg['content']['signature_path']
 
     ansible.send_message('UPDATE_PERIPHERAL', {
         'peripheral': {
@@ -86,14 +76,18 @@ while True:
         'peripheral': {
             'name':id_to_name['1234'],
             'peripheralType': 'MOTOR_SCALAR',
+<<<<<<< HEAD
             'value': random.uniform(0, 100),
+=======
+            'value': random.uniform(-100, 100),
+>>>>>>> 3bcb58c6332e32252ff8cbdc0ba8472e46aa88e3
             'id': '1234'
         }
     })
     ansible.send_message('UPDATE_PERIPHERAL', {
         'peripheral': {
             'name': id_to_name['1235'],
-            'peripheralType': 'SENSOR_BOOLEAN',
+            'peripheralType': 'LimitSwitch',
             'value': random.randint(0, 1),
             'id': '1235'
         }
@@ -102,7 +96,11 @@ while True:
         'peripheral': {
             'name':id_to_name['1237'],
             'peripheralType': 'MOTOR_SCALAR',
+<<<<<<< HEAD
             'value': random.uniform(0, 100),
+=======
+            'value': random.uniform(-100, 100),
+>>>>>>> 3bcb58c6332e32252ff8cbdc0ba8472e46aa88e3
             'id': '1237'
         }
     })
@@ -110,7 +108,11 @@ while True:
         'peripheral': {
             'name':id_to_name['1238'],
             'peripheralType': 'MOTOR_SCALAR',
+<<<<<<< HEAD
             'value': random.uniform(0, 100),
+=======
+            'value': random.uniform(-100, 100),
+>>>>>>> 3bcb58c6332e32252ff8cbdc0ba8472e46aa88e3
             'id': '1238'
         }
     })
@@ -118,7 +120,11 @@ while True:
         'peripheral': {
             'name':id_to_name['1233'],
             'peripheralType': 'MOTOR_SCALAR',
+<<<<<<< HEAD
             'value': random.uniform(0, 100),
+=======
+            'value': random.uniform(-100, 100),
+>>>>>>> 3bcb58c6332e32252ff8cbdc0ba8472e46aa88e3
             'id': '1233'
         }
     })
@@ -126,7 +132,11 @@ while True:
         'peripheral': {
             'name':id_to_name['1239'],
             'peripheralType': 'LimitSwitch',
+<<<<<<< HEAD
             'value': random.randint(0, 1),
+=======
+            'value': random.randint(-100, 1),
+>>>>>>> 3bcb58c6332e32252ff8cbdc0ba8472e46aa88e3
             'id': '1239'
         }
     })
