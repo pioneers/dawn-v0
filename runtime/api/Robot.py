@@ -19,7 +19,7 @@ mc = memcache.Client(['127.0.0.1:%d' % memcache_port]) # connect to memcache
 motor = {}
 
 _naming_map_filename = 'student_code/CustomID.txt'
-_name_to_id = {}
+_name_to_id = {} # Mapping from motor name to device_id, both are strings
 try:
     with open(_naming_map_filename, "r") as f:
         for line in f.readlines():
@@ -45,11 +45,11 @@ def get_motor(name):
     >>> motor = get_motor(motor1)
 
     """
-    name = _lookup(name)
+    device_id = _lookup(name)
     name_to_value = mc.get('motor_values')
-    assert type(name) is str, "Type Mismatch: Must pass in a string"
+    assert type(device_id) is str, "Type Mismatch: Must pass in a string"
     try:
-        return name_to_value[name]/100
+        return name_to_value[device_id]/100
     except KeyError:
         raise KeyError("Motor name not found.")
 
@@ -67,12 +67,12 @@ def set_motor(name, value):
     assert type(name) is str, "Type Mismatch: Must pass in a string to name."
     assert type(value) is int or type(value) is float, "Type Mismatch: Must pass in an integer or float to value."
     assert value <= 1 and value >= -1, "Motor value must be a decimal between -1 and 1 inclusive."
-    name = _lookup(name)
-    name_to_value = mc.get('motor_values')
-    if name not in name_to_value:
+    device_id = _lookup(name)
+    device_id_to_value = mc.get('motor_values')
+    if device_id not in device_id_to_value:
         raise KeyError("No motor with that name")
-    name_to_value[name] = value*100
-    mc.set('motor_values', name_to_value)
+    device_id_to_value[device_id] = value*100
+    mc.set('motor_values', device_id_to_value)
 
 def get_sensor(name):
     """Returns the value, or reading corresponding to the specified sensor.
@@ -123,9 +123,9 @@ def set_servo(name,value):  #TODO Check with hibike on exact functionality
     """
     assert 0 <= value <= 180, "Servo degrees must be between 0 and 180"
     device_id = _lookup(name)
-    name_to_value = mc.get('servo_values')
-    name_to_value[device_id] = value
-    mc.set('servo_values', name_to_value)
+    device_id_to_value = mc.get('servo_values')
+    device_id_to_value[device_id] = value
+    mc.set('servo_values', device_id_to_value)
 
 
 def get_color_sensor(name):
@@ -189,18 +189,31 @@ def get_hue(name):
     all_data = mc.get('sensor_values')
     device_id = _lookup(name)
     try:
-        r = all_data[name][0]
-        g = all_data[name][1]
-        b = all_data[name][2]
+        r = all_data[device_id][0]
+        g = all_data[device_id][1]
+        b = all_data[device_id][2]
         denom = max(r,g,b) - min(r,g,b)
-        if r > g and r > b:
-            return (g - b)/denom
-        elif g > r and g > b:
-            return 2.0 + (b - r)/denom
+        if denom == 0: 
+            return 0
+        L, M, H = sorted([r, g, b])
+        preucilHueError = 1.0 * (M - L) / (H - L)
+        if r >= g and g >= b:
+            return 60 * preucilHueError
+        elif g > r and r >= b:
+            return 60 * (2 - preucilHueError)
+        elif g >= b and b > r:
+            return 60 * (2 + preucilHueError)
+        elif b > g and g > r:
+            return 60 * (4 - preucilHueError)
+        elif b > r and r >= g:
+            return 60 * (4 + preucilHueError)
+        elif r >= b and b > g:
+            return 60 * (6 - preucilHueError)
         else:
-            return 4.0 + (r - g)/denom
+            # Should never be here
+            return -1
     except KeyError:
-        raise KeyError("No Sensor with that name")
+        raise KeyError("No Sensor with name: %s" % (name,))
 
 def get_distance_sensor(name):
     """Returns the distance away from the sensor an object is, measured in centimeters
