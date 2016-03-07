@@ -27,9 +27,10 @@ var FieldActions = {
       Ansible.sendMessage('execute', {
         code: "print 'running'"
       });
-      console.log("RUNNING SOBOT")
+      console.log("RUNNING SOBOT: " + (msg.autonomous ? "AUTONOMOUS" : "TELEOP"))
     } else {
       Ansible.sendMessage('stop', {});
+      console.log("NOT RUNNING SOBOT: " + (msg.estop ? "ESTOP" : "NOT ESTOP"))
     }
   },
   updateGameObjectTimer(msg) {
