@@ -119,6 +119,9 @@ export default React.createClass({
   saveFile() {
     EditorActionCreators.saveFile(this.state.filepath, this.state.editorCode);
   },
+  saveAsFile() {
+    EditorActionCreators.saveFile(null, this.state.editorCode);
+  },
   createNewFile() {
     if (this.hasUnsavedChanges()) {
       smalltalk.confirm(
@@ -166,7 +169,8 @@ export default React.createClass({
         buttons: [
           new EditorButton('create', 'New', this.createNewFile, 'file'),
           new EditorButton('open', 'Open', this.openFile, 'folder-open'),
-          new EditorButton('save', 'Save', this.saveFile, 'floppy-disk')
+          new EditorButton('save', 'Save', this.saveFile, 'floppy-disk'),
+          new EditorButton('saveas', 'Save As', this.saveAsFile, 'floppy-save')
         ],
       }, {
         groupId: 'code-execution-buttons',
@@ -212,9 +216,6 @@ export default React.createClass({
     'solarized_light',
     'terminal'
   ],
-  shouldComponentUpdate(nextProps, nextState) {
-    return !(_.isEqual(nextState, this.state) && _.isEqual(nextProps, this.props));
-  },
   render() {
     let consoleHeight = 250;
     let editorHeight = window.innerHeight * 0.66;
