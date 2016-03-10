@@ -24,9 +24,15 @@ var FieldActions = {
       enabled: msg.enabled
     });
     if (msg.enabled) {
-      Ansible.sendMessage('execute', {
-        code: "print 'running'"
-      });
+      if (msg.autonomous) {
+        Ansible.sendMessage('execute', {
+          code: "import time\nprint time.strftime('starting autonomous at %l:%M:%S %p')\n"
+        });
+      } else {
+        Ansible.sendMessage('execute', {
+          code: "import time\nprint time.strftime('starting teleop at %l:%M:%S %p')\n"
+        });       
+      }
       console.log("RUNNING SOBOT: " + (msg.autonomous ? "AUTONOMOUS" : "TELEOP"))
     } else {
       Ansible.sendMessage('stop', {});
