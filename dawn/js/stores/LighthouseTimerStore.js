@@ -5,46 +5,49 @@ import assign from 'object-assign';
 import _ from 'lodash';
 
 
-let _gameobjtimerData = {
+let _lighthousetimerData = {
   timestamp: 0,
   timeLeft: 0,
   lighthouseAvailable: 'Disconnected from field'
 };
 
-let GameObjectTimerStore = assign({}, EventEmitter.prototype, {
+let LighthouseTimerStore = assign({}, EventEmitter.prototype, {
   emitChange() {
     this.emit('change');
   },
   getTimestamp() {
-    return _gameobjtimerData.timestamp
+    return _lighthousetimerData.timestamp
   },
   getTimeLeft() {
-    return _gameobjtimerData.timeLeft;
+    return _lighthousetimerData.timeLeft;
   },
   getAvailable() {
-    return _gameobjtimerData.lighthouseAvailable;
+    return _lighthousetimerData.lighthouseAvailable;
   }
 });
 
 GameObjectTimerStore.dispatchToken = AppDispatcher.register((action) => {
   switch (action.type) {
-    case ActionTypes.UPDATE_GAMEOBJTIMER:
+    case ActionTypes.UPDATE_LIGHTHOUSETIMER:
       updateTimer(action);
       break;
   }
 });
 function refreshTimer() {
-  GameObjectTimerStore.emitChange
+  LighthouseTimerStore.emitChange
 }
 //setInterval(refreshTimer, 10)
 
 function updateTimer(action) {
   //console.log("baby");
-  _gameobjtimerData.timestamp = Date.now()
-	_gameobjtimerData.timeLeft = action.timeLeft;
-	_gameobjtimerData.lighthouseAvailable = action.lighthouseAvailable;
+  _lighthousetimerData.timestamp = Date.now()
+	_lighthousetimerData.timeLeft = action.timeLeft;
+	if action.lighthouseAvailable:
+    _lighthousetimerData.lighthouseAvailable = "Lighthouse is available"
+  else:
+    _lighthousetimerData.lighthouseAvailable = "Lighthouse is unavailable"
 	//change timeLeft and set stage correctly
-	GameObjectTimerStore.emitChange();
+	LighthouseTimerStore.emitChange();
 }
 
-export default GameObjectTimerStore;
+export default LighthouseTimerStore;

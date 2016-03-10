@@ -32,7 +32,7 @@ import {remote} from 'electron';
 let langtools = ace.acequire('ace/ext/language_tools');
 let storage = remote.require('electron-json-storage');
 import Timer from './Timer'
-import GameObjectTimer from './GameObjectTimer'
+import LighthouseTimer from './LighthouseTimer'
 import FieldStore from '../stores/FieldStore'
 
 export default React.createClass({
@@ -262,7 +262,7 @@ export default React.createClass({
         />
         <div style={this.state.heart ? {'color': 'red', 'height': '20px', 'fontSize': 'large'} : {'color': 'red', 'height': '20px', 'fontSize': 'small'}}>&hearts;</div>
         <Timer {...this.props} />
-        <GameObjectTimer {...this.props} />
+        <LighthouseTimer {...this.props} />
         <AceEditor
           mode="python"
           theme={ this.state.editorTheme }

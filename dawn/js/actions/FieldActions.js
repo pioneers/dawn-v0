@@ -39,11 +39,11 @@ var FieldActions = {
       console.log("NOT RUNNING SOBOT: " + (msg.estop ? "ESTOP" : "NOT ESTOP"))
     }
   },
-  updateGameObjectTimer(msg) {
+  updateLighthouseTimer(msg) {
     AppDispatcher.dispatch({
-      type: ActionTypes.UPDATE_GAMEOBJTIMER,
+      type: ActionTypes.UPDATE_LIGHTHOUSETIMER,
       timeLeft: msg.time_left,
-      lighthouseAvailable: msg.is_lighthouse_on
+      lighthouseAvailable: msg.available
     });
   }
 };

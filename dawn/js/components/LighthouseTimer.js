@@ -1,35 +1,35 @@
 import React from 'react';
 import PeripheralList from './PeripheralList';
 import Peripheral from './Peripheral';
-import GameObjectTimerStore from '../stores/GameObjectTimerStore';
+import GameObjectTimerStore from '../stores/LighthouseTimerStore';
 import _ from 'lodash';
 
-var GameObjectTimer = React.createClass({
+var LighthouseTimer = React.createClass({
   getInitialState() {
     return { 
       timeLeft: 0,
-      lighthouseAvailable: "lighthouse is not available" };
+      lighthouseAvailable: 'Disconnected from field' };
   },
   onChange() {
     this.setState({
-      timeLeft: (GameObjectTimerStore.getTimeLeft() / 1000).toFixed(1),
-      lighthouseAvailable: GameObjectTimerStore.getAvailable()
+      timeLeft: (LighthouseTimerStore.getTimeLeft() / 1000).toFixed(1),
+      lighthouseAvailable: LighthouseTimerStore.getAvailable()
     });
   },
   refresh() {
-    var timeLeft = (GameObjectTimerStore.getTimeLeft() - (Date.now() - GameObjectTimerStore.getTimestamp())) / 1000
+    var timeLeft = (LighthouseTimerStore.getTimeLeft() - (Date.now() - LighthouseTimerStore.getTimestamp())) / 1000
     if (timeLeft < 0){timeLeft = 0}
     this.setState({
       timeLeft: timeLeft.toFixed(1)
     })
   },
   componentDidMount() {
-    GameObjectTimerStore.on('change', this.onChange);
+    LighthouseTimerStore.on('change', this.onChange);
     this.onChange();
     setInterval(this.refresh, 20)
   },
   componentWillUnmount() {
-    GameObjectTimerStore.removeListener('change', this.onChange);
+    LighthouseTimerStore.removeListener('change', this.onChange);
   },
   render: function() {
         return (
@@ -45,4 +45,4 @@ var GameObjectTimer = React.createClass({
     }
 });
 
-export default GameObjectTimer;
+export default LighthouseTimer;
