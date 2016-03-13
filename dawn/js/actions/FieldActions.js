@@ -43,7 +43,8 @@ var FieldActions = {
     AppDispatcher.dispatch({
       type: ActionTypes.UPDATE_LIGHTHOUSETIMER,
       timeLeft: msg.time_left,
-      lighthouseAvailable: msg.available
+      enabled: msg.enabled,
+      available: msg.available
     });
   }
 };

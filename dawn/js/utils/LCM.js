@@ -18,7 +18,7 @@ function makeLCM(){
         lcm.subscribe("Robot0/RobotControl", "RobotControl", function(msg) {
             FieldActions.updateRobot(msg)
         })
-        lcm.subscribe("LighthouseTimer/LighthouseTime", "LighthouseTime", FieldActions.updateGameObjectTimer)
+        lcm.subscribe("LighthouseTimer/LighthouseTime", "LighthouseTime", FieldActions.updateLighthouseTimer)
     }
     lcm.on_ready(subscribeAll)
     lcm.on_close(makeLCM)

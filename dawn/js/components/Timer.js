@@ -26,7 +26,7 @@ var Timer = React.createClass({
   componentDidMount() {
     TimerStore.on('change', this.onChange);
     this.onChange();
-    setInterval(this.refresh, 20)
+    setInterval(this.refresh, 80)
   },
   componentWillUnmount() {
     TimerStore.removeListener('change', this.onChange);
@@ -35,10 +35,7 @@ var Timer = React.createClass({
         return (
         <div>
             <p>
-              The following is a timer: <b>{this.state.timeLeft}</b>
-            </p>
-            <p>
-              Stage: <b>{this.state.stage}</b>
+              Match {this.state.stage}: <b>{this.state.timeLeft}</b>
             </p>
         </div>
        );

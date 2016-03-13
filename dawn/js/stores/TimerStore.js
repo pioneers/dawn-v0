@@ -34,7 +34,7 @@ TimerStore.dispatchToken = AppDispatcher.register((action) => {
   }
 });
 function refreshTimer() {
-  TimerStore.emitChange
+  TimerStore.emitChange()
 }
 //setInterval(refreshTimer, 10)
 
