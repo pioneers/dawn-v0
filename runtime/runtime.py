@@ -19,6 +19,7 @@ mc.set('control_mode', ["default", "all"])
 mc.set('drive_mode', ["brake", "all"])
 mc.set('drive_distance', [])
 mc.set('metal_detector_calibrate', [False,False])
+mc.set('color_sensor_leds', {})
 
 #####
 # Connect to hibike
@@ -221,6 +222,14 @@ def metal_d_calibrate(metalID):
         h.writeValue(metalID, "calibrate", calibrate_val)
     calibrate_val += 1
     mc.set("metal_detector_calibrate", [False,False])
+
+def set_color_sensor_leds(data):
+    for device_id, value in data.items():
+        if value != 1 and value != 0:
+            continue
+        h.writeValue(device_id_to_uid(device_id),
+                     "Toggle",
+                     value)
 
 
 #####
@@ -458,6 +467,10 @@ while True:
     flag_values = mc.get('flag_values') or [False, False, False, False]
     if flag_values:
         set_flag(flag_values)
+
+    color_s_leds = mc.get('color_sensor_leds') or {}
+    if color_s_leds:
+        set_color_sensor_leds(color_s_leds)
 
     #Drive distance for grizzlies
     drive_distance = mc.get('drive_distance')
