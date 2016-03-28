@@ -202,6 +202,28 @@ def get_hue(name):
     except KeyError:
         raise KeyError("No Sensor with that name")
 
+def set_color_sensor_led(name, value):
+    """Sets the value of the LED on the specified color sensor.
+
+    Reading values from the color sensor while the LED is off will result in 
+    poor performance, so it is highly recommended to turn the LED on before 
+    using the color sensor.
+
+    :param name: A string that identifies the color sensor
+    :param value: An integer to write to the LED. Must be 0 or 1.
+
+    :Examples:
+
+    >> set_color_sensor_led("color1", 0)
+    >> set_color_sensor_led("color1", 1)
+
+    """
+    assert value == 0 or value == 1, "LED value must be 0 or 1."
+    device_id = _lookup(name)
+    colorsensor_vals = mc.get('color_sensor_leds')
+    colorsensor_vals[device_id] = value
+    mc.set('color_sensor_leds', colorsensor_vals)
+
 def get_distance_sensor(name):
     """Returns the distance away from the sensor an object is, measured in centimeters
 
@@ -271,19 +293,19 @@ def calibrate_metal_detector(name): #TODO test calibration
     mc.set("metal_detector_calibrate",[name,True])
 
 
-"""
-def get_all_reflecting(name): #TODO hibike implement
-    \"""Returns how much light is reflected onto the sensor_values
+
+def get_all_reflecting(name):
+    """Returns how much light is reflected onto the sensor_values
 
     A light/reflective material will return higher values, while a dark material
     will return a lower value. Each reflecting sensor returns a list, with each index
-    corresponding to a specifie reflecting sensor.
+    corresponding to a specific reflecting sensor.
 
     :param name: A String that identifies the reflecting smart device.
     :returns: A list of decimals which represents how much light is reflected.
-    \"""
-    return null
-"""
+    """
+    device_id = _lookup(name)
+    return list(_testConnected(device_id))
 
 
 def drive_distance_all(degrees, motors, gear_ratios):
