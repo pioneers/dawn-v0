@@ -293,19 +293,19 @@ def calibrate_metal_detector(name): #TODO test calibration
     mc.set("metal_detector_calibrate",[name,True])
 
 
-"""
-def get_all_reflecting(name): #TODO hibike implement
-    \"""Returns how much light is reflected onto the sensor_values
+
+def get_all_reflecting(name):
+    """Returns how much light is reflected onto the sensor_values
 
     A light/reflective material will return higher values, while a dark material
     will return a lower value. Each reflecting sensor returns a list, with each index
-    corresponding to a specifie reflecting sensor.
+    corresponding to a specific reflecting sensor.
 
     :param name: A String that identifies the reflecting smart device.
     :returns: A list of decimals which represents how much light is reflected.
-    \"""
-    return null
-"""
+    """
+    device_id = _lookup(name)
+    return list(_testConnected(device_id))
 
 
 def drive_distance_all(degrees, motors, gear_ratios):
