@@ -13,10 +13,11 @@ export default React.createClass({
   getInitialState() {
     return {
       steps: [],
-      consoleData: [],
-      isRunningCode: false,
-      connectionStatus: true,
-      batteryLevel: 0
+      consoleData: RobotInfoStore.getConsoleData(),
+      isRunningCode: RobotInfoStore.getIsRunningCode(),
+      connectionStatus: RobotInfoStore.getConnectionStatus(),
+      runtimeStatus: RobotInfoStore.getRuntimeStatus(),
+      batteryLevel: RobotInfoStore.getBatteryLevel()
     };
   },
   componentDidMount() {
@@ -33,6 +34,7 @@ export default React.createClass({
       consoleData: RobotInfoStore.getConsoleData(),
       isRunningCode: RobotInfoStore.getIsRunningCode(),
       connectionStatus: RobotInfoStore.getConnectionStatus(),
+      runtimeStatus: RobotInfoStore.getRuntimeStatus(),
       batteryLevel: RobotInfoStore.getBatteryLevel()
     });
   },
@@ -73,8 +75,10 @@ export default React.createClass({
       <div>
         <DNav
           startTour={this.startTour}
+	  runtimeStatus={this.state.runtimeStatus}
           connection={this.state.connectionStatus}
           battery={this.state.batteryLevel}
+          isRunningCode={this.state.isRunningCode}
         />
         <Joyride
           ref="joyride"
@@ -82,13 +86,15 @@ export default React.createClass({
           type="continuous"
           showSkipButton={true}
           completeCallback={this.completeCallback}
+          locale={{back: 'Previous', close: 'Close', last: 'End Tour', next: 'Next', skip: 'Skip Tour'}}
         />
         <div style={{ height: '60px', marginBottom: '21px' }}/>
         <Dashboard {...this.props}
           addSteps={this.addSteps}
           addTooltip={this.addTooltip}
           consoleData={this.state.consoleData}
-          connectionStatus={this.state.connectionStatus}
+	  connectionStatus={this.state.connectionStatus}
+          runtimeStatus={this.state.runtimeStatus}
           isRunningCode={this.state.isRunningCode}
         />
       </div>

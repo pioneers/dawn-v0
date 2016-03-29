@@ -25,5 +25,6 @@ dist/*
 
 cache/
 
-runtime/student_code/student_code.py
+runtime/student_code/*
 runtime/hibike/
+

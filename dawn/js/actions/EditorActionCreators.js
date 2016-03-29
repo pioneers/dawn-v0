@@ -8,7 +8,6 @@ let EditorActionCreators = {
   readFilepath(filepath) {
     fs.readFile(filepath, 'utf8', function(err, data) {
       if (err) {
-        console.log('error');
       } else {
         localStorage.setItem('lastFile', filepath);
         AppDispatcher.dispatch({
@@ -49,9 +48,17 @@ let EditorActionCreators = {
     };
 
     if (filepath === null) {
-      dialog.showSaveDialog(function(filepath) {
+      dialog.showSaveDialog({
+        filters: [{ name: 'python', extensions: ['py']}]
+      }, function(filepath) {
         if (filepath === undefined) return;
-        writeContents(filepath);
+
+        // Automatically append .py extension if they don't have it
+        if (filepath.endsWith('.py')) {
+          writeContents(filepath);
+        } else {
+          writeContents(filepath + '.py');
+        }
       });
     } else {
       writeContents(filepath);
