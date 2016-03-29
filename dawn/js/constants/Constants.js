@@ -11,6 +11,7 @@ module.exports = {
     UPDATE_MOTOR: null,
     UPDATE_PERIPHERAL: null,
     UPDATE_STATUS: null,
+    UPDATE_CONNECTION: null,
     SAVE_FILE: null,
     OPEN_FILE: null,
     CLEAR_EDITOR: null,
@@ -21,6 +22,13 @@ module.exports = {
   PeripheralTypes: keyMirror({
     MOTOR_SCALAR: null,
     SENSOR_BOOLEAN: null,
-    SENSOR_SCALAR: null
+    SENSOR_SCALAR: null,
+    LimitSwitch: null,
+    LineFollower: null,
+    Potentiometer: null,
+    Encoder: null,
+    ColorSensor: null,
+    MetalDetector: null,
+    ExampleDevice: null
   })
 };

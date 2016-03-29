@@ -11,13 +11,15 @@ import os
 memcache_port = 12357
 mc = memcache.Client(['127.0.0.1:%d' % memcache_port])
 mc.set('gamepad', {'0': {'axes': [0,0,0,0], 'buttons': None, 'connected': None, 'mapping': None}})
-mc.set('motor_values', {})
-mc.set('servo_values', {})
+mc.set('motor_values', [])
+mc.set('servo_values', [])
 mc.set('flag_values', [False, False, False, False])
 mc.set('PID_constants',[("P", 1), ("I", 0), ("D", 0)])
 mc.set('control_mode', ["default", "all"])
 mc.set('drive_mode', ["brake", "all"])
 mc.set('drive_distance', [])
+mc.set('metal_detector_calibrate', [False,False])
+mc.set('toggle_light', None)
 
 #####
 # Connect to hibike
@@ -119,9 +121,15 @@ def get_all_data(connectedDevices):
         if uid == battery_UID: # battery value testing is special-cased
             continue
         tup_nest = h.getData(uid, "dataUpdate")
-        if device_type == 9: # XXX a constant value
-            #just for color sensor, put all data into one list
-            all_data["5" + str(uid)] = h.getData(uid, "dataUpdate")
+        if h.getDeviceName(int(device_type)) == "ColorSensor":
+            #special case for color sensors
+            color_data = h.getData(uid, "dataUpdate")[0]
+            lum = float(color_data[3])
+            red = int(color_data[0] / lum * 256)
+            green = int(color_data[1] / lum * 256)
+            blue = int(color_data[2] / lum * 256)
+            all_data[str(uid) + "1"] = [red, green, blue, lum, get_hue(red, green, blue)]
+            continue
         if not tup_nest:
             continue
         values, timestamps = tup_nest
@@ -129,15 +137,40 @@ def get_all_data(connectedDevices):
             all_data[device_id] = value
     return all_data
 
+def get_hue(r, g, b):
+    denom = max(r, g, b) - min(r, g, b)
+    if denom == 0:
+        return 0
+    L, M, H = sorted([r, g, b])
+    preucilHueError = 1.0 * (M - L) / (H - L)
+    if r >= g and g >= b:
+        return 60 * preucilHueError
+    elif g > r and r >= b:
+        return 60 * (2 - preucilHueError)
+    elif g >= b and b > r:
+        return 60 * (2 + preucilHueError)
+    elif b > g and g > r:
+        return 60 * (4 - preucilHueError)
+    elif b > r and r >= g:
+        return 60 * (4 + preucilHueError)
+    elif r >= b and b > g:
+        return 60 * (6 - preucilHueError)
+    else:
+        # Should never be here
+        return -1
+
+
 #####
 # Battery
 #####
 battery_UID = None
+battery_safe = False
 def init_battery():
     global battery_UID
     for UID, dev in connectedDevices:
         if h.getDeviceName(int(dev)) == "BatteryBuzzer":
             battery_UID = UID
+    test_battery() #TODO Calls test_battery to send alert once for no battery buzzer
 
 def test_battery():
     global battery_UID
@@ -158,7 +191,6 @@ def test_battery():
     try:
         (safe, connected, c0, c1, c2, voltage), timestamp = h.getData(battery_UID,"dataUpdate")
     except:
-        raise
         safe, voltage = False, 0.0
 
     ansible.send_message('UPDATE_BATTERY', {
@@ -212,6 +244,21 @@ def set_flag(values):
     for field, value in zip(["s1", "s2", "s3", "s4"], values):
         h.writeValue(flag_UID, field, int(value))
 
+calibrate_val = 1
+def metal_d_calibrate(metalID):
+    global calibrate_val
+    for i in range(10):
+    #while h.getData(metalID, "calibrate") != calibrate_val:
+        h.writeValue(metalID, "calibrate", calibrate_val)
+    calibrate_val += 1
+    mc.set("metal_detector_calibrate", [False,False])
+
+def set_light(value):
+    device_id = value[0]
+    write_value = value[1]
+    h.writeValue(device_id_to_uid(device_id), "Toggle", write_value)
+    mc.set("toggle_light", None)
+
 #####
 # Motors
 #####
@@ -232,8 +279,12 @@ def enumerate_motors():
         grizzly_motor = Grizzly(addrs[index])
         grizzly_motor.set_mode(ControlMode.NO_PID, DriveMode.DRIVE_BRAKE)
         grizzly_motor.set_target(0)
-        grizzly_motor._set_as_int(0x80, 500, 2)
-
+        
+        # enable usb mode disables timeouts, so we have to disable it to enable timeouts.
+        #grizzly_motor._set_as_int(Addr.EnableUSB, 0, 1)
+        
+        # set the grizzly timeout to 500 ms
+        #grizzly_motor._set_as_int(Addr.Timeout, 500, 2)
         name_to_grizzly['motor' + str(index)] = grizzly_motor
         name_to_values['motor' + str(index)] = 0
         name_to_modes['motor' + str(index)] = (ControlMode.NO_PID, DriveMode.DRIVE_BRAKE)
@@ -252,15 +303,15 @@ def set_motors(data):
 
 # Called on end of student code, sets all motor values to zero
 def stop_motors():
-    name_to_values = {}
+    motor_values = mc.get('motor_values') 
     for name, grizzly in name_to_grizzly.iteritems():
         try:
             grizzly.set_target(0)
         except:
             print("WARNING: failed to stop grizzly")
-        name_to_values[name] = 0
+        motor_values[name] = 0
 
-    mc.set('motor_values', name_to_values)
+    mc.set('motor_values', motor_values)
 
 def drive_set_distance(list_tuples):
     for item in list_tuples:
@@ -275,26 +326,41 @@ def drive_set_distance(list_tuples):
             set_control_mode(control_mode)
         except:
             stop_motors()
+        mc.set("drive_distance", [])
 
 def set_control_mode(mode):
     new_mode = all_modes[mode[0]]
     if mode[1] == "all":
         for motor, old_mode in name_to_modes.items():
             grizzly = name_to_grizzly[motor]
-            grizzly.set_mode(new_mode, old_mode[1])
+            try:
+                grizzly.set_mode(new_mode, old_mode[1])
+            except:
+                pass
     else:
         grizzly = name_to_grizzly[motor]
-        grizzly.set_mode(new_mode, old_mode[1])
+        try:
+            grizzly.set_mode(new_mode, old_mode[1])
+        except:
+            pass
+    mc.set("control_mode", [])
 
 def set_drive_mode(mode):
     new_mode = all_modes[mode[0]]
     if mode[1] == "all":
         for motor, old_mode in name_to_modes.items():
             grizzly = name_to_grizzly[motor]
-            grizzly.set_mode(old_mode[0], new_mode)
+            try:
+                grizzly.set_mode(old_mode[0], new_mode)
+            except:
+                pass
     else:
         grizzly = name_to_grizzly[motor]
-        grizzly.set_mode(old_mode[0], new_mode)
+        try:
+            grizzly.set_mode(old_mode[0], new_mode)
+        except:
+            pass
+    mc.set("drive_mode", [])
 
 def set_PID(constants):
     PID_constants[constants[0]] = constants[1]
@@ -302,8 +368,11 @@ def set_PID(constants):
     i = PID_constants["I"]
     d = PID_constants["D"]
     for motor, grizzly in name_to_grizzly.items():
-        grizzly.init_pid(p, i, d)
-
+        try:
+            grizzly.init_pid(p, i, d)
+        except:
+            print("pid set failed");
+    mc.set("PID_constants", [])
 
 
 # A process for sending the output of student code to the UI
@@ -313,7 +382,7 @@ def log_output(stream):
     for line in stream:
         if robot_status == 0:
             return
-        time.sleep(0.05)
+        time.sleep(0.005)
         ansible.send_message('UPDATE_CONSOLE', {
             'console_output': {
                 'value': line
@@ -334,7 +403,7 @@ def msg_handling(msg):
         with open('student_code/student_code.py', 'w+') as f:
             f.write(msg['content']['code'])
 
-        enumerate_motors()
+        #enumerate_motors() TODO Unable to restart motors that already exist
 
         student_proc = subprocess.Popen(['python', '-u', 'student_code/student_code.py'],
                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -399,9 +468,15 @@ def send_motor_data(data):
 
 read_naming_map()
 enumerate_hibike()
+enumerate_motors()
 while True:
-    battery_safe = test_battery()
-    if not battery_safe:
+    if battery_UID: #TODO Only tests battery safety if battery buzzer is connected
+        battery_safe = test_battery()
+    if not battery_safe and battery_UID: #TODO Disables sending alert if battery buzzer is not connected
+        if robot_status:
+            student_proc.terminate()
+            stop_motors()
+            robot_status = 0
         for _ in range(10):
             ansible.send_message('UPDATE_STATUS', {
                 'status': {'value': False}
@@ -423,6 +498,10 @@ while True:
     all_sensor_data = get_all_data(connectedDevices)
     send_peripheral_data(all_sensor_data)
     mc.set('sensor_values', all_sensor_data)
+
+    md_calibrate = mc.get('metal_detector_calibrate')
+    if md_calibrate[1]:
+        metal_d_calibrate(device_id_to_uid(md_calibrate[0]))
 
     # Update motor values, and send to UI
     motor_values = mc.get('motor_values') or {}
@@ -451,17 +530,18 @@ while True:
 
     #set drive mode
     drive_mode = mc.get("drive_mode")
-    if control_mode:
-        set_control_mode(control_mode)
+    if drive_mode:
+        set_drive_mode(drive_mode)
 
     #rebind PID constants
     PID_rebind= mc.get("PID_constants")
     if PID_rebind:
         set_PID(PID_rebind)
 
-    #refresh PID constants
-    mc.set("get_PID", PID_constants)
-
+    #toggle light on or off
+    toggle_value = mc.get("toggle_light")
+    if toggle_value != None:
+        set_light(toggle_value)
 
 
     time.sleep(0.05)
