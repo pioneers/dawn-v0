@@ -8,12 +8,16 @@ var Timer = React.createClass({
   getInitialState() {
     return { 
       timeLeft: 0,
-      stage: "disconnected" };
+      stage: "disconnected",
+      width: 75,
+      color: "progress-bar-info" };
   },
   onChange() {
     this.setState({
       timeLeft: (TimerStore.getTimeLeft() / 1000).toFixed(1),
-      stage: TimerStore.getStage()
+      stage: TimerStore.getStage(),
+      width: TimerStore.getWidth(),
+      color: TimerStore.getColor()
     });
   },
   refresh() {

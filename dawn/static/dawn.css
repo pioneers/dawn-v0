@@ -24,3 +24,43 @@
 .invalid:hover {
   background-color: #ffffff;
 }
+
+
+
+.progress, .progress-bar {
+    text-align: center;
+    transition: width 0.3s linear !important;
+
+}
+
+.progress span {
+    position: absolute;
+    /*        display: block;*/
+    /*        width: 100%;
+*/
+    color: black;
+    right: 0;
+    left: 0;
+}
+
+.pioneers-blue {
+    background-color: #363895;
+}
+
+.pioneers-gold {
+    background-color: #c7aa36;
+}
+
+.pioneers-blue,
+.pioneers-gold {
+    color: white;
+}
+
+.clock div {
+    margin-top: 0px;
+    font-size: 30px;
+}
+
+.clock {
+    padding: 0px;
+}

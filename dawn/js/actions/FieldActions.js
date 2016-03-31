@@ -8,7 +8,8 @@ var FieldActions = {
     AppDispatcher.dispatch({
       type: ActionTypes.UPDATE_TIMER,
       timeLeft: timeLeft,
-      stage: msg.stage_name
+      stage: msg.stage_name,
+      totalTime: msg.total_stage_time
     });
   },
   updateHeart(msg) {

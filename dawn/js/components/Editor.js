@@ -31,6 +31,7 @@ import 'brace/theme/terminal';
 import {remote} from 'electron';
 let langtools = ace.acequire('ace/ext/language_tools');
 let storage = remote.require('electron-json-storage');
+import Scoreboard from './Scoreboard';
 import Timer from './Timer'
 import LighthouseTimer from './LighthouseTimer'
 import FieldStore from '../stores/FieldStore'
@@ -261,6 +262,7 @@ export default React.createClass({
           themes={ this.themes }
         />
         <div style={this.state.heart ? {'color': 'red', 'height': '20px', 'fontSize': 'large'} : {'color': 'red', 'height': '20px', 'fontSize': 'small'}}>&hearts;</div>
+        <Scoreboard {...this.props} />
         <Timer {...this.props} />
         <LighthouseTimer {...this.props} />
         <AceEditor
