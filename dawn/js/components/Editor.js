@@ -263,8 +263,6 @@ export default React.createClass({
         />
         <div style={this.state.heart ? {'color': 'red', 'height': '20px', 'fontSize': 'large'} : {'color': 'red', 'height': '20px', 'fontSize': 'small'}}>&hearts;</div>
         <Scoreboard {...this.props} />
-        <Timer {...this.props} />
-        <LighthouseTimer {...this.props} />
         <AceEditor
           mode="python"
           theme={ this.state.editorTheme }

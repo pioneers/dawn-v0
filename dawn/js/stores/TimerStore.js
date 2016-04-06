@@ -71,7 +71,7 @@ function refreshTimer() {
   computeWidthAndColor();
   TimerStore.emitChange()
 }
-setInterval(refreshTimer, 80)
+setInterval(refreshTimer, 200)
 
 function updateTimer(action) {
   _timerData.timestamp = Date.now()

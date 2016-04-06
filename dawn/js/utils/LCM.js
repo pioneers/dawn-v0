@@ -2,7 +2,10 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import LCM from './lcm_ws_bridge'
 import FieldActions from '../actions/FieldActions.js'
 import AlertActions from '../actions/AlertActions.js'
-localStorage.setItem('bridgeAddress', '10.31.1.199')
+fs = require('fs')
+localStorage.setItem('bridgeAddress', fs.readFileSync('lcm_bridge_addr.txt'))
+
+
 let bridgeAddress = localStorage.getItem('bridgeAddress') || '127.0.0.1';
 let lcm = null;
 function makeLCM(){
