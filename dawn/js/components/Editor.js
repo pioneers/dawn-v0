@@ -10,7 +10,7 @@ import _ from 'lodash';
 import ConsoleOutput from './ConsoleOutput';
 import RobotActions from '../actions/RobotActions';
 import Ansible from '../utils/Ansible';
-import {Panel} from 'react-bootstrap';
+import {Panel, Glyphicon} from 'react-bootstrap';
 import { EditorButton } from './EditorClasses';
 import ace from 'brace';
 import 'brace/ext/language_tools';
@@ -47,7 +47,8 @@ export default React.createClass({
       latestSaveCode: '',
       editorCode: '',
       editorTheme: 'github',
-      heart: false
+      heart: false,
+      stationTag: FieldStore.getStationTag()
     };
   },
   componentDidMount() {
@@ -305,8 +306,12 @@ export default React.createClass({
     let editorHeight = window.innerHeight * 0.66;
     return (
       <Panel
-        header={'Editing: ' + this.pathToName(this.state.filepath) +
-          (this.hasUnsavedChanges() ? '*' : '')}
+        header={
+          <div>
+            <span style={{'height': '20px', 'fontSize': 'large'}}>{this.state.stationTag}</span>
+            <Glyphicon glyph="heart" style={this.state.heart ? {'color': 'red', 'height': '20px', 'fontSize': 'large'} : {'color': 'red', 'height': '20px', 'fontSize': 'small'}}/>
+          </div>
+        }
         bsStyle="primary">
         <EditorToolbar
           buttons={ this.generateButtons() }
@@ -315,7 +320,6 @@ export default React.createClass({
           editorTheme={ this.state.editorTheme }
           themes={ this.themes }
         />
-        <div style={this.state.heart ? {'color': 'red', 'height': '20px', 'fontSize': 'large'} : {'color': 'red', 'height': '20px', 'fontSize': 'small'}}>&hearts;</div>
         <Scoreboard {...this.props} />
         <AceEditor
           mode="python"

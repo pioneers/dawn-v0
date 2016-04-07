@@ -18,6 +18,8 @@ module.exports = {
     UPDATE_TIMER: null,
     UPDATE_HEART: null,
     UPDATE_ROBOT: null,
+    UPDATE_MATCH: null,
+    UPDATE_SCORE: null,
     ADD_ALERT: null,
     REMOVE_ALERT: null,
     CLEAR_CONSOLE: null

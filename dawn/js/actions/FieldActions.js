@@ -1,8 +1,6 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import {ActionTypes} from '../constants/Constants';
 import Ansible from '../utils/Ansible'
-fs = require('fs')
-
 var FieldActions = {
   updateTimer(msg) {
     var timeLeft = msg.total_stage_time - msg.stage_time_so_far
@@ -19,26 +17,37 @@ var FieldActions = {
       state: msg.state
     });
   },
+  updateMatch(msg) {
+    AppDispatcher.dispatch({
+      type: ActionTypes.UPDATE_MATCH,
+      matchNumber: msg.match_number,
+      teamNames: msg.team_names,
+      teamNumbers: msg.team_numbers
+    });
+  },
+  updateScore(msg) {
+    AppDispatcher.dispatch({
+      type: ActionTypes.UPDATE_SCORE,
+      state: msg.state,
+      match_number: msg.matchNumber,
+      pearl: msg.pearl, 
+      water_autonomous: msg.water_autonomous, 
+      treasure_autonomous: msg.treasure_autonomous, 
+      water_teleop: msg.water_teleop, 
+      treasure_teleop: msg.treasure_teleop
+    });
+  },
   updateRobot(msg) {
     AppDispatcher.dispatch({
       type: ActionTypes.UPDATE_ROBOT,
       autonomous: msg.autonomous,
       enabled: msg.enabled
     });
-    if (msg.enabled) {
-      if (msg.autonomous) {
-        Ansible.sendMessage('execute', {
-          code: fs.readFileSync('sample_autonomous.py')
-        });
-      } else {
-        Ansible.sendMessage('execute', {
-          code: fs.readFileSync('sample_teleop.py')
-        });       
-      }
-      console.log("RUNNING SOBOT: " + (msg.autonomous ? "AUTONOMOUS" : "TELEOP"))
+    Ansible.sendMessage('game', {'autonomous': msg.autonomous, 'enabled': msg.enabled})
+    if (msg.running) {
+      Ansible.sendMessage('execute', {});
     } else {
       Ansible.sendMessage('stop', {});
-      console.log("NOT RUNNING SOBOT: " + (msg.estop ? "ESTOP" : "NOT ESTOP"))
     }
   },
   updateLighthouseTimer(msg) {

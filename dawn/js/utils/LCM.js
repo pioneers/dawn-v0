@@ -2,7 +2,7 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import LCM from './lcm_ws_bridge'
 import FieldActions from '../actions/FieldActions.js'
 import AlertActions from '../actions/AlertActions.js'
-fs = require('fs')
+import fs from 'fs'
 localStorage.setItem('bridgeAddress', fs.readFileSync('lcm_bridge_addr.txt'))
 
 
@@ -18,8 +18,14 @@ function makeLCM(){
         lcm.subscribe("Heartbeat/Beat", "Heartbeat", function(msg) {
            FieldActions.updateHeart(msg)
         })
-        lcm.subscribe("Robot0/RobotControl", "RobotControl", function(msg) {
+        lcm.subscribe("Robot" + fs.readFileSync('station_number.txt') + "/RobotControl", "RobotControl", function(msg) {
             FieldActions.updateRobot(msg)
+        })
+        lcm.subscribe("Timer/Match", "Match", function(msg) {
+            FieldActions.updateMatch(msg)
+        })
+        lcm.subscribe("LiveScore/LiveScore", "LiveScore", function(msg) {
+            FieldActions.updateScore(msg)
         })
         lcm.subscribe("LighthouseTimer/LighthouseTime", "LighthouseTime", FieldActions.updateLighthouseTimer)
     }

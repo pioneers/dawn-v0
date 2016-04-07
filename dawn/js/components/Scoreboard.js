@@ -1,5 +1,6 @@
 import React from 'react';
 import TimerStore from '../stores/TimerStore';
+import FieldStore from '../stores/FieldStore';
 import LighthouseTimerStore from '../stores/LighthouseTimerStore';
 import _ from 'lodash';
 
@@ -13,7 +14,13 @@ var Scoreboard = React.createClass({
       lighthouseTimeLeft: 0,
       lighthouseWidth: 50,
       lightouseStatus: "Offline",
-      lighthouseColor: "progress-bar-info"};
+      lighthouseColor: "progress-bar-info",
+      station: 0,
+      blueScore: 0,
+      goldScore: 0,
+      matchNumber: 0,
+      teamNumbers: [0, 0, 0, 0],
+      teamNames: ["Offline", "Offline", "Offline", "Offline"] };
   },
   onTimerChange() {
     this.setState({
@@ -47,12 +54,25 @@ var Scoreboard = React.createClass({
       lightouseStatus: status
     });
   },
+  onFieldChange() {
+    this.setState({
+      blueScore: FieldStore.getBlueScore(),
+      goldScore: FieldStore.getGoldScore(),
+      matchNumber: FieldStore.getMatchNumber(),
+      teamNumbers: FieldStore.getTeamNumbers(),
+      teamNames: FieldStore.getTeamNames(),
+      station: FieldStore.getStation()
+    })
+  },
   componentDidMount() {
     TimerStore.on('change', this.onTimerChange);
     this.onTimerChange();
 
     LighthouseTimerStore.on('change', this.onLighthouseChange);
     this.onLighthouseChange();
+
+    FieldStore.on('change', this.onFieldChange);
+    this.onFieldChange();
     //setInterval(this.refresh, 80)
   },
   componentWillUnmount() {
@@ -68,11 +88,11 @@ var Scoreboard = React.createClass({
                 <div className="panel panel-default pioneers-blue">
                   <div className="row">
                     <div className="col-md-7 col-xs-5">
-                      <div className="team-0">-1 Offline</div>
-                      <div className="team-1">-1 Offline</div>
+                      <div className="team-0">{this.state.teamNumbers[0]} {this.state.teamNames[0]}</div>
+                      <div className="team-1">{this.state.teamNumbers[1]} {this.state.teamNames[1]}</div>
                     </div>
                     <div className="col-md-1 col-md-offset-3 col-xs-1 col-xs-offset-4">
-                      <div className="score-blue text-right" style={{}}>?</div>
+                      <div className="score-blue text-right" style={{}}>{this.state.blueScore}</div>
                     </div>
                   </div>
                 </div>
@@ -84,11 +104,11 @@ var Scoreboard = React.createClass({
                 <div className="panel panel-default pioneers-gold">
                   <div className="row">
                     <div className="col-md-1 col-xs-1">
-                      <div className="score-gold" style={{}}>?</div>
+                      <div className="score-gold" style={{}}>{this.state.goldScore}</div>
                     </div>
                     <div className="col-md-7  col-md-offset-3 col-xs-5 col-xs-offset-4">
-                      <div className="team-2 text-right">-1 Offline</div>
-                      <div className="team-3 text-right">-1 Offline</div>
+                      <div className="team-2 text-right">{this.state.teamNames[2]} {this.state.teamNumbers[2]}</div>
+                      <div className="team-3 text-right">{this.state.teamNames[3]} {this.state.teamNumbers[3]}</div>
                     </div>
                   </div>
                 </div>
