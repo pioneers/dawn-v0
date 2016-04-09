@@ -1,7 +1,8 @@
 import React from 'react';
 import {Label} from 'react-bootstrap';
 import numeral from 'numeral';
-
+import fs from 'fs'
+import lcm_publish from '../utils/LCM'
 var StatusLabel = React.createClass({
   propTypes: {
     connectionStatus: React.PropTypes.bool,
