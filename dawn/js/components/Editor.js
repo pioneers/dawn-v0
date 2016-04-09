@@ -256,10 +256,10 @@ export default React.createClass({
       {
         groupId: 'file-operations-buttons',
         buttons: [
-          new EditorButton('create', 'New', this.createNewFile, 'file'),
-          new EditorButton('open', 'Open', this.openFile, 'folder-open'),
-          new EditorButton('save', 'Save', this.saveFile, 'floppy-disk'),
-          new EditorButton('saveas', 'Save As', this.saveAsFile, 'floppy-save')
+          new EditorButton('create', 'New', this.createNewFile, 'file', true),
+          new EditorButton('open', 'Open', this.openFile, 'folder-open', true),
+          new EditorButton('save', 'Save', this.saveFile, 'floppy-disk', true),
+          new EditorButton('saveas', 'Save As', this.saveAsFile, 'floppy-save', true)
         ],
       }, {
         groupId: 'code-execution-buttons',
