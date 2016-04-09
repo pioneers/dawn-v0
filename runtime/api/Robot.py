@@ -38,7 +38,6 @@ def _lookup(name):
 def is_autonomous():
     """Returns the autonomous state of the game.
 
-    :param name: None
     :returns: A boolean.
 
     :Examples:
@@ -52,7 +51,6 @@ def is_autonomous():
 def is_enabled():
     """Returns whether the robot is enabled.
 
-    :param name: None
     :returns: A boolean.
 
     :Examples:
