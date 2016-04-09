@@ -50,7 +50,7 @@ var updateStatus = function() {
         if (ok) {
             msg.green = true;
         } else {
-            msg.yellow = true;
+            msg.red = true;
         }
     } else {
         msg.red = true;
