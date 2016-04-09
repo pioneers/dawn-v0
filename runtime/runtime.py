@@ -1,5 +1,4 @@
 import subprocess, multiprocessing, time
-
 from threading import Thread
 import memcache, ansible, hibike
 from grizzly import *
@@ -175,7 +174,6 @@ def init_battery():
     test_battery() #TODO Calls test_battery to send alert once for no battery buzzer
 
 def test_battery():
-    return True
     global battery_UID
     if battery_UID is None or battery_UID not in [x[0] for x in connectedDevices]:
         ansible.send_message('ADD_ALERT', {
@@ -382,7 +380,6 @@ def set_PID(constants):
 def log_output(stream):
     #TODO: figure out a way to limit speed of sending messages, so
     # ansible is not overflowed by printing too fast
-
     for line in stream:
         if robot_status == 0:
             return
@@ -404,15 +401,9 @@ def upload_file(filename, msg):
         f.write(msg['content']['code'])
 
 def msg_handling(msg):
-    print "ANSIBLE RECVIEVED:", msg
     global robot_status, student_proc, console_proc
     msg_type, content = msg['header']['msg_type'], msg['content']
-<<<<<<< HEAD
-    if msg_type == 'execute' and not robot_status:
-        print "RUNNING KOBOT"
-=======
     if msg_type == 'upload' and not robot_status:
->>>>>>> a1fa6e87de87381a3d2ce106571d8cd565a7c751
         filename = "student_code/student_code.py"
         upload_file(filename, msg)
         #enumerate_motors() TODO Unable to restart motors that already exist
