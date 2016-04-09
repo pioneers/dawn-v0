@@ -2,6 +2,7 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import LCM from './lcm_ws_bridge'
 import FieldActions from '../actions/FieldActions.js'
 import AlertActions from '../actions/AlertActions.js'
+import RobotInfoStore from '../stores/RobotInfoStore'
 import fs from 'fs'
 localStorage.setItem('bridgeAddress', fs.readFileSync('lcm_bridge_addr.txt'))
 
@@ -9,11 +10,17 @@ localStorage.setItem('bridgeAddress', fs.readFileSync('lcm_bridge_addr.txt'))
 let bridgeAddress = localStorage.getItem('bridgeAddress') || '127.0.0.1';
 let lcm = null;
 let lcm_ready = false;
+let queued_publish = null;
 function makeLCM(){
     lcm = new LCM('ws://' + bridgeAddress + ':8000/');
     function subscribeAll() {
         lcm_ready = true;
         console.log('Connected to LCM Bridge')
+        if (queued_publish != null) {
+            lcm.publish(queued_publish[0], queued_publish[1]);
+            queued_publish = null;
+        }
+
         lcm.subscribe("Timer/Time", "Time", function(msg) {
            FieldActions.updateTimer(msg)
         })
@@ -35,10 +42,30 @@ function makeLCM(){
     lcm.on_close(makeLCM)
 }
 makeLCM()
+var updateStatus = function() {
+    var connected = RobotInfoStore.getConnectionStatus()
+    var ok = RobotInfoStore.getRuntimeStatus()
+    var msg = {__type__: 'StatusLight', red: false, yellow: false, green: false, buzzer: false}
+    if (connected) {
+        if (ok) {
+            msg.green = true;
+        } else {
+            msg.yellow = true;
+        }
+    } else {
+        msg.red = true;
+    }
+    lcm_publish("StatusLight" + parseInt(fs.readFileSync("station_number.txt")) + "/StatusLight", msg)
+
+}
+RobotInfoStore.on("change", updateStatus)
+updateStatus()
 
 function lcm_publish(channel, msg) {
     if (lcm_ready) {
         lcm.publish(channel, msg)
+    } else {
+        queued_publish = [channel, msg];
     }
 }
 
