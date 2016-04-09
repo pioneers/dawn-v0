@@ -34,4 +34,9 @@ function makeLCM(){
 }
 makeLCM()
 
+function lcm_publish(channel, msg) {
+    lcm.publish(channel, msg)
+}
 
+
+export default lcm_publish;

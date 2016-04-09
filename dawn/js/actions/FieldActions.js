@@ -1,6 +1,8 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import {ActionTypes} from '../constants/Constants';
 import Ansible from '../utils/Ansible'
+import fs from 'fs'
+let blue = parseInt(fs.readFileSync('station_number.txt')) < 2
 var FieldActions = {
   updateTimer(msg) {
     var timeLeft = msg.total_stage_time - msg.stage_time_so_far
@@ -43,7 +45,7 @@ var FieldActions = {
       autonomous: msg.autonomous,
       enabled: msg.enabled
     });
-    Ansible.sendMessage('game', {'autonomous': msg.autonomous, 'enabled': msg.enabled})
+    Ansible.sendMessage('game', {'autonomous': msg.autonomous, 'enabled': msg.enabled, 'blue': blue})
     if (msg.running) {
       Ansible.sendMessage('execute', {});
     } else {

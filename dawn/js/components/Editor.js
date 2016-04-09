@@ -36,6 +36,9 @@ import Timer from './Timer'
 import LighthouseTimer from './LighthouseTimer'
 import FieldStore from '../stores/FieldStore'
 
+import lcm_publish from '../utils/LCM'
+import fs from 'fs'
+
 let dialog = remote.dialog;
 let currentWindow = remote.getCurrentWindow();
 
@@ -245,6 +248,7 @@ export default React.createClass({
   stopRobot() {
     console.log("MOBOT")
     Ansible.sendMessage('stop', {});
+    lcm_publish("Robot" + fs.readFileSync("station_number.txt") + "/Estop", {__type__: "Estop", estop: true})
   },
   generateButtons() {
     // The buttons which will be in the button toolbar
