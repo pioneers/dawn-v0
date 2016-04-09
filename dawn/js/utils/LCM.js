@@ -8,9 +8,11 @@ localStorage.setItem('bridgeAddress', fs.readFileSync('lcm_bridge_addr.txt'))
 
 let bridgeAddress = localStorage.getItem('bridgeAddress') || '127.0.0.1';
 let lcm = null;
+let lcm_ready = false;
 function makeLCM(){
     lcm = new LCM('ws://' + bridgeAddress + ':8000/');
     function subscribeAll() {
+        lcm_ready = true;
         console.log('Connected to LCM Bridge')
         lcm.subscribe("Timer/Time", "Time", function(msg) {
            FieldActions.updateTimer(msg)
@@ -35,7 +37,9 @@ function makeLCM(){
 makeLCM()
 
 function lcm_publish(channel, msg) {
-    lcm.publish(channel, msg)
+    if (lcm_ready) {
+        lcm.publish(channel, msg)
+    }
 }
 
 

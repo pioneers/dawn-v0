@@ -10,7 +10,7 @@ var StatusLabel = React.createClass({
     battery: React.PropTypes.number
   },
   render() {
-    msg = {__type__: 'StatusLight', red: false, yellow: false, green: false, buzzer: false}
+    let msg = {__type__: 'StatusLight', red: false, yellow: false, green: false, buzzer: false}
     let labelStyle = 'default';
     let labelText = 'Disconnected';
     if (this.props.connectionStatus) {
