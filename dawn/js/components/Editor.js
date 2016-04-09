@@ -6,7 +6,6 @@ import EditorStore from '../stores/EditorStore';
 import AlertActions from '../actions/AlertActions';
 import EditorToolbar from './EditorToolbar';
 import Mousetrap from 'mousetrap';
-import smalltalk from 'smalltalk';
 import _ from 'lodash';
 import ConsoleOutput from './ConsoleOutput';
 import RobotActions from '../actions/RobotActions';
@@ -31,6 +30,8 @@ import 'brace/theme/terminal';
 import {remote} from 'electron';
 let langtools = ace.acequire('ace/ext/language_tools');
 let storage = remote.require('electron-json-storage');
+let dialog = remote.dialog;
+let currentWindow = remote.getCurrentWindow();
 
 export default React.createClass({
   getInitialState() {
@@ -39,10 +40,39 @@ export default React.createClass({
       filepath: null,
       latestSaveCode: '',
       editorCode: '',
-      editorTheme: 'github'
+      editorTheme: 'github',
+      fontSize: 14
     };
   },
   componentDidMount() {
+
+    // If there are unsaved changes and the user tries to close Dawn,
+    // check if they want to save their changes first.
+    window.onbeforeunload = (e) => {
+      if (this.hasUnsavedChanges()) {
+        e.returnValue = false;
+        dialog.showMessageBox({
+          type: 'warning',
+          buttons: ['Save and exit', 'Quit without saving', 'Cancel exit'],
+          title: 'You have unsaved changes!',
+          message: 'You are trying to exit Dawn, but you have unsaved changes. What do you want to do with your unsaved changes?'
+        }, (res)=>{
+          // 'res' is an integer corrseponding to index in button list above.
+          if (res === 0) {
+            this.saveFile(()=>{
+              window.onbeforeunload = null;
+              currentWindow.close();
+            });
+          } else if (res === 1) {
+            window.onbeforeunload = null;
+            currentWindow.close();
+          } else {
+            console.log('Exit canceled.');
+          }
+        });
+      }
+    };
+
     this.refs.CodeEditor.editor.setOption('enableBasicAutocompletion', true);
 
     Mousetrap.prototype.stopCallback = function(e, element, combo) {
@@ -78,6 +108,23 @@ export default React.createClass({
       }
     });
 
+    storage.has('editorFontSize').then((hasKey)=>{
+      if (hasKey) {
+        storage.get('editorFontSize').then((data)=>{
+          console.log(data);
+          this.setState({
+            fontSize: data.editorFontSize
+          });
+        });
+      } else {
+        storage.set('editorFontSize', {
+          editorFontSize: 14
+        }, (err)=>{
+          if (err) throw err;
+        });
+      }
+    });
+
     EditorStore.on('change', this.updateEditorData);
   },
   componentWillUnmount() {
@@ -93,33 +140,56 @@ export default React.createClass({
   },
   openFile() {
     if (this.hasUnsavedChanges()) {
-      smalltalk.confirm(
-        'Are you sure?',
-        'You have unsaved changes, opening a new file will discard them!'
-      ).then(()=>{
-        EditorActionCreators.openFile();
-      }, ()=>{
-        console.log('Canceled');
+      dialog.showMessageBox({
+        type: 'warning',
+        buttons: ['Save and open', 'Discard and open', 'Cancel action'],
+        title: 'You have unsaved changes!',
+        message: 'You are trying to open a new file, but you have unsaved changes to your current one. What do you want to do?'
+      }, (res)=>{
+        // 'res' is an integer corrseponding to index in button list above.
+        if (res === 0) {
+          this.saveFile(()=>{
+            process.nextTick(()=>{
+              EditorActionCreators.openFile();
+            });
+          });
+        } else if (res === 1) {
+          EditorActionCreators.openFile();
+        } else {
+          console.log('File open canceled.');
+        }
       });
     } else {
       EditorActionCreators.openFile();
     }
   },
-  saveFile() {
-    EditorActionCreators.saveFile(this.state.filepath, this.state.editorCode);
+  saveFile(callback) {
+    EditorActionCreators.saveFile(
+      this.state.filepath, this.state.editorCode, callback);
   },
   saveAsFile() {
     EditorActionCreators.saveFile(null, this.state.editorCode);
   },
   createNewFile() {
     if (this.hasUnsavedChanges()) {
-      smalltalk.confirm(
-        'Are you sure?',
-        'You have unsaved changes, creating a new file will discard them!'
-      ).then(()=>{
-        EditorActionCreators.createNewFile();
-      }, ()=>{
-        console.log('Canceled');
+      dialog.showMessageBox({
+        type: 'warning',
+        buttons: ['Save and create', 'Discard and create', 'Cancel action'],
+        title: 'You have unsaved changes!',
+        message: 'You are trying to create a new file, but you have unsaved changes to your current one. What do you want to do?'
+      }, (res)=>{
+        // 'res' is an integer corrseponding to index in button list above.
+        if (res === 0) {
+          this.saveFile(()=>{
+            process.nextTick(()=>{
+              EditorActionCreators.createNewFile();
+            });
+          });
+        } else if (res === 1) {
+          EditorActionCreators.createNewFile();
+        } else {
+          console.log('New file creation canceled.');
+        }
       });
     } else {
       EditorActionCreators.createNewFile();
@@ -178,6 +248,25 @@ export default React.createClass({
   stopRobot() {
     Ansible.sendMessage('stop', {});
   },
+  openAPI() {
+    window.open("https://pie-api.readthedocs.org/")
+  },
+  fontIncrease() {
+    if (this.state.fontSize <= 28) {
+      storage.set('editorFontSize', {editorFontSize: this.state.fontSize + 7}, (err)=>{
+        if (err) throw err;
+      });
+      this.setState({fontSize: this.state.fontSize + 7});
+    }
+  },
+  fontDecrease() {
+    if (this.state.fontSize > 7) {
+      storage.set('editorFontSize', {editorFontSize: this.state.fontSize - 7}, (err)=>{
+        if (err) throw err;
+      });
+      this.setState({fontSize: this.state.fontSize - 7});
+    }
+  },
   generateButtons() {
     // The buttons which will be in the button toolbar
     return [
@@ -194,9 +283,16 @@ export default React.createClass({
         buttons: [
           new EditorButton('run', 'Run', this.startRobot, 'play', (this.props.isRunningCode || !this.props.runtimeStatus)),
           new EditorButton('stop', 'Stop', this.stopRobot, 'stop', !(this.props.isRunningCode && this.props.runtimeStatus)),
-          new EditorButton('upload', 'Upload', this.upload, 'upload', (this.props.isRunningCode || !this.props.runtimeStatus)),
           new EditorButton('toggle-console', 'Toggle Console', this.toggleConsole, 'console'),
-          new EditorButton('clear-console', 'Clear Console', this.clearConsole, 'remove')
+          new EditorButton('clear-console', 'Clear Console', this.clearConsole, 'remove'),
+          new EditorButton('upload', 'Upload', this.upload, 'upload', (this.props.isRunningCode || !this.props.runtimeStatus)),
+        ]
+      }, {
+        groupId: 'misc-buttons',
+        buttons: [
+          new EditorButton('api', 'API Documentation', this.openAPI, 'book'),
+          new EditorButton('zoomin', 'Increase fontsize', this.fontIncrease, 'zoom-in'),
+          new EditorButton('zoomout', 'Decrease fontsize', this.fontDecrease, 'zoom-out')
         ]
       }
     ];
@@ -247,12 +343,13 @@ export default React.createClass({
           changeTheme={ this.changeTheme }
           editorTheme={ this.state.editorTheme }
           themes={ this.themes }
+          runtimeStatus={ this.props.runtimeStatus }
         />
         <AceEditor
           mode="python"
           theme={ this.state.editorTheme }
           width="100%"
-          fontSize={14}
+          fontSize={this.state.fontSize}
           ref="CodeEditor"
           name="CodeEditor"
           height={String(
