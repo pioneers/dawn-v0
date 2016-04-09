@@ -24,11 +24,11 @@ var RobotActions = {
       type: ActionTypes.UPDATE_CONNECTION,
       payload: connectionStatus
     });
-    var index = fs.readFileSync("station_number.txt")  
-    lcm.publish("Robot" + index + "/RobotStatus",  {
-        __type__: "RobotStatus",
-        connected: connectionStatus
-      });
+    // var index = fs.readFileSync("station_number.txt")  
+    // lcm.publish("Robot" + index + "/RobotStatus",  {
+    //     __type__: "RobotStatus",
+    //     connected: connectionStatus
+    //   });
   }
 };
 
