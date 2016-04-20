@@ -3,11 +3,7 @@ import LCM from './lcm_ws_bridge'
 import FieldActions from '../actions/FieldActions.js'
 import AlertActions from '../actions/AlertActions.js'
 import RobotInfoStore from '../stores/RobotInfoStore'
-import fs from 'fs'
-localStorage.setItem('bridgeAddress', fs.readFileSync('lcm_bridge_addr.txt'))
-
-
-let bridgeAddress = localStorage.getItem('bridgeAddress') || '127.0.0.1';
+import {bridgeAddress, stationNumber} from '../utils/StationConfig'
 let lcm = null;
 let lcm_ready = false;
 let queued_publish = null;
@@ -27,7 +23,7 @@ function makeLCM(){
         lcm.subscribe("Heartbeat/Beat", "Heartbeat", function(msg) {
            FieldActions.updateHeart(msg)
         })
-        lcm.subscribe("Robot" + fs.readFileSync('station_number.txt') + "/RobotControl", "RobotControl", function(msg) {
+        lcm.subscribe("Robot" + stationNumber + "/RobotControl", "RobotControl", function(msg) {
             FieldActions.updateRobot(msg)
         })
         lcm.subscribe("Timer/Match", "Match", function(msg) {
@@ -55,7 +51,7 @@ var updateStatus = function() {
     } else {
         msg.red = true;
     }
-    lcm_publish("StatusLight" + parseInt(fs.readFileSync("station_number.txt")) + "/StatusLight", msg)
+    lcm_publish("StatusLight" + stationNumber + "/StatusLight", msg)
 
 }
 RobotInfoStore.on("change", updateStatus)

@@ -2,7 +2,9 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import {ActionTypes} from '../constants/Constants';
 import Ansible from '../utils/Ansible'
 import fs from 'fs'
-let blue = parseInt(fs.readFileSync('station_number.txt')) < 2
+import {bridgeAddress, stationNumber} from '../utils/StationConfig'
+
+let blue = stationNumber < 2
 var FieldActions = {
   updateTimer(msg) {
     var timeLeft = msg.total_stage_time - msg.stage_time_so_far

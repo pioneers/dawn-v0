@@ -248,7 +248,7 @@ export default React.createClass({
   stopRobot() {
     console.log("MOBOT")
     Ansible.sendMessage('stop', {});
-    lcm_publish("Robot" + fs.readFileSync("station_number.txt") + "/Estop", {__type__: "Estop", estop: true})
+    lcm_publish("Robot" + stationNumber + "/Estop", {__type__: "Estop", estop: true})
   },
   generateButtons() {
     // The buttons which will be in the button toolbar

@@ -3,11 +3,11 @@ import {EventEmitter} from 'events';
 import { ActionTypes } from '../constants/Constants';
 import assign from 'object-assign';
 import _ from 'lodash';
-import fs from 'fs'
+import {bridgeAddress, stationNumber} from '../utils/StationConfig'
 
 let _robotData = {
-  station: parseInt(fs.readFileSync("station_number.txt")),
-  isBlue: parseInt(fs.readFileSync("station_number.txt")) < 2,
+  station: stationNumber,
+  isBlue: stationNumber < 2,
   teamNumber: 0,
   teamName: "unknown",
   stationTag: ''
