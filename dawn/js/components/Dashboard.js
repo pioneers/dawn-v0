@@ -8,6 +8,7 @@ import RobotActions from '../actions/RobotActions';
 import Editor from './Editor';
 import FieldControl from './FieldControl'
 import Timer from './Timer';
+import EstopButtonPanel from './EstopButtonPanel';
 
 export default React.createClass({
   displayName: 'Dashboard',
@@ -20,6 +21,7 @@ export default React.createClass({
 	      connectionStatus={this.props.connectionStatus}
               runtimeStatus={this.props.runtimeStatus}/>
             <Gamepads />
+            <EstopButtonPanel />
           </Col>
           <Col smPull={4} sm={8}>
             <Editor

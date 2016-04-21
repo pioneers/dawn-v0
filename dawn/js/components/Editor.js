@@ -245,11 +245,11 @@ export default React.createClass({
       RobotActions.clearConsole();
     };
   },
-  stopRobot() {
-    console.log("MOBOT")
-    Ansible.sendMessage('stop', {});
-    lcm_publish("Robot" + stationNumber + "/Estop", {__type__: "Estop", estop: true})
-  },
+  // stopRobot() {
+  //   console.log("MOBOT")
+  //   Ansible.sendMessage('stop', {});
+  //   lcm_publish("Robot" + stationNumber + "/Estop", {__type__: "Estop", estop: true})
+  // },
   generateButtons() {
     // The buttons which will be in the button toolbar
     return [
@@ -265,7 +265,7 @@ export default React.createClass({
         groupId: 'code-execution-buttons',
         buttons: [
           new EditorButton('run', 'Run', this.startRobot, 'play', true),
-          new EditorButton('stop', 'Stop', this.stopRobot, 'stop', false),
+          // new EditorButton('stop', 'Stop', this.stopRobot, 'stop', false),
           new EditorButton('upload', 'Upload', this.upload, 'upload', true),
           new EditorButton('toggle-console', 'Toggle Console', this.toggleConsole, 'console'),
           new EditorButton('clear-console', 'Clear Console', this.clearConsole, 'remove')
