@@ -17,11 +17,13 @@ export default React.createClass({
       <Grid fluid>
         <Row>
           <Col smPush={8} sm={4}>
+            <EstopButtonPanel />
+            <p></p>
             <FinalCompPeripheralList
 	      connectionStatus={this.props.connectionStatus}
               runtimeStatus={this.props.runtimeStatus}/>
             <Gamepads />
-            <EstopButtonPanel />
+            
           </Col>
           <Col smPull={4} sm={8}>
             <Editor

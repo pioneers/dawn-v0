@@ -20,24 +20,20 @@ export default React.createClass({
 	},
 
   render() {
-    var defaultStyle = {
-      color: 'red'
-    };
     return (
-      <Panel
-        header="Estop"
-        bsStyle="primary"
-        id="estop-panel"
-        defaultExpanded >
-        <Button style = {defaultStyle}
+      <div>
+        <Button 
+                bsStyle="danger"
                 defaultPressed={true}
                 bsSize="large"
                 onClick={ this.stopRobot() }
-                label="ESTOP"
-                aligned="center" />
+                aligned="center" 
+                block>
+        TOUCHSCREEN ESTOP
+        </Button>
 
 
-      </Panel>
+      </div>
     );
   }
 });
