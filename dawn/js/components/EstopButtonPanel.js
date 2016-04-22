@@ -9,14 +9,14 @@ import { Button } from 'react-bootstrap';
 
 import lcm_publish from '../utils/LCM'
 import fs from 'fs'
-import stationNumber from '../utils/StationConfig'
+import {stationNumber} from '../utils/StationConfig'
 
 export default React.createClass({
   displayName: 'EstopButton',
 	stopRobot() {
-    console.log("MOBOT")
-    Ansible.sendMessage('stop', {});
     lcm_publish("Robot" + stationNumber + "/Estop", {__type__: "Estop", estop: true})
+    Ansible.sendMessage('stop', {});
+    
 	},
 
   render() {
@@ -26,8 +26,9 @@ export default React.createClass({
                 bsStyle="danger"
                 defaultPressed={true}
                 bsSize="large"
-                onClick={ this.stopRobot() }
-                aligned="center" 
+                onClick={ this.stopRobot }
+                aligned="center"
+                style={{paddingTop: "40px", paddingBottom: "40px"}} 
                 block>
         TOUCHSCREEN ESTOP
         </Button>

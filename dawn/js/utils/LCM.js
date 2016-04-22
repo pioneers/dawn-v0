@@ -61,6 +61,7 @@ function lcm_publish(channel, msg) {
     if (lcm_ready) {
         lcm.publish(channel, msg)
     } else {
+        console.log("lcm publish queued")
         queued_publish = [channel, msg];
     }
 }
