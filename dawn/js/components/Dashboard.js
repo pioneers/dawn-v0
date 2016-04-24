@@ -9,6 +9,7 @@ import Editor from './Editor';
 import FieldControl from './FieldControl'
 import Timer from './Timer';
 import EstopButtonPanel from './EstopButtonPanel';
+import RobotRefreshButton from './RobotRefreshButton';
 
 export default React.createClass({
   displayName: 'Dashboard',
@@ -18,6 +19,8 @@ export default React.createClass({
         <Row>
           <Col smPush={8} sm={4}>
             <EstopButtonPanel />
+            <p></p>
+            <RobotRefreshButton />
             <p></p>
             <FinalCompPeripheralList
 	      connectionStatus={this.props.connectionStatus}

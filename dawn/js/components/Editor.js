@@ -313,9 +313,9 @@ export default React.createClass({
       }, {
         groupId: 'misc-buttons',
         buttons: [
-          new EditorButton('api', 'API Documentation', this.openAPI, 'book'),
-          new EditorButton('zoomin', 'Increase fontsize', this.fontIncrease, 'zoom-in'),
-          new EditorButton('zoomout', 'Decrease fontsize', this.fontDecrease, 'zoom-out')
+          new EditorButton('api', 'API Documentation', this.openAPI, 'book', true),
+          new EditorButton('zoomin', 'Increase fontsize', this.fontIncrease, 'zoom-in', true),
+          new EditorButton('zoomout', 'Decrease fontsize', this.fontDecrease, 'zoom-out', true)
         ]
       }
     ];
