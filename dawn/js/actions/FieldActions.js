@@ -47,6 +47,7 @@ var FieldActions = {
       autonomous: msg.autonomous,
       enabled: msg.enabled
     });
+    Ansible.sendMessage('competition', {'competition': true});
     Ansible.sendMessage('game', {'autonomous': msg.autonomous, 'enabled': msg.enabled, 'blue': blue})
     if (msg.running) {
       Ansible.sendMessage('execute', {});
