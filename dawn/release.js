@@ -32,6 +32,7 @@ function pack(platform, arch, noprune) {
   opts.asar = true;
   opts.version = '0.36.2';
   opts.out = path.resolve('..'); // build in the parent dir
+  opts.overwrite = true; // overwrite output dirs from previous builds
 
   packager(opts, function(err, appPath) {
     if (err) {
