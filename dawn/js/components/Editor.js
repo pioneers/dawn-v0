@@ -51,7 +51,7 @@ export default React.createClass({
       editorCode: '',
       editorTheme: 'github',
       heart: false,
-      stationTag: FieldStore.getStationTag()
+      stationTag: FieldStore.getStationTag(),
       fontSize: 14
     };
   },
