@@ -30,6 +30,7 @@ function pack(platform, arch, noprune) {
   opts.prune = !noprune; //remove dev dependencies unless noprune is set
   opts.icon = './icons/pieicon';
   opts.asar = true;
+  opts.overwrite = true;
   opts.version = '0.36.2';
   opts.out = path.resolve('..'); // build in the parent dir
 

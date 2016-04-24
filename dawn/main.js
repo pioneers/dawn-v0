@@ -139,7 +139,7 @@ app.on('ready', function() {
   });
 
   // In development mode, allow quick reloading to see effects of code changes.
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'development' || true) {
     template[2].submenu.unshift({
       label: 'Reload',
       accelerator: 'CommandOrControl+R',

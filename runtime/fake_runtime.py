@@ -23,15 +23,21 @@ robotStatus = 0
 id_to_name = {'1230': 'MotorA', '1231': 'MotorB', '1232': 'LimitA', '1233': 'LineA', '1234': 'PotentiometerA', '1235': 'EncoderA', 
                 '1236': 'ColorThing', '1237': 'MetalDetectorA', '1238': 'ScalarA', '1239': 'ServoA',
                 '1240': 'TempMotor', '1241': 'TempLine'}
+
+counter = 0
 while True:
+    counter += 1
     batteryLevel = random.uniform(0, 12.0)
     mc.set('gamepad', {'time': datetime.now()}) # sending arbitary data to API
     msg = ansible.recv()
     if msg:
         msg_type = msg['header']['msg_type']
+        print msg_type, robotStatus
+
         if msg_type == 'execute' and not robotStatus:
-            with open('student_code.py', 'w+') as f:
-                f.write(msg['content']['code'])
+            if 'code' in msg['content']:
+                with open('student_code.py', 'w+') as f:
+                    f.write(msg['content']['code'])
             student_proc = subprocess.Popen(['python', '-u', 'student_code.py'],
                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             lines_iter = iter(student_proc.stdout.readline, b'')
@@ -56,6 +62,10 @@ while True:
         elif msg_type == 'update':
             print msg['content']['update_path']
             print msg['content']['signature_path']
+    if counter < 10:
+        continue
+    else:
+        counter = 0
 
     ansible.send_message('UPDATE_BATTERY', {
         'battery': {
@@ -175,4 +185,4 @@ while True:
                 'message': 'Robot battery level crucial!'
                 }
             })
-    time.sleep(0.5)
+    time.sleep(0.05)
