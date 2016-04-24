@@ -52,6 +52,7 @@ export default React.createClass({
       editorTheme: 'github',
       heart: false,
       stationTag: FieldStore.getStationTag()
+      fontSize: 14
     };
   },
   componentDidMount() {
@@ -112,6 +113,23 @@ export default React.createClass({
       } else {
         storage.set('editorTheme', {
           theme: 'github'
+        }, (err)=>{
+          if (err) throw err;
+        });
+      }
+    });
+
+    storage.has('editorFontSize').then((hasKey)=>{
+      if (hasKey) {
+        storage.get('editorFontSize').then((data)=>{
+          console.log(data);
+          this.setState({
+            fontSize: data.editorFontSize
+          });
+        });
+      } else {
+        storage.set('editorFontSize', {
+          editorFontSize: 14
         }, (err)=>{
           if (err) throw err;
         });
@@ -250,6 +268,25 @@ export default React.createClass({
     Ansible.sendMessage('stop', {});
     lcm_publish("Robot" + stationNumber + "/Estop", {__type__: "Estop", estop: true})
   },
+  openAPI() {
+    window.open("https://pie-api.readthedocs.org/")
+  },
+  fontIncrease() {
+    if (this.state.fontSize <= 28) {
+      storage.set('editorFontSize', {editorFontSize: this.state.fontSize + 7}, (err)=>{
+        if (err) throw err;
+      });
+      this.setState({fontSize: this.state.fontSize + 7});
+    }
+  },
+  fontDecrease() {
+    if (this.state.fontSize > 7) {
+      storage.set('editorFontSize', {editorFontSize: this.state.fontSize - 7}, (err)=>{
+        if (err) throw err;
+      });
+      this.setState({fontSize: this.state.fontSize - 7});
+    }
+  },
   generateButtons() {
     // The buttons which will be in the button toolbar
     return [
@@ -267,8 +304,18 @@ export default React.createClass({
           new EditorButton('run', 'Run', this.startRobot, 'play', true),
           new EditorButton('stop', 'Stop', this.stopRobot, 'stop', true),
           new EditorButton('upload', 'Upload', this.upload, 'upload', true),
+          new EditorButton('run', 'Run', this.startRobot, 'play', (this.props.isRunningCode || !this.props.runtimeStatus)),
+          new EditorButton('stop', 'Stop', this.stopRobot, 'stop', !(this.props.isRunningCode && this.props.runtimeStatus)),
           new EditorButton('toggle-console', 'Toggle Console', this.toggleConsole, 'console'),
-          new EditorButton('clear-console', 'Clear Console', this.clearConsole, 'remove')
+          new EditorButton('clear-console', 'Clear Console', this.clearConsole, 'remove'),
+          new EditorButton('upload', 'Upload', this.upload, 'upload', (this.props.isRunningCode || !this.props.runtimeStatus)),
+        ]
+      }, {
+        groupId: 'misc-buttons',
+        buttons: [
+          new EditorButton('api', 'API Documentation', this.openAPI, 'book'),
+          new EditorButton('zoomin', 'Increase fontsize', this.fontIncrease, 'zoom-in'),
+          new EditorButton('zoomout', 'Decrease fontsize', this.fontDecrease, 'zoom-out')
         ]
       }
     ];
@@ -323,13 +370,14 @@ export default React.createClass({
           changeTheme={ this.changeTheme }
           editorTheme={ this.state.editorTheme }
           themes={ this.themes }
+          runtimeStatus={ this.props.runtimeStatus }
         />
         <Scoreboard {...this.props} />
         <AceEditor
           mode="python"
           theme={ this.state.editorTheme }
           width="100%"
-          fontSize={14}
+          fontSize={this.state.fontSize}
           ref="CodeEditor"
           name="CodeEditor"
           height={'0px'}

@@ -23,7 +23,7 @@ module.exports = {
     ADD_ALERT: null,
     REMOVE_ALERT: null,
     CLEAR_CONSOLE: null
-
+    runtime_version: null
   }),
   PeripheralTypes: keyMirror({
     MOTOR_SCALAR: null,
