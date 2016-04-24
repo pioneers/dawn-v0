@@ -1,5 +1,5 @@
 import fs from 'fs';
-export const stationNumber = parseInt(fs.readFileSync('/opt/driver_station/station_number.txt'))
-export const bridgeAddress = fs.readFileSync('/opt/driver_station/lcm_bridge_addr.txt')
+export const stationNumber = parseInt(localStorage.getItem('stationNumber') || '0');
+export const bridgeAddress = localStorage.getItem('bridgeAddress') || "10.31.1.187";
 console.log("station: " + stationNumber)
 console.log("bridge: " + bridgeAddress)
