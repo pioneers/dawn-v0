@@ -22,7 +22,7 @@ module.exports = {
     UPDATE_SCORE: null,
     ADD_ALERT: null,
     REMOVE_ALERT: null,
-    CLEAR_CONSOLE: null
+    CLEAR_CONSOLE: null,
     runtime_version: null
   }),
   PeripheralTypes: keyMirror({
