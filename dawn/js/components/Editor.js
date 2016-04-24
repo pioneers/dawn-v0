@@ -304,11 +304,11 @@ export default React.createClass({
           new EditorButton('run', 'Run', this.startRobot, 'play', true),
           new EditorButton('stop', 'Stop', this.stopRobot, 'stop', true),
           new EditorButton('upload', 'Upload', this.upload, 'upload', true),
-          new EditorButton('run', 'Run', this.startRobot, 'play', (this.props.isRunningCode || !this.props.runtimeStatus)),
-          new EditorButton('stop', 'Stop', this.stopRobot, 'stop', !(this.props.isRunningCode && this.props.runtimeStatus)),
+          new EditorButton('run', 'Run', this.startRobot, 'play', true),
+          new EditorButton('stop', 'Stop', this.stopRobot, 'stop', true),
           new EditorButton('toggle-console', 'Toggle Console', this.toggleConsole, 'console'),
           new EditorButton('clear-console', 'Clear Console', this.clearConsole, 'remove'),
-          new EditorButton('upload', 'Upload', this.upload, 'upload', (this.props.isRunningCode || !this.props.runtimeStatus)),
+          new EditorButton('upload', 'Upload', this.upload, 'upload', true),
         ]
       }, {
         groupId: 'misc-buttons',

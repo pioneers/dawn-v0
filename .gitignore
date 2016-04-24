@@ -32,3 +32,6 @@ runtime/api/doc/build/*
 
 dawn-linux-x64*
 dawn-linux-ia32*
+
+dawn-darwin-x64*
+dawn-darwin-ia32*
