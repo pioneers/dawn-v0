@@ -35,3 +35,6 @@ dawn-linux-ia32*
 
 dawn-darwin-x64*
 dawn-darwin-ia32*
+
+dawn-win32-x64*
+dawn-win32-ia32*
