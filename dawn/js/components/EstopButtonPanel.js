@@ -23,7 +23,7 @@ export default React.createClass({
                 aligned="center"
                 style={{paddingTop: "40px", paddingBottom: "40px"}} 
                 block>
-        TOUCHSCREEN E-STOP
+        E-STOP
         </Button>
 
 
