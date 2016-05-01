@@ -34,11 +34,35 @@ def _lookup(name):
     if name in _name_to_id:
         return _name_to_id[name]
     return name
+def player_name():
+    """Returns the name of the current player.
 
+    :returns: A string.
+
+    :Examples:
+
+    >>> if player_name == 'blue1':
+            set_motor('motor1', 0.5)
+
+    """
+    return mc.get('player')
+def location(player):
+    """Returns the location of the specified player.
+
+    :param player: one of "blue1", "blue2", "gold1", "gold2"
+    :returns: A tuple with (x, y, angle) with units cm and degrees
+
+    :Examples:
+
+    >>> if location(player_name())[2] < 90:
+            set_motor('motor1', 0.5)
+
+    """
+    assert player in ['blue1', 'blue2', 'gold1', 'gold2'], "Invalid player name"
+    return mc.get('locations')[player]
 def is_autonomous():
     """Returns the autonomous state of the game.
 
-    :param name: None
     :returns: A boolean.
 
     :Examples:
@@ -52,7 +76,6 @@ def is_autonomous():
 def is_enabled():
     """Returns whether the robot is enabled.
 
-    :param name: None
     :returns: A boolean.
 
     :Examples:

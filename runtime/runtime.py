@@ -24,6 +24,14 @@ mc.set("spec_pid", [])
 mc.set("encoder_distance", {})
 mc.set('game', {'autonomous': False, 'enabled': True})
 
+### rt2 metadata
+
+# id of current player
+mc.set('player', 'blue1')
+
+# locations of each player. data points take the form [x cm, y cm, angle degrees] with origin at bottom left
+mc.set('locations', {'blue1': [0, 0, 0], 'blue2': [0, 0, 0], 'gold1': [0, 0, 0], 'gold2': [0, 0, 0]})
+
 #####
 # Connect to hibike
 #####
@@ -529,7 +537,10 @@ def msg_handling(msg):
         if 'blue' in msg['content'] and flag_UID is not None:
             h.writeValue(flag_UID, 'blue', int(msg['content']['blue']))
             h.writeValue(flag_UID, 'yellow', int(not msg['content']['blue']))
-
+    elif msg_type == 'player':
+        mc.set('player', msg['content'])
+    elif msg_type == 'locations':
+        mc.set('locations', msg['content'])
 peripheral_data_last_sent = 0
 def send_peripheral_data(data):
     global peripheral_data_last_sent
