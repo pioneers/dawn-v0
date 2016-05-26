@@ -29,3 +29,4 @@ runtime/student_code/*
 runtime/hibike/
 
 runtime/api/doc/build/*
+runtime/remoteApi.dll

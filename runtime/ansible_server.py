@@ -23,7 +23,6 @@ if async_mode == 'eventlet':
     import eventlet
     eventlet.monkey_patch()
 
-import os
 from threading import Thread
 from Queue import Empty
 import json
@@ -42,45 +41,23 @@ def ansible_server(send_queue, recv_queue):
     app = Flask(__name__)
     socketio = SocketIO(app)
 
-    def send_version():
-        headhash = os.popen('git rev-parse HEAD').read()
-        git_status = os.popen('git status --porcelain -uno').read()
-        modified = 0
-        if len(git_status) > 0:
-            modified = 1
-        send_queue.put_nowait({
-        'header': {'msg_type': 'runtime_version'},
-        'content': {'headhash': headhash,
-                    'modified': modified,
-                    'version': '2.3'}
-        })
-
-    @app.route('/restart')
-    def do_restart():
-        os.system("sudo restart runtime")
-
-    @app.route('/upload', methods=['POST'])
-    def upload_file():
-        if request.method == 'POST':
-            file = request.files['file']
-            if file:
-                prefix = os.path.expanduser('~/updates/')
-                full_path = os.path.join(prefix, file.filename)
-                file.save(full_path)
-                return full_path, 200
-
     @socketio.on('message')
     def receive_message(msg):
         data = json.loads(msg)
         # Special channel for gamepad data
         if data['header']['msg_type'] == 'gamepad':
             mc.set('gamepad', data['content'])
+        elif 'tar' in data['header']['msg_type']:
+            f = open(data['header']['msg_type'], 'wb')
+            binarydata = b64decode(data['content'])
+            f.write(bytearray(binarydata))
+            f.flush()
+            f.close()
         else:
             recv_queue.put_nowait(data)
 
     @socketio.on('connect')
     def on_connect():
-        send_version()
         print 'Connected to Dawn.'
 
     @socketio.on_error()
@@ -95,11 +72,10 @@ def ansible_server(send_queue, recv_queue):
                 time.sleep(.02)
             except Empty:
                 time.sleep(.02)
-            except:
-                time.sleep(.02)
-
 
     send_p = Thread(target=send_process, args=(send_queue,))
+    send_p.daemon = True
     send_p.start()
 
     socketio.run(app, host='0.0.0.0')
+
