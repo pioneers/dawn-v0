@@ -30,3 +30,5 @@ runtime/hibike/
 
 runtime/api/doc/build/*
 runtime/remoteApi.dll
+runtime/remoteApi.so
+runtime/remoteApi.dylib
