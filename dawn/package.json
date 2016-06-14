@@ -48,6 +48,8 @@
     "react-dom": "^0.14.5",
     "react-immutable-proptypes": "^1.7.0",
     "react-joyride": "^1.1.1",
+    "react-redux": "^4.4.5",
+    "redux": "^3.5.2",
     "riek": "^1.0.0",
     "smalltalk": "^1.6.5",
     "superagent": "^1.7.2"

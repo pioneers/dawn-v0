@@ -3,7 +3,8 @@ import AceEditor from 'react-ace';
 import brace from 'brace';
 import EditorActionCreators from '../actions/EditorActionCreators';
 import EditorStore from '../stores/EditorStore';
-import AlertActions from '../actions/AlertActions';
+import { connect } from 'react-redux';
+import { addAsyncAlert } from '../actions/AlertActions';
 import EditorToolbar from './EditorToolbar';
 import Mousetrap from 'mousetrap';
 import _ from 'lodash';
@@ -33,7 +34,7 @@ let storage = remote.require('electron-json-storage');
 let dialog = remote.dialog;
 let currentWindow = remote.getCurrentWindow();
 
-export default React.createClass({
+let Editor = React.createClass({
   getInitialState() {
     return {
       showConsole: false,
@@ -45,7 +46,6 @@ export default React.createClass({
     };
   },
   componentDidMount() {
-
     // If there are unsaved changes and the user tries to close Dawn,
     // check if they want to save their changes first.
     window.onbeforeunload = (e) => {
@@ -225,7 +225,7 @@ export default React.createClass({
   sendCode(command) {
     let correctedText = this.correctText(this.state.editorCode);
     if (correctedText !== this.state.editorCode) {
-      AlertActions.addAlert(
+      this.props.onAlertAdd(
 	'Invalid characters detected',
 	'Your code has non-ASCII characters, which won\'t work on the robot. ' +
 	'Please remove them and try again.'
@@ -368,3 +368,13 @@ export default React.createClass({
     );
   }
 });
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onAlertAdd: (heading, message) => {
+      dispatch(addAsyncAlert(heading, message));
+    }
+  };
+};
+Editor = connect(null, mapDispatchToProps)(Editor);
+export default Editor;
