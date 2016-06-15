@@ -1,5 +1,5 @@
 /**
- * Reducer from asynchronous alerts.
+ * Reducer from asynchronous alerts state data.
  */
 
 

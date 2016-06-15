@@ -5,10 +5,11 @@
 import { combineReducers } from 'redux';
 
 import asyncAlerts from './alerts';
-
+import editor from './editor';
 
 const dawnApp = combineReducers({
-  asyncAlerts: asyncAlerts
+  asyncAlerts: asyncAlerts,
+  editor: editor
 });
 
 export default dawnApp;

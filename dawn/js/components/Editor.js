@@ -1,8 +1,16 @@
 import React from 'react';
 import AceEditor from 'react-ace';
 import brace from 'brace';
-import EditorActionCreators from '../actions/EditorActionCreators';
-import EditorStore from '../stores/EditorStore';
+import {
+  openFile,
+  saveFile,
+  deleteFile,
+  createNewFile,
+  changeTheme,
+  editorUpdate,
+  increaseFontsize,
+  decreaseFontsize
+} from '../actions/EditorActions.js';
 import { connect } from 'react-redux';
 import { addAsyncAlert } from '../actions/AlertActions';
 import EditorToolbar from './EditorToolbar';
@@ -38,11 +46,6 @@ let Editor = React.createClass({
   getInitialState() {
     return {
       showConsole: false,
-      filepath: null,
-      latestSaveCode: '',
-      editorCode: '',
-      editorTheme: 'github',
-      fontSize: 14
     };
   },
   componentDidMount() {
@@ -85,58 +88,9 @@ let Editor = React.createClass({
       }
       this.saveFile();
     });
-
-    // If possible, reopen the last opened file.
-    let lastFile = localStorage.getItem('lastFile');
-    if (lastFile !== null) {
-      EditorActionCreators.readFilepath(lastFile);
-    }
-
-    storage.has('editorTheme').then((hasKey)=>{
-      if (hasKey) {
-        storage.get('editorTheme').then((data)=>{
-          this.setState({
-            editorTheme: data.theme
-          });
-        });
-      } else {
-        storage.set('editorTheme', {
-          theme: 'github'
-        }, (err)=>{
-          if (err) throw err;
-        });
-      }
-    });
-
-    storage.has('editorFontSize').then((hasKey)=>{
-      if (hasKey) {
-        storage.get('editorFontSize').then((data)=>{
-          console.log(data);
-          this.setState({
-            fontSize: data.editorFontSize
-          });
-        });
-      } else {
-        storage.set('editorFontSize', {
-          editorFontSize: 14
-        }, (err)=>{
-          if (err) throw err;
-        });
-      }
-    });
-
-    EditorStore.on('change', this.updateEditorData);
   },
   componentWillUnmount() {
     Mousetrap.unbind(['mod+s']);
-    EditorStore.removeListener('change', this.updateEditorData);
-  },
-  updateEditorData() {
-    this.setState({
-      filepath: EditorStore.getFilepath(),
-      latestSaveCode: EditorStore.getLatestSaveCode(),
-      editorCode: EditorStore.getEditorCode()
-    });
   },
   openFile() {
     if (this.hasUnsavedChanges()) {
@@ -150,25 +104,25 @@ let Editor = React.createClass({
         if (res === 0) {
           this.saveFile(()=>{
             process.nextTick(()=>{
-              EditorActionCreators.openFile();
+              this.props.onOpenFile();
             });
           });
         } else if (res === 1) {
-          EditorActionCreators.openFile();
+          this.props.onOpenFile();
         } else {
           console.log('File open canceled.');
         }
       });
     } else {
-      EditorActionCreators.openFile();
+      this.props.onOpenFile();
     }
   },
   saveFile(callback) {
-    EditorActionCreators.saveFile(
-      this.state.filepath, this.state.editorCode, callback);
+    this.props.onSaveFile(
+      this.props.filepath, this.props.editorCode, callback);
   },
   saveAsFile() {
-    EditorActionCreators.saveFile(null, this.state.editorCode);
+    this.props.onSaveFile(null, this.props.editorCode);
   },
   createNewFile() {
     if (this.hasUnsavedChanges()) {
@@ -182,21 +136,18 @@ let Editor = React.createClass({
         if (res === 0) {
           this.saveFile(()=>{
             process.nextTick(()=>{
-              EditorActionCreators.createNewFile();
+              this.props.onCreateNewFile();
             });
           });
         } else if (res === 1) {
-          EditorActionCreators.createNewFile();
+          this.props.onCreateNewFile();
         } else {
           console.log('New file creation canceled.');
         }
       });
     } else {
-      EditorActionCreators.createNewFile();
+      this.props.onCreateNewFile();
     }
-  },
-  editorUpdate(newVal) {
-    EditorActionCreators.editorUpdate(newVal);
   },
   correctText(text) {
     // Removes non-ASCII characters from text.
@@ -223,8 +174,8 @@ let Editor = React.createClass({
     RobotActions.clearConsole();
   },
   sendCode(command) {
-    let correctedText = this.correctText(this.state.editorCode);
-    if (correctedText !== this.state.editorCode) {
+    let correctedText = this.correctText(this.props.editorCode);
+    if (correctedText !== this.props.editorCode) {
       this.props.onAlertAdd(
 	'Invalid characters detected',
 	'Your code has non-ASCII characters, which won\'t work on the robot. ' +
@@ -233,7 +184,7 @@ let Editor = React.createClass({
       return false;
     } else {
       Ansible.sendMessage(command, {
-	code: this.state.editorCode
+	code: this.props.editorCode
       });
       return true;
     }
@@ -250,22 +201,6 @@ let Editor = React.createClass({
   },
   openAPI() {
     window.open("https://pie-api.readthedocs.org/")
-  },
-  fontIncrease() {
-    if (this.state.fontSize <= 28) {
-      storage.set('editorFontSize', {editorFontSize: this.state.fontSize + 7}, (err)=>{
-        if (err) throw err;
-      });
-      this.setState({fontSize: this.state.fontSize + 7});
-    }
-  },
-  fontDecrease() {
-    if (this.state.fontSize > 7) {
-      storage.set('editorFontSize', {editorFontSize: this.state.fontSize - 7}, (err)=>{
-        if (err) throw err;
-      });
-      this.setState({fontSize: this.state.fontSize - 7});
-    }
   },
   generateButtons() {
     // The buttons which will be in the button toolbar
@@ -291,8 +226,8 @@ let Editor = React.createClass({
         groupId: 'misc-buttons',
         buttons: [
           new EditorButton('api', 'API Documentation', this.openAPI, 'book'),
-          new EditorButton('zoomin', 'Increase fontsize', this.fontIncrease, 'zoom-in'),
-          new EditorButton('zoomout', 'Decrease fontsize', this.fontDecrease, 'zoom-out')
+          new EditorButton('zoomin', 'Increase fontsize', this.props.onIncreaseFontsize, 'zoom-in'),
+          new EditorButton('zoomout', 'Decrease fontsize', this.props.onDecreaseFontsize, 'zoom-out')
         ]
       }
     ];
@@ -309,13 +244,7 @@ let Editor = React.createClass({
     }
   },
   hasUnsavedChanges() {
-    return (this.state.latestSaveCode !== this.state.editorCode);
-  },
-  changeTheme(theme) {
-    storage.set('editorTheme', {theme: theme}, (err)=>{
-      if (err) throw err;
-    });
-    this.setState({editorTheme: theme});
+    return (this.props.latestSaveCode !== this.props.editorCode);
   },
   themes: [
     'monokai',
@@ -334,28 +263,28 @@ let Editor = React.createClass({
     let editorHeight = window.innerHeight * 0.66;
     return (
       <Panel
-        header={'Editing: ' + this.pathToName(this.state.filepath) +
+        header={'Editing: ' + this.pathToName(this.props.filepath) +
           (this.hasUnsavedChanges() ? '*' : '')}
         bsStyle="primary">
         <EditorToolbar
           buttons={ this.generateButtons() }
           unsavedChanges={ this.hasUnsavedChanges() }
-          changeTheme={ this.changeTheme }
-          editorTheme={ this.state.editorTheme }
+          changeTheme={ this.props.onChangeTheme }
+          editorTheme={ this.props.editorTheme }
           themes={ this.themes }
           runtimeStatus={ this.props.runtimeStatus }
         />
         <AceEditor
           mode="python"
-          theme={ this.state.editorTheme }
+          theme={ this.props.editorTheme }
           width="100%"
-          fontSize={this.state.fontSize}
+          fontSize={this.props.fontSize}
           ref="CodeEditor"
           name="CodeEditor"
           height={String(
             editorHeight - this.state.showConsole * (consoleHeight + 30)) + 'px'}
-          value = { this.state.editorCode }
-          onChange={ this.editorUpdate }
+          value = { this.props.editorCode }
+          onChange={ this.props.onEditorUpdate }
 	  onPaste={ this.onEditorPaste }
           editorProps={{$blockScrolling: Infinity}}
         />
@@ -369,12 +298,44 @@ let Editor = React.createClass({
   }
 });
 
+const mapStateToProps = (state) => {
+  return {
+    editorCode: state.editor.editorCode,
+    editorTheme: state.editor.editorTheme,
+    filepath: state.editor.filepath,
+    fontSize: state.editor.fontSize,
+    latestSaveCode: state.editor.latestSaveCode
+  };
+};
+
 const mapDispatchToProps = (dispatch) => {
   return {
     onAlertAdd: (heading, message) => {
       dispatch(addAsyncAlert(heading, message));
+    },
+    onEditorUpdate: (newVal) => {
+      dispatch(editorUpdate(newVal));
+    },
+    onOpenFile: () => {
+      dispatch(openFile());
+    },
+    onSaveFile: (filepath, code, callback) => {
+      dispatch(saveFile(filepath, code, callback));
+    },
+    onChangeTheme: (theme) => {
+      dispatch(changeTheme(theme));
+    },
+    onIncreaseFontsize: () => {
+      dispatch(increaseFontsize());
+    },
+    onDecreaseFontsize: () => {
+      dispatch(decreaseFontsize());
+    },
+    onCreateNewFile: () => {
+      dispatch(createNewFile());
     }
   };
 };
-Editor = connect(null, mapDispatchToProps)(Editor);
+
+Editor = connect(mapStateToProps, mapDispatchToProps)(Editor);
 export default Editor;
