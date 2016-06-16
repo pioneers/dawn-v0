@@ -6,7 +6,6 @@ import _ from 'lodash';
 import Immutable from 'immutable';
 
 let _robotInfo = {
-  consoleData: Immutable.List(),
   connectionStatus: false,
   runtimeStatus: true, // Are we receiving data from runtime?
   isRunningCode: false, // Is runtime executing code?
@@ -17,9 +16,6 @@ let _robotInfo = {
 let RobotInfoStore = assign({}, EventEmitter.prototype, {
   emitChange() {
     this.emit('change');
-  },
-  getConsoleData() {
-    return _robotInfo.consoleData;
   },
   getConnectionStatus() {
     return _robotInfo.connectionStatus;
@@ -78,19 +74,6 @@ function handleStopCheck(action) {
   }
 }
 
-function handleConsoleUpdate(action) {
-  _robotInfo.consoleData = _robotInfo.consoleData.push(action.console_output.value);
-  // keep the length of console output less than 20 lines
-  if (_robotInfo.consoleData.size > 20)
-    _robotInfo.consoleData = _robotInfo.consoleData.shift();
-  RobotInfoStore.emitChange();
-}
-
-function handleClearConsole(action) {
-  _robotInfo.consoleData = _robotInfo.consoleData.clear();
-  RobotInfoStore.emitChange();
-}
-
 function handleUpdateConnection(action) {
   _robotInfo.connectionStatus = action.payload;
   RobotInfoStore.emitChange();
@@ -113,12 +96,6 @@ RobotInfoStore.dispatchToken = AppDispatcher.register((action) => {
       break;
     case ActionTypes.UPDATE_BATTERY:
       handleUpdateBattery(action);
-      break;
-    case ActionTypes.UPDATE_CONSOLE:
-      handleConsoleUpdate(action);
-      break;
-    case ActionTypes.CLEAR_CONSOLE:
-      handleClearConsole(action);
       break;
     case ActionTypes.UPDATE_CONNECTION:
       handleUpdateConnection(action);

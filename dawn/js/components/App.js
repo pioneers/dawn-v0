@@ -16,7 +16,6 @@ let App = React.createClass({
   getInitialState() {
     return {
       steps: [],
-      consoleData: RobotInfoStore.getConsoleData(),
       isRunningCode: RobotInfoStore.getIsRunningCode(),
       connectionStatus: RobotInfoStore.getConnectionStatus(),
       runtimeStatus: RobotInfoStore.getRuntimeStatus(),
@@ -54,7 +53,6 @@ let App = React.createClass({
   },
   updateRobotInfo() {
     this.setState({
-      consoleData: RobotInfoStore.getConsoleData(),
       isRunningCode: RobotInfoStore.getIsRunningCode(),
       connectionStatus: RobotInfoStore.getConnectionStatus(),
       runtimeStatus: RobotInfoStore.getRuntimeStatus(),
@@ -113,7 +111,6 @@ let App = React.createClass({
         <Dashboard {...this.props}
           addSteps={this.addSteps}
           addTooltip={this.addTooltip}
-          consoleData={this.state.consoleData}
 	  connectionStatus={this.state.connectionStatus}
           runtimeStatus={this.state.runtimeStatus}
           isRunningCode={this.state.isRunningCode}

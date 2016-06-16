@@ -11,6 +11,7 @@ import {
   increaseFontsize,
   decreaseFontsize
 } from '../actions/EditorActions.js';
+import { showConsole, hideConsole } from '../actions/ConsoleActions';
 import { connect } from 'react-redux';
 import { addAsyncAlert } from '../actions/AlertActions';
 import EditorToolbar from './EditorToolbar';
@@ -19,7 +20,7 @@ import _ from 'lodash';
 import ConsoleOutput from './ConsoleOutput';
 import RobotActions from '../actions/RobotActions';
 import Ansible from '../utils/Ansible';
-import {Panel} from 'react-bootstrap';
+import { Panel } from 'react-bootstrap';
 import { EditorButton } from './EditorClasses';
 import ace from 'brace';
 import 'brace/ext/language_tools';
@@ -36,18 +37,13 @@ import 'brace/theme/textmate';
 import 'brace/theme/solarized_dark';
 import 'brace/theme/solarized_light';
 import 'brace/theme/terminal';
-import {remote} from 'electron';
+import { remote } from 'electron';
 let langtools = ace.acequire('ace/ext/language_tools');
 let storage = remote.require('electron-json-storage');
 let dialog = remote.dialog;
 let currentWindow = remote.getCurrentWindow();
 
 let Editor = React.createClass({
-  getInitialState() {
-    return {
-      showConsole: false,
-    };
-  },
   componentDidMount() {
     // If there are unsaved changes and the user tries to close Dawn,
     // check if they want to save their changes first.
@@ -166,7 +162,11 @@ let Editor = React.createClass({
     pasteData.text = correctedText;
   },
   toggleConsole() {
-    this.setState({showConsole: !this.state.showConsole});
+    if (this.props.showConsole) {
+      this.props.onHideConsole();
+    } else {
+      this.props.onShowConsole();
+    }
     // must call resize method after changing height of ace editor
     setTimeout(()=>this.refs.CodeEditor.editor.resize(), 0.1);
   },
@@ -282,7 +282,7 @@ let Editor = React.createClass({
           ref="CodeEditor"
           name="CodeEditor"
           height={String(
-            editorHeight - this.state.showConsole * (consoleHeight + 30)) + 'px'}
+            editorHeight - this.props.showConsole * (consoleHeight + 30)) + 'px'}
           value = { this.props.editorCode }
           onChange={ this.props.onEditorUpdate }
 	  onPaste={ this.onEditorPaste }
@@ -290,7 +290,7 @@ let Editor = React.createClass({
         />
         <ConsoleOutput
           toggleConsole={this.toggleConsole}
-          show={this.state.showConsole}
+          show={this.props.showConsole}
           height={consoleHeight}
           output={this.props.consoleData}/>
       </Panel>
@@ -304,7 +304,9 @@ const mapStateToProps = (state) => {
     editorTheme: state.editor.editorTheme,
     filepath: state.editor.filepath,
     fontSize: state.editor.fontSize,
-    latestSaveCode: state.editor.latestSaveCode
+    latestSaveCode: state.editor.latestSaveCode,
+    showConsole: state.studentConsole.showConsole,
+    consoleData: state.studentConsole.consoleData
   };
 };
 
@@ -333,6 +335,12 @@ const mapDispatchToProps = (dispatch) => {
     },
     onCreateNewFile: () => {
       dispatch(createNewFile());
+    },
+    onShowConsole: () => {
+      dispatch(showConsole());
+    },
+    onHideConsole: () => {
+      dispatch(hideConsole());
     }
   };
 };
