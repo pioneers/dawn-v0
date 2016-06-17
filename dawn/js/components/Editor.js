@@ -11,7 +11,11 @@ import {
   increaseFontsize,
   decreaseFontsize
 } from '../actions/EditorActions.js';
-import { showConsole, hideConsole } from '../actions/ConsoleActions';
+import {
+  showConsole,
+  hideConsole,
+  clearConsole
+} from '../actions/ConsoleActions';
 import { connect } from 'react-redux';
 import { addAsyncAlert } from '../actions/AlertActions';
 import EditorToolbar from './EditorToolbar';
@@ -114,8 +118,7 @@ let Editor = React.createClass({
     }
   },
   saveFile(callback) {
-    this.props.onSaveFile(
-      this.props.filepath, this.props.editorCode, callback);
+    this.props.onSaveFile(this.props.filepath, this.props.editorCode, callback);
   },
   saveAsFile() {
     this.props.onSaveFile(null, this.props.editorCode);
@@ -171,7 +174,7 @@ let Editor = React.createClass({
     setTimeout(()=>this.refs.CodeEditor.editor.resize(), 0.1);
   },
   clearConsole() {
-    RobotActions.clearConsole();
+    this.props.onClearConsole();
   },
   sendCode(command) {
     let correctedText = this.correctText(this.props.editorCode);
@@ -341,6 +344,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     onHideConsole: () => {
       dispatch(hideConsole());
+    },
+    onClearConsole: () => {
+      dispatch(clearConsole());
     }
   };
 };

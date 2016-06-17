@@ -9,12 +9,12 @@ const initialState = {
 
 const studentConsole = (state=initialState, action) => {
   switch (action.type) {
-    case 'CONSOLE_UPDATE':
+    case 'UPDATE_CONSOLE':
       return {
         ...state,
         consoleData: [
-          ...consoleData,
-          action.consoleOutput
+          ...state.consoleData,
+          action.console_output.value
         ]
       };
     case 'CLEAR_CONSOLE':
