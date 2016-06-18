@@ -2,7 +2,6 @@ import React from 'react';
 import Joyride from 'react-joyride';
 import DNav from './DNav';
 import Dashboard from './Dashboard';
-import RobotInfoStore from '../stores/RobotInfoStore';
 import RuntimeConfig from './RuntimeConfig';
 import joyrideSteps from './JoyrideSteps';
 import smalltalk from 'smalltalk';
@@ -16,16 +15,10 @@ let App = React.createClass({
   getInitialState() {
     return {
       steps: [],
-      isRunningCode: RobotInfoStore.getIsRunningCode(),
-      connectionStatus: RobotInfoStore.getConnectionStatus(),
-      runtimeStatus: RobotInfoStore.getRuntimeStatus(),
-      batteryLevel: RobotInfoStore.getBatteryLevel(),
-      runtimeVersion: RobotInfoStore.getRuntimeVersion()
     };
   },
   componentDidMount() {
     this.addSteps(joyrideSteps);
-    RobotInfoStore.on('change', this.updateRobotInfo);
     ipcRenderer.on('start-interactive-tour', ()=>{
       this.startTour();
     });
@@ -47,18 +40,6 @@ let App = React.createClass({
         this.updateAlert(latestAlert);
       }
     }
-  },
-  componentWillUnmount() {
-    RobotInfoStore.removeListener('change', this.updateRobotInfo);
-  },
-  updateRobotInfo() {
-    this.setState({
-      isRunningCode: RobotInfoStore.getIsRunningCode(),
-      connectionStatus: RobotInfoStore.getConnectionStatus(),
-      runtimeStatus: RobotInfoStore.getRuntimeStatus(),
-      batteryLevel: RobotInfoStore.getBatteryLevel(),
-      runtimeVersion: RobotInfoStore.getRuntimeVersion()
-    });
   },
   updateAlert(latestAlert) {
     smalltalk.alert(latestAlert.heading, latestAlert.message).then(()=>{
@@ -94,10 +75,10 @@ let App = React.createClass({
       <div>
         <DNav
           startTour={this.startTour}
-          runtimeStatus={this.state.runtimeStatus}
-          connection={this.state.connectionStatus}
-          battery={this.state.batteryLevel}
-          isRunningCode={this.state.isRunningCode}
+          runtimeStatus={this.props.runtimeStatus}
+          connection={this.props.connectionStatus}
+          battery={this.props.batteryLevel}
+          isRunningCode={this.props.isRunningCode}
         />
         <Joyride
           ref="joyride"
@@ -111,13 +92,13 @@ let App = React.createClass({
         <Dashboard {...this.props}
           addSteps={this.addSteps}
           addTooltip={this.addTooltip}
-	  connectionStatus={this.state.connectionStatus}
-          runtimeStatus={this.state.runtimeStatus}
-          isRunningCode={this.state.isRunningCode}
+	  connectionStatus={this.props.connectionStatus}
+          runtimeStatus={this.props.runtimeStatus}
+          isRunningCode={this.props.isRunningCode}
         />
         <RuntimeConfig
-          connectionStatus={this.state.connectionStatus}
-          runtimeVersion={this.state.runtimeVersion}/>
+          connectionStatus={this.props.connectionStatus}
+          runtimeVersion={this.props.runtimeVersion}/>
       </div>
     );
   }
@@ -125,6 +106,11 @@ let App = React.createClass({
 
 const mapStateToProps = (state) => {
   return {
+    connectionStatus: state.info.connectionStatus,
+    runtimeStatus: state.info.runtimeStatus,
+    batteryLevel: state.info.batteryLevel,
+    isRunningCode: state.info.isRunningCode,
+    runtimeVersion: state.info.runtimeVersion,
     asyncAlerts: state.asyncAlerts
   };
 };

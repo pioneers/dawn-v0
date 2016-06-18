@@ -7,11 +7,15 @@ import { combineReducers } from 'redux';
 import asyncAlerts from './alerts';
 import editor from './editor';
 import studentConsole from './studentConsole';
+import peripherals from './peripherals';
+import info from './info';
 
 const dawnApp = combineReducers({
   asyncAlerts: asyncAlerts,
   editor: editor,
-  studentConsole: studentConsole
+  studentConsole: studentConsole,
+  peripherals: peripherals,
+  info: info
 });
 
 export default dawnApp;

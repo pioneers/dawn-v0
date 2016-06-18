@@ -22,7 +22,6 @@ import EditorToolbar from './EditorToolbar';
 import Mousetrap from 'mousetrap';
 import _ from 'lodash';
 import ConsoleOutput from './ConsoleOutput';
-import RobotActions from '../actions/RobotActions';
 import Ansible from '../utils/Ansible';
 import { Panel } from 'react-bootstrap';
 import { EditorButton } from './EditorClasses';
@@ -173,9 +172,6 @@ let Editor = React.createClass({
     // must call resize method after changing height of ace editor
     setTimeout(()=>this.refs.CodeEditor.editor.resize(), 0.1);
   },
-  clearConsole() {
-    this.props.onClearConsole();
-  },
   sendCode(command) {
     let correctedText = this.correctText(this.props.editorCode);
     if (correctedText !== this.props.editorCode) {
@@ -196,7 +192,7 @@ let Editor = React.createClass({
   startRobot() {
     let sent = this.sendCode('execute');
     if (sent) {
-      RobotActions.clearConsole();
+      this.props.onClearConsole();
     };
   },
   stopRobot() {
@@ -222,7 +218,7 @@ let Editor = React.createClass({
           new EditorButton('run', 'Run', this.startRobot, 'play', (this.props.isRunningCode || !this.props.runtimeStatus)),
           new EditorButton('stop', 'Stop', this.stopRobot, 'stop', !(this.props.isRunningCode && this.props.runtimeStatus)),
           new EditorButton('toggle-console', 'Toggle Console', this.toggleConsole, 'console'),
-          new EditorButton('clear-console', 'Clear Console', this.clearConsole, 'remove'),
+          new EditorButton('clear-console', 'Clear Console', this.props.onClearConsole, 'remove'),
           new EditorButton('upload', 'Upload', this.upload, 'upload', (this.props.isRunningCode || !this.props.runtimeStatus)),
         ]
       }, {
