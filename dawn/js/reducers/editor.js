@@ -56,6 +56,8 @@ const editor = (state=defaultEditorState, action) => {
         ...state,
         fontSize: (fontSize >= 8) ? fontSize - 1 : fontSize
       };
+    case 'UPDATE_GAMEPADS':
+      return state;
     default:
       return state;
   }

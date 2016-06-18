@@ -8,6 +8,8 @@ import fs from 'fs';
 import { takeEvery, delay } from 'redux-saga';
 import { cps, call, put, fork, take, race } from 'redux-saga/effects';
 import { remote } from 'electron';
+import _ from 'lodash';
+import Ansible from './Ansible';
 
 const dialog = remote.dialog;
 
@@ -130,6 +132,60 @@ function* reapPeripheral(action) {
   }
 }
 
+var _timestamps = [0, 0, 0, 0];
+
+const _needToUpdate = function(newGamepads) {
+  return _.some(newGamepads, function(gamepad, index) {
+    if(!_.isUndefined(gamepad) && (gamepad.timestamp > _timestamps[index])) {
+      _timestamps[index] = gamepad.timestamp;
+      return true;
+    } else if (_.isUndefined(gamepad) && !_.isNull(_timestamps[index])) {
+      _timestamps[index] = null;
+      return true;
+    }
+    return false;
+  });
+};
+
+const _formatGamepadsForJSON = function(newGamepads) {
+  let formattedGamepads = {};
+  // Currently there is a bug on windows where navigator.getGamepads()
+  // returns a second, 'ghost' gamepad even when only one is connected.
+  // The filter on 'mapping' filters out the ghost gamepad.
+  _.forEach(_.filter(newGamepads, {'mapping': 'standard'}), function(gamepad, indexGamepad) {
+    if (gamepad) {
+      formattedGamepads[indexGamepad] = {
+        index: indexGamepad,
+        axes: gamepad.axes,
+        buttons: _.map(gamepad.buttons, 'value')
+      };
+    }
+  });
+  return formattedGamepads;
+};
+
+/**
+ * Repeatedly grab gamepad data, send it over Ansible to the robot, and dispatch
+ * redux action to update gamepad state.
+ */
+function* updateGamepads() {
+  while (true) {
+    // navigator.getGamepads always returns a reference to the same object. This
+    // confuses redux, so we use assignIn to clone to a new object each time.
+    let newGamepads = _.assignIn({}, navigator.getGamepads());
+    if (_needToUpdate(newGamepads)) {
+      // Send gamepad data to Runtime over Ansible.
+      if (_.some(newGamepads)) {
+        Ansible.sendMessage('gamepad', _formatGamepadsForJSON(newGamepads));
+      }
+
+      yield put({ type: 'UPDATE_GAMEPADS', gamepads: newGamepads });
+    }
+
+    yield call(delay, 50); // wait 50 ms before updating again.
+  }
+}
+
 /**
  * The root saga combines all the other sagas together into one.
  */
@@ -138,6 +194,7 @@ export default function* rootSaga() {
     takeEvery('OPEN_FILE', openFile),
     takeEvery('SAVE_FILE', saveFile),
     takeEvery('UPDATE_PERIPHERAL', reapPeripheral),
-    fork(runtimeHeartbeat)
+    fork(runtimeHeartbeat),
+    fork(updateGamepads)
   ];
 }
