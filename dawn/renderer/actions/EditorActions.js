@@ -22,7 +22,7 @@ export const deleteFile = () => {
   };
 };
 
-export const createNewFile = (filepath) => {
+export const createNewFile = () => {
   return {
     type: 'CREATE_NEW_FILE'
   };

@@ -16,6 +16,17 @@ import {
   decreaseFontsize
 } from '../renderer/actions/EditorActions';
 
+// reduxState is synchronized with the frontend redux state.
+let reduxState;
+ipcMain.on('stateUpdate', (event, state) => {
+  reduxState = state;
+});
+
+// Dispatch redux actions to the frontend.
+const reduxDispatch = (action) => {
+  mainWindow.webContents.send('dispatch', action);
+};
+
 let template = [
   {
     label: 'Dawn',
@@ -30,6 +41,31 @@ let template = [
         label: 'Quit',
         accelerator: 'CommandOrControl+Q',
         click: function() { app.quit(); }
+      }
+    ]
+  },
+  {
+    label: 'File',
+    submenu: [
+      {
+        label: 'New File',
+        click: () => reduxDispatch(createNewFile())
+      },
+      {
+        label: 'Open file',
+        click: () => reduxDispatch(openFile())
+      },
+      {
+        label: 'Save file',
+        click: () => {
+          let filepath = reduxState.editor.filepath;
+          let code = reduxState.editor.editorCode;
+          reduxDispatch(saveFile(filepath, code));
+        }
+      },
+      {
+        label: 'Save file as',
+        click: () => reduxDispatch(saveFile(null, reduxState.editor.editorCode))
       }
     ]
   },
@@ -105,7 +141,7 @@ app.on('ready', function() {
   });
 
   // Add open devtools option to main menu.
-  template[2].submenu.unshift({
+  template[3].submenu.unshift({
     label: 'Toggle DevTools',
     click: function() {
       mainWindow.webContents.toggleDevTools();
@@ -114,7 +150,7 @@ app.on('ready', function() {
 
   // In development mode, allow quick reloading to see effects of code changes.
   if (process.env.NODE_ENV === 'development') {
-    template[2].submenu.unshift({
+    template[3].submenu.unshift({
       label: 'Reload',
       accelerator: 'CommandOrControl+R',
       click: function() {
