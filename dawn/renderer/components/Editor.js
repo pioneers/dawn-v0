@@ -116,8 +116,8 @@ let Editor = React.createClass({
       this.props.onOpenFile();
     }
   },
-  saveFile(callback) {
-    this.props.onSaveFile(this.props.filepath, this.props.editorCode, callback);
+  saveFile() {
+    this.props.onSaveFile(this.props.filepath, this.props.editorCode);
   },
   saveAsFile() {
     this.props.onSaveFile(null, this.props.editorCode);

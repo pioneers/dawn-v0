@@ -8,12 +8,11 @@ export const openFile = () => {
   };
 };
 
-export const saveFile = (filepath, code, callback) => {
+export const saveFile = (filepath, code) => {
   return {
     type: 'SAVE_FILE',
     code: code,
-    filepath: filepath,
-    callback: callback
+    filepath: filepath
   };
 };
 

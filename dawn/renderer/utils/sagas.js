@@ -72,7 +72,6 @@ function* openFile(action) {
 function* saveFile(action) {
   var filepath = action.filepath;
   var code = action.code;
-  var callback = action.callback;
   if (filepath === null) {
     filepath = yield call(saveFileDialog);
   }
@@ -80,8 +79,7 @@ function* saveFile(action) {
   yield put({
     type: 'SAVE_FILE_SUCCEEDED',
     code: code,
-    filepath: filepath,
-    callback: callback
+    filepath: filepath
   });
 }
 

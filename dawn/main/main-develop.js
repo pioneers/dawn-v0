@@ -1,11 +1,20 @@
-// Electron entrypoint
+/**
+ * Entrypoint for main process of Electron application.
+ */
+
 'use strict';
-const electron = require('electron');
-const app = electron.app;
-const BrowserWindow = electron.BrowserWindow;
-const Menu = electron.Menu;
-const storage = require('electron-json-storage');
-const ipcMain = electron.ipcMain;
+import { app, BrowserWindow, Menu, ipcMain } from 'electron';
+import storage from 'electron-json-storage';
+import {
+  openFile,
+  saveFile,
+  deleteFile,
+  createNewFile,
+  editorUpdate,
+  changeTheme,
+  increaseFontsize,
+  decreaseFontsize
+} from '../renderer/actions/EditorActions';
 
 let template = [
   {
@@ -78,16 +87,6 @@ let template = [
     ]
   }
 ];
-
-// Keep track of whether dawn is connected to robot or not.
-let runtimeConnected = false;
-ipcMain.on('runtime-connect', function(event, arg) {
-  runtimeConnected = true;
-});
-
-ipcMain.on('runtime-disconnect', function(event, arg) {
-  runtimeConnected = false;
-});
 
 let mainWindow;
 app.on('window-all-closed', function() {
