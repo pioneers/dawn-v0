@@ -3,18 +3,14 @@
  */
 
 let nextAsyncAlertId = 0;
-export const addAsyncAlert = (heading, message) => {
-  return {
-    type: 'ADD_ASYNC_ALERT',
-    id: nextAsyncAlertId++,
-    heading: heading,
-    message: message
-  };
-};
+export const addAsyncAlert = (heading, message) => ({
+  type: 'ADD_ASYNC_ALERT',
+  id: nextAsyncAlertId++,
+  heading,
+  message,
+});
 
-export const removeAsyncAlert = (id) => {
-  return {
-    type: 'REMOVE_ASYNC_ALERT',
-    id: id
-  };
-};
+export const removeAsyncAlert = (id) => ({
+  type: 'REMOVE_ASYNC_ALERT',
+  id,
+});

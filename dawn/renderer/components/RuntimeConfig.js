@@ -1,14 +1,13 @@
 import React from 'react';
-import {Modal, Button} from 'react-bootstrap';
-import {ipcRenderer} from 'electron';
-const request = require('superagent');
+import { Modal, Button } from 'react-bootstrap';
+import { ipcRenderer } from 'electron';
 import Ansible from '../utils/Ansible';
 
 class RuntimeConfig extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showModal: false
+      showModal: false,
     };
 
     this.openModal = this.openModal.bind(this);
@@ -16,22 +15,22 @@ class RuntimeConfig extends React.Component {
   }
 
   componentDidMount() {
-    ipcRenderer.on('show-runtime-config', (event, msg)=>{
+    ipcRenderer.on('show-runtime-config', () => {
       console.log('received message');
       this.openModal();
     });
   }
 
   openModal() {
-    this.setState({showModal: true});
+    this.setState({ showModal: true });
   }
 
   closeModal() {
-    this.setState({showModal: false});
+    this.setState({ showModal: false });
   }
 
   render() {
-    let runtimeVersion = this.props.runtimeVersion;
+    const runtimeVersion = this.props.runtimeVersion;
     let versionInfo = null;
     if (!this.props.connectionStatus) {
       versionInfo = (
@@ -64,8 +63,9 @@ class RuntimeConfig extends React.Component {
           <p><strong>Restart the robot's runtime:</strong></p>
           <Button
             bsStyle="danger"
-            onClick={()=>Ansible.restartRuntime()}
-            disabled={!this.props.connectionStatus}>
+            onClick={() => { Ansible.restartRuntime(); }}
+            disabled={!this.props.connectionStatus}
+          >
             Restart
           </Button>
         </Modal.Body>
@@ -76,5 +76,10 @@ class RuntimeConfig extends React.Component {
     );
   }
 }
+
+RuntimeConfig.propTypes = {
+  runtimeVersion: React.PropTypes.object,
+  connectionStatus: React.PropTypes.object,
+};
 
 export default RuntimeConfig;

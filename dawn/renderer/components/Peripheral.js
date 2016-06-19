@@ -7,18 +7,16 @@
  */
 
 import React from 'react';
-import {ListGroupItem} from 'react-bootstrap';
-import {PeripheralTypes} from '../constants/Constants';
-import {
-  Motor,
-  ColorSensor,
-  BooleanSensor,
-  ScalarSensor,
-  GenericPeripheral
-} from './Peripherals';
+import { ListGroupItem } from 'react-bootstrap';
+import { PeripheralTypes } from '../constants/Constants';
+import GenericPeripheral from './peripherals/GenericPeripheral';
+import ScalarSensor from './peripherals/ScalarSensor';
+import Motor from './peripherals/Motor';
+import BooleanSensor from './peripherals/BooleanSensor';
+import ColorSensor from './peripherals/ColorSensor';
 
 // Mapping between peripheral types and components
-var typesToComponents = {};
+const typesToComponents = {};
 typesToComponents[PeripheralTypes.MOTOR_SCALAR] = Motor;
 typesToComponents[PeripheralTypes.SENSOR_BOOLEAN] = BooleanSensor;
 typesToComponents[PeripheralTypes.SENSOR_SCALAR] = ScalarSensor;
@@ -30,28 +28,29 @@ typesToComponents[PeripheralTypes.ColorSensor] = ColorSensor;
 typesToComponents[PeripheralTypes.MetalDetector] = ScalarSensor;
 typesToComponents[PeripheralTypes.ServoControl] = ScalarSensor;
 
-
-var Peripheral = React.createClass({
-  propTypes: {
-    peripheralType: React.PropTypes.string.isRequired
-  },
+class Peripheral extends React.Component {
   /**
    * Determines the specific type of peripheral that this object represents.
    */
   determinePeripheralComponent() {
     return typesToComponents[this.props.peripheralType];
-  },
+  }
+
   /**
    * We render the specific peripheral corrensponding to the peripheralType.
    */
   render() {
-    var SpecificPeripheralComponent = this.determinePeripheralComponent() || GenericPeripheral;
+    const SpecificPeripheralComponent = this.determinePeripheralComponent() || GenericPeripheral;
     return (
       <ListGroupItem>
-        <SpecificPeripheralComponent {...this.props}/>
+        <SpecificPeripheralComponent {...this.props} />
       </ListGroupItem>
     );
   }
-});
+}
+
+Peripheral.propTypes = {
+  peripheralType: React.PropTypes.string,
+};
 
 export default Peripheral;

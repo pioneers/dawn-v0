@@ -10,48 +10,49 @@ import { remote, ipcRenderer } from 'electron';
 import { connect } from 'react-redux';
 const storage = remote.require('electron-json-storage');
 
-let App = React.createClass({
-  displayName: 'Dawn',
-  getInitialState() {
-    return {
+class AppComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
       steps: [],
     };
-  },
+    this.addSteps = this.addSteps.bind(this);
+    this.addTooltip = this.addTooltip.bind(this);
+    this.startTour = this.startTour.bind(this);
+    this.completeCallback = this.completeCallback.bind(this);
+    this.updateAlert = this.updateAlert.bind(this);
+  }
+
   componentDidMount() {
     this.addSteps(joyrideSteps);
-    ipcRenderer.on('start-interactive-tour', ()=>{
+    ipcRenderer.on('start-interactive-tour', () => {
       this.startTour();
     });
-    storage.has('firstTime').then((hasKey)=>{
+    storage.has('firstTime').then((hasKey) => {
       if (!hasKey) {
         this.startTour();
-        storage.set('firstTime', {first: true}, (err)=>{
+        storage.set('firstTime', { first: true }, (err) => {
           if (err) throw err;
         });
       }
     });
-  },
+  }
+
   componentWillReceiveProps(nextProps) {
-    let asyncAlerts = nextProps.asyncAlerts;
+    const asyncAlerts = nextProps.asyncAlerts;
     // If the alerts list has changed, display the latest one.
     if (asyncAlerts !== this.props.asyncAlerts) {
-      let latestAlert = asyncAlerts[asyncAlerts.length - 1];
+      const latestAlert = asyncAlerts[asyncAlerts.length - 1];
       if (latestAlert !== undefined) {
         this.updateAlert(latestAlert);
       }
     }
-  },
-  updateAlert(latestAlert) {
-    smalltalk.alert(latestAlert.heading, latestAlert.message).then(()=>{
-      this.props.onAlertDone(latestAlert.id);
-    }, ()=>{
-      this.props.onAlertDone(latestAlert.id);
-    });
-  },
+  }
+
   addSteps(steps) {
-    let joyride = this.refs.joyride;
+    const joyride = this.refs.joyride;
     if (!Array.isArray(steps)) {
-      steps = [ steps ];
+      steps = [steps];
     }
     if (!steps.length) {
       return false;
@@ -60,16 +61,28 @@ let App = React.createClass({
       currentState.steps = currentState.steps.concat(joyride.parseSteps(steps));
       return currentState;
     });
-  },
+  }
+
   addTooltip(data) {
     this.refs.joyride.addTooltip(data);
-  },
+  }
+
   startTour() {
     this.refs.joyride.start(true);
-  },
-  completeCallback(steps, skipped) {
+  }
+
+  completeCallback() {
     this.refs.joyride.reset(false);
-  },
+  }
+
+  updateAlert(latestAlert) {
+    smalltalk.alert(latestAlert.heading, latestAlert.message).then(() => {
+      this.props.onAlertDone(latestAlert.id);
+    }, () => {
+      this.props.onAlertDone(latestAlert.id);
+    });
+  }
+
   render() {
     return (
       <div>
@@ -84,45 +97,58 @@ let App = React.createClass({
           ref="joyride"
           steps={this.state.steps}
           type="continuous"
-          showSkipButton={true}
           completeCallback={this.completeCallback}
-          locale={{back: 'Previous', close: 'Close', last: 'End Tour', next: 'Next', skip: 'Skip Tour'}}
+          locale={{
+            back: 'Previous',
+            close: 'Close',
+            last: 'End Tour',
+            next: 'Next',
+            skip: 'Skip Tour',
+          }}
         />
-        <div style={{ height: '60px', marginBottom: '21px' }}/>
-        <Dashboard {...this.props}
+        <div style={{ height: '60px', marginBottom: '21px' }} />
+        <Dashboard
+          {...this.props}
           addSteps={this.addSteps}
           addTooltip={this.addTooltip}
-	  connectionStatus={this.props.connectionStatus}
+          connectionStatus={this.props.connectionStatus}
           runtimeStatus={this.props.runtimeStatus}
           isRunningCode={this.props.isRunningCode}
         />
         <RuntimeConfig
           connectionStatus={this.props.connectionStatus}
-          runtimeVersion={this.props.runtimeVersion}/>
+          runtimeVersion={this.props.runtimeVersion}
+        />
       </div>
     );
   }
+}
+
+AppComponent.propTypes = {
+  connectionStatus: React.PropTypes.bool,
+  runtimeStatus: React.PropTypes.bool,
+  batteryLevel: React.PropTypes.number,
+  isRunningCode: React.PropTypes.bool,
+  runtimeVersion: React.PropTypes.object,
+  asyncAlerts: React.PropTypes.array,
+  onAlertDone: React.PropTypes.func,
+};
+
+const mapStateToProps = (state) => ({
+  connectionStatus: state.info.connectionStatus,
+  runtimeStatus: state.info.runtimeStatus,
+  batteryLevel: state.info.batteryLevel,
+  isRunningCode: state.info.isRunningCode,
+  runtimeVersion: state.info.runtimeVersion,
+  asyncAlerts: state.asyncAlerts,
 });
 
-const mapStateToProps = (state) => {
-  return {
-    connectionStatus: state.info.connectionStatus,
-    runtimeStatus: state.info.runtimeStatus,
-    batteryLevel: state.info.batteryLevel,
-    isRunningCode: state.info.isRunningCode,
-    runtimeVersion: state.info.runtimeVersion,
-    asyncAlerts: state.asyncAlerts
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  onAlertDone(id) {
+    dispatch(removeAsyncAlert(id));
+  },
+});
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    onAlertDone: (id) => {
-      dispatch(removeAsyncAlert(id));
-    }
-  };
-};
-
-App = connect(mapStateToProps, mapDispatchToProps)(App)
+const App = connect(mapStateToProps, mapDispatchToProps)(AppComponent);
 
 export default App;

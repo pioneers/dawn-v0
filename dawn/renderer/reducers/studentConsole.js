@@ -4,33 +4,33 @@
 
 const initialState = {
   showConsole: false,
-  consoleData: []
+  consoleData: [],
 };
 
-const studentConsole = (state=initialState, action) => {
+const studentConsole = (state = initialState, action) => {
   switch (action.type) {
     case 'UPDATE_CONSOLE':
       return {
         ...state,
         consoleData: [
           ...state.consoleData,
-          action.console_output.value
-        ]
+          action.console_output.value,
+        ],
       };
     case 'CLEAR_CONSOLE':
       return {
         ...state,
-        consoleData: []
+        consoleData: [],
       };
     case 'SHOW_CONSOLE':
       return {
         ...state,
-        showConsole: true
+        showConsole: true,
       };
     case 'HIDE_CONSOLE':
       return {
         ...state,
-        showConsole: false
+        showConsole: false,
       };
     default:
       return state;

@@ -6,7 +6,7 @@ import DevTools from './components/DevTools';
 
 const sagaMiddleware = createSagaMiddleware();
 
-let store = createStore(
+const store = createStore(
   dawnApp,
   compose(
     applyMiddleware(sagaMiddleware),

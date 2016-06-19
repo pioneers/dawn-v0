@@ -1,5 +1,5 @@
-const peripherals = (state={}, action) => {
-  let nextState = Object.assign({}, state);
+const peripherals = (state = {}, action) => {
+  const nextState = Object.assign({}, state);
 
   switch (action.type) {
     case 'UPDATE_PERIPHERAL':

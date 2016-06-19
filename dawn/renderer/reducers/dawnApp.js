@@ -12,12 +12,12 @@ import info from './info';
 import gamepads from './gamepads';
 
 const dawnApp = combineReducers({
-  asyncAlerts: asyncAlerts,
-  editor: editor,
-  studentConsole: studentConsole,
-  peripherals: peripherals,
-  info: info,
-  gamepads: gamepads
+  asyncAlerts,
+  editor,
+  studentConsole,
+  peripherals,
+  info,
+  gamepads,
 });
 
 export default dawnApp;

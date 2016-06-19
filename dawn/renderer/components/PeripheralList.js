@@ -3,26 +3,27 @@
  */
 
 import React from 'react';
-import {Panel, ListGroup} from 'react-bootstrap';
+import { Panel, ListGroup } from 'react-bootstrap';
 
-var PeripheralList = React.createClass({
-  getDefaultProps: function() {
-    return {
-      header: 'PeripheralList'
-    };
-  },
-  render() {
-    return (
-      <Panel
-        id="peripherals-panel"
-        header={this.props.header}
-        bsStyle="primary">
-        <ListGroup fill style={{marginBottom: '5px'}}>
-          {this.props.children}
-        </ListGroup>
-      </Panel>
-    );
-  }
-});
+const PeripheralList = (props) => (
+  <Panel
+    id="peripherals-panel"
+    header={props.header}
+    bsStyle="primary"
+  >
+    <ListGroup fill style={{ marginBottom: '5px' }}>
+      {props.children}
+    </ListGroup>
+  </Panel>
+);
+
+PeripheralList.defaultProps = {
+  header: 'PeripheralList',
+};
+
+PeripheralList.propTypes = {
+  header: React.PropTypes.string,
+  children: React.PropTypes.any,
+};
 
 export default PeripheralList;

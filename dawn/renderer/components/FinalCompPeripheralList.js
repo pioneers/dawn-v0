@@ -8,43 +8,44 @@ import Peripheral from './Peripheral';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-var FinalCompPeripheralList = React.createClass({
-  render() {
-    let errorMsg = null;
-    if (!this.props.connectionStatus) {
-      errorMsg = 'You are currently disconnected from the robot.';
-    } else if (!this.props.runtimeStatus) {
-      errorMsg = 'There appears to be some sort of Runtime error. No data is being received.';
-    }
-    return (
-      <PeripheralList header='Peripherals'>
-      {
-        !errorMsg ?
-        _.map(
-          _.toArray(this.props.peripherals),
-          (peripheral) => {
-            return (
-              <Peripheral
-                key={peripheral.id}
-                id={peripheral.id}
-                name={peripheral.name}
-                value={peripheral.value}
-                peripheralType={peripheral.peripheralType}/>
-            );
-          }
-        ) : errorMsg
-      }
-      </PeripheralList>
-    );
+const FinalCompPeripheralListComponent = (props) => {
+  let errorMsg = null;
+  if (!props.connectionStatus) {
+    errorMsg = 'You are currently disconnected from the robot.';
+  } else if (!props.runtimeStatus) {
+    errorMsg = 'There appears to be some sort of Runtime error. No data is being received.';
   }
-});
-
-const mapStateToProps = (state) => {
-  return {
-    peripherals: state.peripherals
-  };
+  return (
+    <PeripheralList header="Peripherals">
+    {
+      !errorMsg ?
+      _.map(
+        _.toArray(props.peripherals),
+        (peripheral) => (
+          <Peripheral
+            key={peripheral.id}
+            id={peripheral.id}
+            name={peripheral.name}
+            value={peripheral.value}
+            peripheralType={peripheral.peripheralType}
+          />
+        )
+      ) : errorMsg
+    }
+    </PeripheralList>
+  );
 };
 
-FinalCompPeripheralList = connect(mapStateToProps)(FinalCompPeripheralList);
+FinalCompPeripheralListComponent.propTypes = {
+  connectionStatus: React.PropTypes.bool,
+  runtimeStatus: React.PropTypes.bool,
+  peripherals: React.PropTypes.object,
+};
+
+const mapStateToProps = (state) => ({
+  peripherals: state.peripherals,
+});
+
+const FinalCompPeripheralList = connect(mapStateToProps)(FinalCompPeripheralListComponent);
 
 export default FinalCompPeripheralList;

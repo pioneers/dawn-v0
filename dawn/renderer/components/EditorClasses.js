@@ -21,16 +21,17 @@ export class EditorButton {
         key={key}
         placement="top"
         overlay={
-          <Tooltip id={ this.name.toLowerCase() + '-tooltip' }>
+          <Tooltip id={`${this.name.toLowerCase()} + -tooltip`}>
             {this.text}
           </Tooltip>
-        }>
+        }
+      >
         <Button
           onClick={this.callback}
           bsSize="small"
           disabled={this.disabled || false}
           active={this.active}
-          >
+        >
           <Glyphicon glyph={this.glyph} />
         </Button>
       </OverlayTrigger>

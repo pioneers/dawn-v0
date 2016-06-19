@@ -1,9 +1,9 @@
-const gamepads = (state={}, action) => {
+const gamepads = (state = {}, action) => {
   switch (action.type) {
     case 'UPDATE_GAMEPADS':
       return {
         ...state,
-        gamepads: action.gamepads
+        gamepads: action.gamepads,
       };
     default:
       return state;

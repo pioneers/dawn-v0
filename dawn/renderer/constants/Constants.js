@@ -15,6 +15,7 @@ module.exports = {
     Encoder: null,
     ColorSensor: null,
     MetalDetector: null,
-    ExampleDevice: null
-  })
+    ExampleDevice: null,
+    ServoControl: null,
+  }),
 };

@@ -1,34 +1,34 @@
-const info = (state={}, action) => {
+const info = (state = {}, action) => {
   switch (action.type) {
     case 'ANSIBLE_CONNECT':
       return {
         ...state,
-        connectionStatus: true
+        connectionStatus: true,
       };
     case 'ANSIBLE_DISCONNECT':
       return {
         ...state,
-        connectionStatus: false
+        connectionStatus: false,
       };
     case 'RUNTIME_CONNECT':
       return {
         ...state,
-        runtimeStatus: true
+        runtimeStatus: true,
       };
     case 'RUNTIME_DISCONNECT':
       return {
         ...state,
-        runtimeStatus: false
+        runtimeStatus: false,
       };
     case 'UPDATE_BATTERY':
       return {
         ...state,
-        batteryLevel: action.battery.value
+        batteryLevel: action.battery.value,
       };
     case 'UPDATE_STATUS':
       return {
         ...state,
-        isRunningCode: (action.status.value === 1)
+        isRunningCode: (action.status.value === 1),
       };
     case 'runtime_version':
       return {
@@ -36,8 +36,8 @@ const info = (state={}, action) => {
         runtimeVersion: {
           version: action.version,
           headhash: action.headhash,
-          modified: action.modified
-        }
+          modified: action.modified,
+        },
       };
     default:
       return state;

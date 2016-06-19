@@ -22,9 +22,9 @@ const dialog = remote.dialog;
  * @return {Promise} - fulfilled if user selects file, rejected otherwise
  */
 function openFileDialog() {
-  return new Promise(function(resolve, reject) {
+  return new Promise((resolve, reject) => {
     dialog.showOpenDialog({
-      filters: [{ name: 'python', extensions: ['py']}]
+      filters: [{ name: 'python', extensions: ['py'] }],
     }, (filepaths) => {
       if (filepaths === undefined) {
         reject();
@@ -42,9 +42,9 @@ function openFileDialog() {
  * @return {Promise} - fulfilled with filepath once user hits save.
  */
 function saveFileDialog() {
-  return new Promise(function(resolve, reject) {
+  return new Promise((resolve, reject) => {
     dialog.showSaveDialog({
-      filters: [{ name: 'python', extensions: ['py']}]
+      filters: [{ name: 'python', extensions: ['py'] }],
     }, (filepath) => {
       if (filepath === undefined) {
         reject();
@@ -52,34 +52,34 @@ function saveFileDialog() {
 
       // Automatically append .py extension if they don't have it
       if (!filepath.endsWith('.py')) {
-        filepath = filepath + '.py';
+        resolve(`${filepath}.py`);
       }
       resolve(filepath);
     });
   });
 }
 
-function* openFile(action) {
+function* openFile() {
   const filepath = yield call(openFileDialog);
   const data = yield cps(fs.readFile, filepath, 'utf8');
   yield put({
     type: 'OPEN_FILE_SUCCEEDED',
     code: data,
-    filepath: filepath
+    filepath,
   });
 }
 
 function* saveFile(action) {
-  var filepath = action.filepath;
-  var code = action.code;
+  let filepath = action.filepath;
+  const code = action.code;
   if (filepath === null) {
     filepath = yield call(saveFileDialog);
   }
   yield cps(fs.writeFile, filepath, code);
   yield put({
     type: 'SAVE_FILE_SUCCEEDED',
-    code: code,
-    filepath: filepath
+    code,
+    filepath,
   });
 }
 
@@ -94,13 +94,13 @@ function* runtimeHeartbeat() {
   while (true) {
     // Start a race between a delay and receiving an UPDATE_STATUS action from
     // runtime. Only the winner will have a value.
-    const { update, timeout } = yield race({
+    const result = yield race({
       update: take('UPDATE_STATUS'),
-      timeout: call(delay, 1000) // The delay is 1000 ms, or 1 second.
+      timeout: call(delay, 1000), // The delay is 1000 ms, or 1 second.
     });
 
     // If update wins, we assume we are connected, otherwise disconnected.
-    if (update) {
+    if (result.update) {
       yield put({ type: 'RUNTIME_CONNECT' });
     } else {
       yield put({ type: 'RUNTIME_DISCONNECT' });
@@ -113,28 +113,28 @@ function* runtimeHeartbeat() {
  * recently (they are assumed to be disconnected).
  */
 function* reapPeripheral(action) {
-  let id = action.peripheral.id;
+  const id = action.peripheral.id;
   // Start a race between a delay and receiving an UPDATE_PERIPHERAL action for
   // this same peripheral (per peripheral.id). Only the winner has a value.
-  const { peripheralUpdate, timeout } = yield race({
-    peripheralUpdate: take((action) => {
-      return action.type === 'UPDATE_PERIPHERAL' && action.peripheral.id === id;
-    }),
-    timeout: call(delay, 3000) // The delay is 3000 ms, or 3 seconds.
+  const result = yield race({
+    peripheralUpdate: take((nextAction) => (
+      nextAction.type === 'UPDATE_PERIPHERAL' && nextAction.peripheral.id === id
+    )),
+    timeout: call(delay, 3000), // The delay is 3000 ms, or 3 seconds.
   });
 
   // If the delay won, then we have not received an update for this peripheral
   // recently and remove it from our state.
-  if (timeout) {
+  if (result.timeout) {
     yield put({ type: 'PERIPHERAL_DISCONNECT', peripheralId: id });
   }
 }
 
-var _timestamps = [0, 0, 0, 0];
+const _timestamps = [0, 0, 0, 0];
 
-const _needToUpdate = function(newGamepads) {
-  return _.some(newGamepads, function(gamepad, index) {
-    if(!_.isUndefined(gamepad) && (gamepad.timestamp > _timestamps[index])) {
+function _needToUpdate(newGamepads) {
+  return _.some(newGamepads, (gamepad, index) => {
+    if (!_.isUndefined(gamepad) && (gamepad.timestamp > _timestamps[index])) {
       _timestamps[index] = gamepad.timestamp;
       return true;
     } else if (_.isUndefined(gamepad) && !_.isNull(_timestamps[index])) {
@@ -143,24 +143,24 @@ const _needToUpdate = function(newGamepads) {
     }
     return false;
   });
-};
+}
 
-const _formatGamepadsForJSON = function(newGamepads) {
-  let formattedGamepads = {};
+function _formatGamepadsForJSON(newGamepads) {
+  const formattedGamepads = {};
   // Currently there is a bug on windows where navigator.getGamepads()
   // returns a second, 'ghost' gamepad even when only one is connected.
   // The filter on 'mapping' filters out the ghost gamepad.
-  _.forEach(_.filter(newGamepads, {'mapping': 'standard'}), function(gamepad, indexGamepad) {
+  _.forEach(_.filter(newGamepads, { mapping: 'standard' }), (gamepad, indexGamepad) => {
     if (gamepad) {
       formattedGamepads[indexGamepad] = {
         index: indexGamepad,
         axes: gamepad.axes,
-        buttons: _.map(gamepad.buttons, 'value')
+        buttons: _.map(gamepad.buttons, 'value'),
       };
     }
   });
   return formattedGamepads;
-};
+}
 
 /**
  * Repeatedly grab gamepad data, send it over Ansible to the robot, and dispatch
@@ -170,7 +170,7 @@ function* updateGamepads() {
   while (true) {
     // navigator.getGamepads always returns a reference to the same object. This
     // confuses redux, so we use assignIn to clone to a new object each time.
-    let newGamepads = _.assignIn({}, navigator.getGamepads());
+    const newGamepads = _.assignIn({}, navigator.getGamepads());
     if (_needToUpdate(newGamepads)) {
       // Send gamepad data to Runtime over Ansible.
       if (_.some(newGamepads)) {
@@ -193,6 +193,6 @@ export default function* rootSaga() {
     takeEvery('SAVE_FILE', saveFile),
     takeEvery('UPDATE_PERIPHERAL', reapPeripheral),
     fork(runtimeHeartbeat),
-    fork(updateGamepads)
+    fork(updateGamepads),
   ];
 }

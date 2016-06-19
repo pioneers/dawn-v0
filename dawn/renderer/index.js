@@ -9,8 +9,8 @@ import './utils/MainProcessBridge';
 ReactDOM.render(
   <Provider store={store}>
     <div>
-      <App/>
-      <DevTools/>
+      <App />
+      <DevTools />
     </div>
   </Provider>,
   document.getElementById('content')

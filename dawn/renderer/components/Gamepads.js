@@ -4,8 +4,7 @@ import { Panel, ListGroup } from 'react-bootstrap';
 import _ from 'lodash';
 import GamepadItem from './GamepadItem';
 
-let Gamepads = React.createClass({
-  displayName: 'Gamepads',
+class GamepadsComponent extends React.Component {
   renderInterior() {
     // if there are any gamepads
     if (_.some(this.props.gamepads, (gamepad) => gamepad !== undefined)) {
@@ -13,40 +12,43 @@ let Gamepads = React.createClass({
       // returns a second, 'ghost' gamepad even when only one is connected.
       // The filter on 'mapping' filters out the ghost gamepad.
       return _.map(_.filter(
-        this.props.gamepads, {'mapping': 'standard'}), (gamepad, index) => {
-          return (<GamepadItem key={index} index={index} gamepad={gamepad}/>);
-        }
-      );
-    } else {
-      return (
-        <p>
-          There don't seem to be any gamepads connected.
-          Connect a gamepad and press any button on it.
-        </p>
+        this.props.gamepads, { mapping: 'standard' }), (gamepad, index) => (
+          <GamepadItem key={index} index={index} gamepad={gamepad} />
+        )
       );
     }
-  },
+    return (
+      <p>
+        There don't seem to be any gamepads connected.
+        Connect a gamepad and press any button on it.
+      </p>
+    );
+  }
+
   render() {
     return (
       <Panel
         header="Gamepads"
         bsStyle="primary"
         id="gamepads-panel"
-        defaultExpanded>
-        <ListGroup fill style={{marginBottom: '5px'}}>
+        defaultExpanded
+      >
+        <ListGroup fill style={{ marginBottom: '5px' }}>
           {this.renderInterior()}
         </ListGroup>
       </Panel>
     );
   }
-});
+}
 
-const mapStateToProps = (state) => {
-  return {
-    gamepads: state.gamepads.gamepads
-  };
+GamepadsComponent.propTypes = {
+  gamepads: React.PropTypes.object,
 };
 
-Gamepads = connect(mapStateToProps)(Gamepads);
+const mapStateToProps = (state) => ({
+  gamepads: state.gamepads.gamepads,
+});
+
+const Gamepads = connect(mapStateToProps)(GamepadsComponent);
 
 export default Gamepads;
