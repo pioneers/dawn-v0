@@ -1,0 +1,24 @@
+syntax = "proto3";
+package main;
+
+message GamepadValueList {
+    repeated sint32 val = 1;
+}
+
+message Gamepad {
+    GamepadValueList axes = 1;
+    GamepadValueList buttons = 2;
+}
+
+message GamepadData {
+    repeated Gamepad gamepad = 1;
+}
+
+message ConsoleOutput {
+    string output = 1;
+}
+
+message AnsibleMessage {
+    string type = 1;
+    bytes data = 2;
+}

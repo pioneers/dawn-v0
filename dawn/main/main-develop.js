@@ -9,6 +9,7 @@ import {
   saveFile,
   createNewFile,
 } from '../renderer/actions/EditorActions';
+import './ansible/Ansible';
 
 let mainWindow; // the window which displays Dawn
 
