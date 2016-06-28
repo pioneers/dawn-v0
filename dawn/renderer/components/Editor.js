@@ -50,6 +50,8 @@ class EditorComponent extends React.Component {
       'solarized_light',
       'terminal',
     ];
+
+    this.toggleConsole = this.toggleConsole.bind(this);
   }
 
   componentDidMount() {

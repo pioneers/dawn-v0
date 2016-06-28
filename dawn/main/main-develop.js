@@ -9,7 +9,8 @@ import {
   saveFile,
   createNewFile,
 } from '../renderer/actions/EditorActions';
-import './ansible/Ansible';
+import { updateConsole } from '../renderer/actions/ConsoleActions';
+import Ansible from './ansible/Ansible';
 
 let mainWindow; // the window which displays Dawn
 
@@ -23,6 +24,17 @@ ipcMain.on('stateUpdate', (event, state) => {
 const reduxDispatch = (action) => {
   mainWindow.webContents.send('dispatch', action);
 };
+
+Ansible.on((type, data) => {
+  switch (type) {
+    case 'ConsoleOutput':
+      updateConsole(data.output);
+      break;
+    default:
+      console.log(type, data);
+  }
+});
+Ansible.connect();
 
 const template = [
   {

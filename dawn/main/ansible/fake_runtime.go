@@ -32,6 +32,7 @@ func send_output(output chan string, outbound chan []byte) {
 		select {
 		case content := <- output:
 			buffer.WriteString(content)
+			buffer.WriteString("\n")
 		case <- ticker:
 			output_string := buffer.String()
 			if len(output_string) > 0 {
