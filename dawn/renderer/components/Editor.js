@@ -1,11 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  changeTheme,
   editorUpdate,
+} from '../actions/EditorActions.js';
+import {
+  changeTheme,
   increaseFontsize,
   decreaseFontsize,
-} from '../actions/EditorActions.js';
+} from '../actions/SettingsActions.js';
 import {
   showConsole,
   hideConsole,
@@ -242,9 +244,9 @@ EditorComponent.propTypes = {
 
 const mapStateToProps = (state) => ({
   editorCode: state.editor.editorCode,
-  editorTheme: state.editor.editorTheme,
+  editorTheme: state.settings.editorTheme,
   filepath: state.editor.filepath,
-  fontSize: state.editor.fontSize,
+  fontSize: state.settings.fontSize,
   latestSaveCode: state.editor.latestSaveCode,
   showConsole: state.studentConsole.showConsole,
   consoleData: state.studentConsole.consoleData,
