@@ -17,7 +17,6 @@ const RendererBridge = {
 
   reduxDispatch(action) {
     if (this.registeredWindow) {
-      console.log(action);
       this.registeredWindow.webContents.send('dispatch', action);
     }
   },

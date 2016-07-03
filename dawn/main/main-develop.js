@@ -10,6 +10,7 @@ import {
   createNewFile,
 } from '../renderer/actions/EditorActions';
 import RendererBridge from './RendererBridge';
+import FakeRuntime from './FakeRuntime';
 
 let mainWindow; // the window which displays Dawn
 const template = [
@@ -89,6 +90,16 @@ const template = [
         label: 'Simulate Competition',
         click() {
           mainWindow.webContents.send('simulate-competition');
+        },
+      },
+      {
+        label: 'Toggle Runtime',
+        click() {
+          if (FakeRuntime.isActive()) {
+            FakeRuntime.stop();
+          } else {
+            FakeRuntime.start(500);
+          }
         },
       },
     ],
