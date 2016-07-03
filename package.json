@@ -6,7 +6,7 @@
   "scripts": {
     "start": "better-npm-run start",
     "build": "better-npm-run build",
-    "watch": "node ./node_modules/webpack/bin/webpack.js --watch"
+    "watch": "node ./node_modules/webpack/bin/webpack.js --watch --progress"
   },
   "betterScripts": {
     "start": {
