@@ -1,6 +1,5 @@
 import React from 'react';
 import Joyride from 'react-joyride';
-import DNav from './DNav';
 import Dashboard from './Dashboard';
 import joyrideSteps from './JoyrideSteps';
 import smalltalk from 'smalltalk';
@@ -85,13 +84,6 @@ class AppComponent extends React.Component {
   render() {
     return (
       <div>
-        <DNav
-          startTour={this.startTour}
-          runtimeStatus={this.props.runtimeStatus}
-          connection={this.props.connectionStatus}
-          battery={this.props.batteryLevel}
-          isRunningCode={this.props.isRunningCode}
-        />
         <Joyride
           ref="joyride"
           steps={this.state.steps}
@@ -105,7 +97,7 @@ class AppComponent extends React.Component {
             skip: 'Skip Tour',
           }}
         />
-        <div style={{ height: '60px', marginBottom: '21px' }} />
+        <div style={{ height: '10px' }} />
         <Dashboard
           {...this.props}
           addSteps={this.addSteps}

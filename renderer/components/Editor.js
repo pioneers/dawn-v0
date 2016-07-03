@@ -30,6 +30,7 @@ import 'brace/theme/terminal';
 class Editor extends React.Component {
   constructor(props) {
     super(props);
+    this.consoleHeight = 250; // pixels
     this.themes = [
       'monokai',
       'github',
@@ -43,6 +44,7 @@ class Editor extends React.Component {
       'terminal',
     ];
     this.toggleConsole = this.toggleConsole.bind(this);
+    this.getEditorHeight = this.getEditorHeight.bind(this);
   }
 
   componentDidMount() {
@@ -60,6 +62,10 @@ class Editor extends React.Component {
     correctedText = this.correctText(correctedText);
     // TODO: Create some notification that an attempt was made at correcting non-ASCII chars.
     pasteData.text = correctedText; // eslint-disable-line no-param-reassign
+  }
+
+  getEditorHeight(windowHeight) {
+    return `${String(windowHeight - 135 - this.props.showConsole * (this.consoleHeight + 40))}px`;
   }
 
   correctText(text) {
@@ -127,65 +133,60 @@ class Editor extends React.Component {
   }
 
   render() {
-    const consoleHeight = 250;
-    const editorHeight = window.innerHeight * 0.66;
     const changeMarker = this.hasUnsavedChanges() ? '*' : '';
     return (
       <Panel
         bsStyle="primary"
-        style={{ padding: '0' }}
         header={
-          <div>
-            <Row>
-              <Col md={6}>
-                Editing: {this.pathToName(this.props.filepath)} {changeMarker}
-              </Col>
-              <Col md={6}>
-                <ButtonGroup className="pull-right">
-                  <Button
-                    bsStyle="default"
-                    bsSize="small"
-                    onClick={this.startRobot}
-                    disabled={this.props.isRunningCode || !this.props.runtimeStatus}
-                  >
-                    <Glyphicon glyph="play" />
-                  </Button>
-                  <Button
-                    bsStyle="default"
-                    bsSize="small"
-                    onClick={this.stopRobot}
-                    disabled={!(this.props.isRunningCode && this.props.runtimeStatus)}
-                  >
-                    <Glyphicon glyph="stop" />
-                  </Button>
-                  <Button
-                    bsStyle="default"
-                    bsSize="small"
-                    onClick={this.upload}
-                    disabled={this.props.isRunningCode || !this.props.runtimeStatus}
-                  >
-                    <Glyphicon glyph="upload" />
-                  </Button>
-                </ButtonGroup>
-                <ButtonGroup className="pull-right">
-                  <Button
-                    bsStyle="default"
-                    bsSize="small"
-                    onClick={this.toggleConsole}
-                  >
-                    <Glyphicon glyph="console" />
-                  </Button>
-                  <Button
-                    bsStyle="default"
-                    bsSize="small"
-                    onClick={this.props.onClearConsole}
-                  >
-                    <Glyphicon glyph="remove" />
-                  </Button>
-                </ButtonGroup>
-              </Col>
-            </Row>
-          </div>
+          <Row>
+            <Col md={6}>
+              Editing: {this.pathToName(this.props.filepath)} {changeMarker}
+            </Col>
+            <Col md={6}>
+              <ButtonGroup className="pull-right">
+                <Button
+                  bsStyle="default"
+                  bsSize="small"
+                  onClick={this.startRobot}
+                  disabled={this.props.isRunningCode || !this.props.runtimeStatus}
+                >
+                  <Glyphicon glyph="play" />
+                </Button>
+                <Button
+                  bsStyle="default"
+                  bsSize="small"
+                  onClick={this.stopRobot}
+                  disabled={!(this.props.isRunningCode && this.props.runtimeStatus)}
+                >
+                  <Glyphicon glyph="stop" />
+                </Button>
+                <Button
+                  bsStyle="default"
+                  bsSize="small"
+                  onClick={this.upload}
+                  disabled={this.props.isRunningCode || !this.props.runtimeStatus}
+                >
+                  <Glyphicon glyph="upload" />
+                </Button>
+              </ButtonGroup>
+              <ButtonGroup className="pull-right">
+                <Button
+                  bsStyle="default"
+                  bsSize="small"
+                  onClick={this.toggleConsole}
+                >
+                  <Glyphicon glyph="console" />
+                </Button>
+                <Button
+                  bsStyle="default"
+                  bsSize="small"
+                  onClick={this.props.onClearConsole}
+                >
+                  <Glyphicon glyph="remove" />
+                </Button>
+              </ButtonGroup>
+            </Col>
+          </Row>
         }
       >
         <AceEditor
@@ -195,7 +196,7 @@ class Editor extends React.Component {
           fontSize={this.props.fontSize}
           ref="CodeEditor"
           name="CodeEditor"
-          height={`${String(editorHeight - this.props.showConsole * (consoleHeight + 30))}px`}
+          height={this.getEditorHeight(window.innerHeight)}
           value={this.props.editorCode}
           onChange={this.props.onEditorUpdate}
           onPaste={this.onEditorPaste}
@@ -204,7 +205,7 @@ class Editor extends React.Component {
         <ConsoleOutput
           toggleConsole={this.toggleConsole}
           show={this.props.showConsole}
-          height={consoleHeight}
+          height={this.consoleHeight}
           output={this.props.consoleData}
         />
       </Panel>
