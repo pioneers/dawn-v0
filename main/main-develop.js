@@ -87,12 +87,6 @@ const template = [
     label: 'Debug',
     submenu: [
       {
-        label: 'Simulate Competition',
-        click() {
-          mainWindow.webContents.send('simulate-competition');
-        },
-      },
-      {
         label: 'Toggle Runtime',
         click() {
           if (FakeRuntime.isActive()) {
@@ -139,7 +133,7 @@ app.on('ready', () => {
   RendererBridge.registerWindow(mainWindow);
 
   mainWindow.maximize();
-  mainWindow.loadURL(`file://${__dirname}/static/index.html`);
+  mainWindow.loadURL(`file://${__dirname}/../static/index.html`);
 
   mainWindow.on('closed', () => {
     mainWindow = null;
