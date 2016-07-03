@@ -99,17 +99,6 @@ const template = [
     ],
   },
   {
-    label: 'Config',
-    submenu: [
-      {
-        label: 'Runtime Config',
-        click() {
-          mainWindow.webContents.send('show-runtime-config');
-        },
-      },
-    ],
-  },
-  {
     label: 'Help',
     submenu: [
       {

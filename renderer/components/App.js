@@ -2,7 +2,6 @@ import React from 'react';
 import Joyride from 'react-joyride';
 import DNav from './DNav';
 import Dashboard from './Dashboard';
-import RuntimeConfig from './RuntimeConfig';
 import joyrideSteps from './JoyrideSteps';
 import smalltalk from 'smalltalk';
 import { removeAsyncAlert } from '../actions/AlertActions';
@@ -115,10 +114,6 @@ class AppComponent extends React.Component {
           runtimeStatus={this.props.runtimeStatus}
           isRunningCode={this.props.isRunningCode}
         />
-        <RuntimeConfig
-          connectionStatus={this.props.connectionStatus}
-          runtimeVersion={this.props.runtimeVersion}
-        />
       </div>
     );
   }
@@ -129,7 +124,6 @@ AppComponent.propTypes = {
   runtimeStatus: React.PropTypes.bool,
   batteryLevel: React.PropTypes.number,
   isRunningCode: React.PropTypes.bool,
-  runtimeVersion: React.PropTypes.object,
   asyncAlerts: React.PropTypes.array,
   onAlertDone: React.PropTypes.func,
 };
@@ -139,7 +133,6 @@ const mapStateToProps = (state) => ({
   runtimeStatus: state.info.runtimeStatus,
   batteryLevel: state.info.batteryLevel,
   isRunningCode: state.info.isRunningCode,
-  runtimeVersion: state.info.runtimeVersion,
   asyncAlerts: state.asyncAlerts,
 });
 
