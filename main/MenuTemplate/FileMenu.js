@@ -17,26 +17,28 @@ const FileMenu = {
       click() {
         RendererBridge.reduxDispatch(createNewFile());
       },
+      accelerator: 'CommandOrControl+N',
     },
     {
       label: 'Open file',
       click() {
         RendererBridge.reduxDispatch(openFile());
       },
+      accelerator: 'CommandOrControl+O',
     },
     {
       label: 'Save file',
       click() {
-        const filepath = RendererBridge.reduxState.editor.filepath;
-        const code = RendererBridge.reduxState.editor.editorCode;
-        RendererBridge.reduxDispatch(saveFile(filepath, code));
+        RendererBridge.reduxDispatch(saveFile());
       },
+      accelerator: 'CommandOrControl+S',
     },
     {
       label: 'Save file as',
       click() {
-        RendererBridge.reduxDispatch(saveFile(null, RendererBridge.reduxState.editor.editorCode));
+        RendererBridge.reduxDispatch(saveFile(true));
       },
+      accelerator: 'CommandOrControl+Shift+S',
     },
   ],
 };
