@@ -5,11 +5,12 @@
  */
 
 import fs from 'fs';
-import { takeEvery, delay } from 'redux-saga';
+import { takeEvery, delay, eventChannel } from 'redux-saga';
 import { cps, call, put, fork, take, race } from 'redux-saga/effects';
-import { remote } from 'electron';
+import { remote, ipcRenderer } from 'electron';
 import _ from 'lodash';
 import Ansible from './Ansible';
+import { store } from '../configureStore';
 
 const dialog = remote.dialog;
 
@@ -185,6 +186,47 @@ function* updateGamepads() {
 }
 
 /**
+ * Creates the ansibleReceiver eventChannel, which emits
+ * data received from the main process.
+ */
+function ansibleReceiver() {
+  return eventChannel((emitter) => {
+    const listener = (event, action) => {
+      emitter(action);
+    };
+    // Suscribe listener to dispatches from main process.
+    ipcRenderer.on('dispatch', listener);
+    // Return an unsuscribe function.
+    return () => {
+      ipcRenderer.removeListener('dispatch', listener);
+    };
+  });
+}
+
+/**
+ * Takes data from the ansibleReceiver channel and dispatches
+ * it to the store
+ */
+function* ansibleSaga() {
+  const chan = yield call(ansibleReceiver);
+  while (true) {
+    const action = yield take(chan);
+    // dispatch the action
+    yield put(action);
+  }
+}
+
+/**
+ * Send the store to the main process whenever it changes.
+ */
+function* updateMainProcess() {
+  // Store may not yet be initialized.
+  if (store) {
+    ipcRenderer.send('stateUpdate', store.getState());
+  }
+}
+
+/**
  * The root saga combines all the other sagas together into one.
  */
 export default function* rootSaga() {
@@ -192,7 +234,9 @@ export default function* rootSaga() {
     takeEvery('OPEN_FILE', openFile),
     takeEvery('SAVE_FILE', saveFile),
     takeEvery('UPDATE_PERIPHERAL', reapPeripheral),
+    takeEvery('*', updateMainProcess),
     fork(runtimeHeartbeat),
     fork(updateGamepads),
+    fork(ansibleSaga),
   ];
 }
