@@ -5,7 +5,9 @@ import _ from 'lodash';
 
 const hostname = 'localhost';
 const clientPort = '12345'; // send port
-const client = dgram.createSocket('udp4');
+const serverPort = '12346'; // receive port
+const client = dgram.createSocket('udp4'); // sender
+const server = dgram.createSocket('udp4'); // receiver
 
 const builder = ProtoBuf.loadProtoFile('./main/ansible/ansible.proto');
 const AnsibleMain = builder.build('main');
@@ -29,12 +31,16 @@ function buildProto(data) {
     return GamepadMsg;
   });
   const message = new DawnData({
-    gamepads,
     student_code_status: status,
+    gamepads,
   });
   return message;
 }
 
+/**
+ * Receives data from the renderer process and sends that data
+ * (serialized by protobufs) to the robot Runtime
+ */
 ipcMain.on('stateUpdate', (event, data) => {
   const message = buildProto(data);
   const buffer = message.encode().toBuffer();
@@ -45,3 +51,12 @@ ipcMain.on('stateUpdate', (event, data) => {
     }
   });
 });
+
+/**
+ * Handler to receive messages from the robot Runtime
+ */
+server.on('message', (msg) => {
+  console.log(`Dawn received: ${msg}\n`);
+});
+
+server.bind(serverPort, hostname);
