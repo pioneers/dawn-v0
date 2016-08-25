@@ -9,10 +9,12 @@ const serverPort = '12346'; // receive port
 const client = dgram.createSocket('udp4'); // sender
 const server = dgram.createSocket('udp4'); // receiver
 
-const builder = ProtoBuf.loadProtoFile('./main/ansible/ansible.proto');
-const AnsibleMain = builder.build('main');
-const DawnData = AnsibleMain.DawnData;
+const dawnBuilder = ProtoBuf.loadProtoFile('./main/ansible/ansible-protos/ansible.proto');
+const DawnData = dawnBuilder.build('DawnData');
 const StudentCodeStatus = DawnData.StudentCodeStatus;
+
+const runtimeBuilder = ProtoBuf.loadProtoFile('./main/ansible/ansible-protos/runtime_proto.proto');
+const RuntimeData = runtimeBuilder.build('RuntimeData');
 
 /**
  * Serialize the data using protocol buffers.
@@ -56,7 +58,8 @@ ipcMain.on('stateUpdate', (event, data) => {
  * Handler to receive messages from the robot Runtime
  */
 server.on('message', (msg) => {
-  console.log(`Dawn received: ${msg}\n`);
+  const data = RuntimeData.decode(msg).toRaw();
+  console.log(`Dawn received: ${JSON.stringify(data)}\n`);
 });
 
 server.bind(serverPort, hostname);
